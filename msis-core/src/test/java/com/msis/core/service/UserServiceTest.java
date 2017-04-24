@@ -2,13 +2,16 @@ package com.msis.core.service;
 
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+
+
+
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +35,7 @@ import static org.junit.Assert.*;
 @ActiveProfiles("test")
 @FixMethodOrder(value=MethodSorters.NAME_ASCENDING)
 public class UserServiceTest {
-	static Logger log = LogManager.getLogger(UserServiceTest.class.getName());
+	static Logger log = LoggerFactory.getLogger(UserServiceTest.class.getName());
 	@Autowired
     private UserService userService;
 	

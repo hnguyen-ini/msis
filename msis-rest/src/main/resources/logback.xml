@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	  	<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+	    	<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} – %msg%n</pattern>
+	  	</encoder>
+	</appender>
+
+	<appender name="FILE-AUDIT"	class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.base}/logs/debug.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${catalina.base}/logs/debug.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>200MB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+	
+	<appender name="FILE-WARN"	class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.base}/logs/warn.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${catalina.base}/logs/warn.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>200MB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="FILE-ERROR"	class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.base}/logs/error.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+			</Pattern>
+		</encoder>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${catalina.base}/logs/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+				<!-- each file should be at most 10MB, keep 30 days worth of history, but at most 200MB -->
+				<maxFileSize>10MB</maxFileSize>
+				<maxHistory>30</maxHistory>
+				<totalSizeCap>200MB</totalSizeCap>  
+		</rollingPolicy>
+
+	</appender>
+
+	<!-- Send logs to both console and file audit -->
+	<logger name="com.msis" level="debug" additivity="false">
+		<appender-ref ref="FILE-AUDIT" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<root level="error">
+		<appender-ref ref="FILE-ERROR" />
+	</root>
+	
+	<root level="warn">
+		<appender-ref ref="FILE-WARN" />
+	</root>
+
+</configuration>

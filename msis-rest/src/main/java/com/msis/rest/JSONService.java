@@ -8,8 +8,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+
 @Path("/json/metallica")
 public class JSONService {
+	static Logger log = LoggerFactory.getLogger(JSONService.class);
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -18,7 +24,10 @@ public class JSONService {
 		Track track = new Track();
 		track.setTitle("Enter Sandman");
 		track.setSinger("Metallica");
-
+		log.info(new Gson().toJson(track));
+		log.warn(new Gson().toJson(track));
+		log.debug(new Gson().toJson(track));
+		log.error(new Gson().toJson(track));
 		return track;
 
 	}
