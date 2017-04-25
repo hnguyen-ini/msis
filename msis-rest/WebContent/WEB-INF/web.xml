@@ -10,20 +10,46 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   
+  <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>classpath:security.xml classpath:rest-config.xml</param-value>
+  </context-param>
+  
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <filter>
+    <filter-name>CORS-Filter</filter-name>
+    <filter-class>com.msis.rest.filter.CORSFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>CORS-Filter</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
   <servlet>
 	<servlet-name>msis-rest</servlet-name>
 	<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
 	<init-param>
-		<param-name>com.sun.jersey.config.property.packages</param-name>
-		<param-value>com.msis.rest</param-value>
+	  <param-name>com.sun.jersey.config.property.packages</param-name>
+	  <param-value>com.msis.rest</param-value>
 	</init-param>
 	<init-param>
-		<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-		<param-value>true</param-value>
+	  <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+	  <param-value>true</param-value>
 	</init-param>
 	<load-on-startup>1</load-on-startup>
   </servlet>
-
   <servlet-mapping>
 	<servlet-name>msis-rest</servlet-name>
 	<url-pattern>/rest/*</url-pattern>

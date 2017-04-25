@@ -2,6 +2,8 @@ package com.msis.core.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +26,9 @@ import com.msis.core.service.UserService;
  */
 @Service(value="userService")
 public class UserServiceImpl implements UserService{
-
+	static Logger log = LoggerFactory.getLogger(CDNServiceS3.class);	
+	static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+	
 	private UserRepository userRepository;
 	@Autowired
 	public void setUserRepository(UserRepository userRepository) {

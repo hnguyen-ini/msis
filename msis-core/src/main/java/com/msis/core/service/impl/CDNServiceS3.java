@@ -7,8 +7,8 @@ import java.io.InputStream;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +22,13 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
+import com.msis.core.config.BeanConfig;
 import com.msis.core.config.CoreConfig;
 import com.msis.core.service.CDNService;
 
 @Service(value="cdnService")
 public class CDNServiceS3 implements CDNService{
-	static Logger log = LogManager.getLogger(CDNServiceS3.class.getName());
+	static Logger log = LoggerFactory.getLogger(CDNServiceS3.class);
 	private String rootBucketName;
     private String cdnBaseUri;
     private AmazonS3 s3client;

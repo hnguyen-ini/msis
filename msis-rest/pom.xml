@@ -25,8 +25,30 @@
       <artifactId>msis-core</artifactId>
       <version>1.0</version>
     </dependency>
+    
+    <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
+	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>servlet-api</artifactId>
+	    <version>2.5</version>
+	</dependency>
+    
   </dependencies>
   
   
   <packaging>war</packaging>
+  <build>
+  	<plugins>
+  		<plugin>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-war-plugin</artifactId>
+		  <version>2.3</version>
+		  <configuration>
+		    <webXml>${basedir}/WebContent/WEB-INF/web.xml</webXml>
+		    <warSourceDirectory>${basedir}/WebContent</warSourceDirectory>
+		    <packagingExcludes>${basedir}/WebContent/WEB-INF/web.xml</packagingExcludes>
+		  </configuration>
+		</plugin>
+	</plugins>
+  </build>
 </project>

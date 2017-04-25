@@ -1,9 +1,7 @@
 package com.msis.core.config;
 
-import java.util.Arrays;
-
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -15,7 +13,7 @@ import com.msis.common.service.ServiceStatus;
 @Configuration
 @PropertySource({"classpath:core-app.properties"})
 public class CoreConfig {
-	static Logger log = LogManager.getLogger(CoreConfig.class.getName());
+	static Logger log = LoggerFactory.getLogger(CoreConfig.class);
 	@Autowired
     protected Environment env;
 	

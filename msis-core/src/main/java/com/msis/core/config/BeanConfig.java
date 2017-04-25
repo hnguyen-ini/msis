@@ -1,7 +1,7 @@
 package com.msis.core.config;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +12,7 @@ import com.msis.core.service.impl.UserServiceImpl;
 
 @Configuration
 public class BeanConfig {
-	static Logger log = LogManager.getLogger(BeanConfig.class.getName());
+	static Logger log = LoggerFactory.getLogger(BeanConfig.class);
 	
 	@Bean
 	public UserService userService() {

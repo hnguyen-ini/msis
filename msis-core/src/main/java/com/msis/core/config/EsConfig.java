@@ -2,11 +2,11 @@ package com.msis.core.config;
 
 import java.net.InetAddress;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,7 +22,7 @@ import com.msis.common.service.ServiceStatus;
 @EnableElasticsearchRepositories(basePackages = "com.msis.core.repository")
 @ComponentScan(value = "com.msis.core.config")
 public class EsConfig {
-	static Logger log = LogManager.getLogger(EsConfig.class.getName());
+	static Logger log = LoggerFactory.getLogger(EsConfig.class);
 	@Autowired
     private CoreConfig coreConfig;
     

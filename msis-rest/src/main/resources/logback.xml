@@ -8,7 +8,7 @@
 	</appender>
 
 	<appender name="FILE-AUDIT"	class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${catalina.base}/logs/debug.log</file>
+		<file>${catalina.base}/logs/msis/debug.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
 				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
@@ -17,7 +17,7 @@
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>${catalina.base}/logs/debug.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<fileNamePattern>${catalina.base}/logs/msis/debug.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<maxFileSize>10MB</maxFileSize>
 			<maxHistory>30</maxHistory>
 			<totalSizeCap>200MB</totalSizeCap>
@@ -25,7 +25,7 @@
 	</appender>
 	
 	<appender name="FILE-WARN"	class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${catalina.base}/logs/warn.log</file>
+		<file>${catalina.base}/logs/msis/warn.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
 				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
@@ -34,7 +34,7 @@
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>${catalina.base}/logs/warn.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<fileNamePattern>${catalina.base}/logs/msis/warn.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 			<maxFileSize>10MB</maxFileSize>
 			<maxHistory>30</maxHistory>
 			<totalSizeCap>200MB</totalSizeCap>
@@ -42,7 +42,7 @@
 	</appender>
 
 	<appender name="FILE-ERROR"	class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${catalina.base}/logs/error.log</file>
+		<file>${catalina.base}/logs/msis/error.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
 				%d{yyyy-MM-dd HH:mm:ss} - %msg%n
@@ -51,7 +51,7 @@
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
 			<!-- rollover daily -->
-			<fileNamePattern>${catalina.base}/logs/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<fileNamePattern>${catalina.base}/logs/msis/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
 				<!-- each file should be at most 10MB, keep 30 days worth of history, but at most 200MB -->
 				<maxFileSize>10MB</maxFileSize>
 				<maxHistory>30</maxHistory>
@@ -65,13 +65,13 @@
 		<appender-ref ref="FILE-AUDIT" />
 		<appender-ref ref="STDOUT" />
 	</logger>
-
-	<root level="error">
-		<appender-ref ref="FILE-ERROR" />
-	</root>
 	
-	<root level="warn">
+	<logger name="com.msis" level="error" additivity="false">
+		<appender-ref ref="FILE-ERROR" />
+	</logger>
+	
+	<logger name="com.msis" level="warn" additivity="false">
 		<appender-ref ref="FILE-WARN" />
-	</root>
+	</logger>
 
 </configuration>
