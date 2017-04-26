@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
 import com.msis.common.crypto.AES;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
@@ -26,7 +27,6 @@ import com.msis.core.service.UserService;
  */
 @Service(value="userService")
 public class UserServiceImpl implements UserService{
-	static Logger log = LoggerFactory.getLogger(CDNServiceS3.class);	
 	static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
 	private UserRepository userRepository;
@@ -140,6 +140,32 @@ public class UserServiceImpl implements UserService{
 		} catch (Exception e) {
 			throw new ServiceException(ServiceStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+
+	@Override
+	public User encryptPublicKey(User user) throws ServiceException {
+		String userData = new Gson().toJson(user);
+		AES aes = new AES(coreConfig.publicKey());
+		aes.encryptString(userData);
+		return null;
+	}
+
+	@Override
+	public User decryptPublicKey(User user) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public User encryptPrivateKey(User user) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public User decryptPrivateKey(User user) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	
