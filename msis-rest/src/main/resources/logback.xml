@@ -61,16 +61,21 @@
 	</appender>
 
 	<!-- Send logs to both console and file audit -->
-	<logger name="com.msis" level="debug" additivity="false">
+	<logger name="com.msis" level="DEBUG" additivity="false">
 		<appender-ref ref="FILE-AUDIT" />
 		<appender-ref ref="STDOUT" />
 	</logger>
 	
-	<logger name="com.msis" level="error" additivity="false">
+	<logger name="com.msis" level="INFO" additivity="false">
+		<appender-ref ref="FILE-AUDIT" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	
+	<logger name="com.msis" level="ERROR" additivity="false">
 		<appender-ref ref="FILE-ERROR" />
 	</logger>
 	
-	<logger name="com.msis" level="warn" additivity="false">
+	<logger name="com.msis" level="WARN" additivity="false">
 		<appender-ref ref="FILE-WARN" />
 	</logger>
 

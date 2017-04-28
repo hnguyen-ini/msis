@@ -24,6 +24,7 @@
                 <!--logout-success-url="/logout/success"-->
                 <!--logout-url="/logout"/>-->
         <http-basic/>
+        <csrf disabled="true"/>
     </http>
     
     <authentication-manager>

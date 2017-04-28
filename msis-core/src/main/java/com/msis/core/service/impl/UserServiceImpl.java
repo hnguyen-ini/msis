@@ -1,6 +1,7 @@
 package com.msis.core.service.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,30 +101,35 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User regUser(User user) throws ServiceException {
-         // client & server must have the same publicKey
-    	AES aes = new AES(coreConfig.publicKey()); 
-    	String email = aes.decryptString(user.getEmail());
-        String password = aes.decryptString(user.getPassword());
-        String valid = PasswordUtils.validate(password);
-        if (valid != null) 
-        	throw new ServiceException(ServiceStatus.BAD_PASSWORD, valid);
-        
-        // reset AES with privateKey
-        aes = new AES(coreConfig.privateKey());
-        email = aes.encryptString(email);
-        User regUser = findByEmail(email);
-        if (regUser != null)
-        	throw new ServiceException(ServiceStatus.DUPLICATE_USER);
-        Long time = System.currentTimeMillis();
-        password = aes.encryptString(password);
-    	regUser = new User(user);
-    	regUser.setEmail(email);
-    	regUser.setPassword(password);
-    	regUser.setCreateAt(time);
-    	regUser.setModifyAt(time);
-    	save(user);
-    
-    	return user;
+		try {
+			if (!okUser(user))
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Invaid user");
+			// client & server must have the same publicKey and email, password must be validated on client
+	    	User deUser = decryptPublicKey(user);
+	    	User enUser = encryptPrivateKey(deUser);
+			
+	        User regUser = findByEmail(enUser.getEmail());
+	        if (regUser != null)
+	        	throw new ServiceException(ServiceStatus.DUPLICATE_USER, "Duplicate user email");
+	        
+	        String token = UUID.randomUUID().toString();
+	        Long time = System.currentTimeMillis();
+	        enUser.setCreateAt(time);
+	        enUser.setModifyAt(time);
+	        enUser.setLoginAt(time);
+	        enUser.setToken(token);
+	        save(enUser);
+	        
+	        user.setCreateAt(time);
+	        user.setModifyAt(time);
+	        user.setLoginAt(time);
+	        user.setToken(token);
+	    	return user;
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Register failed, " + e.getMessage());
+		}
 	}
 
 	@Override
@@ -144,33 +150,69 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User encryptPublicKey(User user) throws ServiceException {
-		String userData = new Gson().toJson(user);
 		AES aes = new AES(coreConfig.publicKey());
-		aes.encryptString(userData);
-		return null;
+		
+		User enUser = new User();
+		enUser.setEmail(aes.encryptString(user.getEmail()));
+		enUser.setFirstName(aes.encryptString(user.getFirstName()));
+		enUser.setLastName(aes.encryptString(user.getLastName()));
+		enUser.setPassword(aes.encryptString(user.getPassword()));
+		enUser.setToken(aes.encryptString(user.getToken()));
+		
+		return enUser;
 	}
 
 	@Override
 	public User decryptPublicKey(User user) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		AES aes = new AES(coreConfig.publicKey());
+		
+		User deUser = new User();
+		deUser.setEmail(aes.decryptString(user.getEmail()));
+		deUser.setFirstName(aes.decryptString(user.getFirstName()));
+		deUser.setLastName(aes.decryptString(user.getLastName()));
+		deUser.setPassword(aes.decryptString(user.getPassword()));
+		deUser.setToken(aes.decryptString(user.getToken()));
+		
+		return deUser;
 	}
 
 	@Override
 	public User encryptPrivateKey(User user) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		AES aes = new AES(coreConfig.privateKey());
+		
+		User enUser = new User();
+		enUser.setEmail(aes.encryptString(user.getEmail()));
+		enUser.setFirstName(aes.encryptString(user.getFirstName()));
+		enUser.setLastName(aes.encryptString(user.getLastName()));
+		enUser.setPassword(aes.encryptString(user.getPassword()));
+		enUser.setToken(aes.encryptString(user.getToken()));
+		
+		return enUser;
 	}
 
 	@Override
 	public User decryptPrivateKey(User user) throws ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		AES aes = new AES(coreConfig.privateKey());
+		
+		User deUser = new User();
+		deUser.setEmail(aes.decryptString(user.getEmail()));
+		deUser.setFirstName(aes.decryptString(user.getFirstName()));
+		deUser.setLastName(aes.decryptString(user.getLastName()));
+		deUser.setPassword(aes.decryptString(user.getPassword()));
+		deUser.setToken(aes.decryptString(user.getToken()));
+		
+		return deUser;
+	}
+
+	@Override
+	public boolean okUser(User user) {
+		if (user.getEmail() == null || user.getEmail().isEmpty()
+				|| user.getFirstName() == null || user.getFirstName().isEmpty()
+				|| user.getLastName() == null || user.getLastName().isEmpty()
+				|| user.getPassword() == null || user.getPassword().isEmpty())
+			return false;
+		return true;
 	}
 
 	
-
-
-	
-
 }

@@ -29,6 +29,8 @@ public class AES {
     
     public String encryptString(String plainText) throws ServiceException {
         try {
+        	if (plainText == null || plainText.isEmpty())
+        		return plainText;
 	    	Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
 	        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
 	        return Base64.encodeBase64String(encryptedBytes);
@@ -39,6 +41,8 @@ public class AES {
 
     public String decryptString(String encrypted) throws ServiceException {
     	try {
+    		if (encrypted == null || encrypted.isEmpty())
+        		return encrypted;
 	        Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
 	        byte[] plainBytes = cipher.doFinal(Base64.decodeBase64(encrypted));
 	        return new String(plainBytes);

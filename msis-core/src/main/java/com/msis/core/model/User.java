@@ -13,6 +13,10 @@ public class User {
 	private String password;
 	private Long createAt;
 	private Long modifyAt;
+	private String status = "A";
+	
+	// login info
+	private String token;
 	private Long loginAt;
 	
 	public User() {}
@@ -105,6 +109,22 @@ public class User {
 
 	public void setLoginAt(Long loginAt) {
 		this.loginAt = loginAt;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 }

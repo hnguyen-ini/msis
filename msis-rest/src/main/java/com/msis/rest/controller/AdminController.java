@@ -31,6 +31,8 @@ public class AdminController implements InitializingBean{
 		return testUser;
 	}
 	
+	
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(userService, "userService not set");

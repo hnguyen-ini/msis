@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
+import com.msis.common.utils.ListUtils;
 import com.msis.core.model.Patient;
 import com.msis.core.repository.PatientRepository;
 import com.msis.core.service.PatientService;
@@ -59,7 +60,7 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public List<Patient> findByCreator(String creator) {
-		return patientRepositoty.findByCreator(creator);
+		return ListUtils.okList(patientRepositoty.findByCreator(creator));
 	}
 	
 }

@@ -33,4 +33,6 @@ public interface UserService {
 	User decryptPublicKey(User user) throws ServiceException;
 	User encryptPrivateKey(User user) throws ServiceException;
 	User decryptPrivateKey(User user) throws ServiceException;
+	
+	boolean okUser(User user);
 }
