@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.msis.common.crypto.AES;
+import com.msis.common.crypto.Crypto;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
 import com.msis.common.utils.ListUtils;
@@ -114,16 +115,17 @@ public class UserServiceImpl implements UserService{
 	        
 	        String token = UUID.randomUUID().toString();
 	        Long time = System.currentTimeMillis();
+	        
 	        enUser.setCreateAt(time);
 	        enUser.setModifyAt(time);
 	        enUser.setLoginAt(time);
-	        enUser.setToken(token);
+	        enUser.setToken(Crypto.encryptString(coreConfig.privateKey(), token));
 	        save(enUser);
 	        
-	        user.setCreateAt(time);
-	        user.setModifyAt(time);
-	        user.setLoginAt(time);
-	        user.setToken(token);
+	        user.setPassword(null);
+	        user.setFirstName(null);
+	        user.setLastName(null);
+	        user.setToken(Crypto.encryptString(coreConfig.publicKey(), token));
 	    	return user;
 		} catch (ServiceException e) {
 			throw e;

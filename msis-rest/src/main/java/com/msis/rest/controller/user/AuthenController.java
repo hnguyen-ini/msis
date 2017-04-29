@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.Gson;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceResponse;
@@ -20,6 +21,7 @@ import com.msis.core.model.User;
 import com.msis.core.service.UserService;
 
 @Path("/authen")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenController implements InitializingBean {
 	static Logger log = LoggerFactory.getLogger(AuthenController.class);
 	private static UserService userService;
