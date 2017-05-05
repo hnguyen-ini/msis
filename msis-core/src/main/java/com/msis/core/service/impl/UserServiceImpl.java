@@ -104,23 +104,30 @@ public class UserServiceImpl implements UserService{
 	public User regUser(User user) throws ServiceException {
 		try {
 			if (!okUser(user))
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Invaid user");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Invaid user information");
 			// client & server must have the same publicKey and email, password must be validated on client
 	    	User deUser = decryptPublicKey(user);
 	    	User enUser = encryptPrivateKey(deUser);
 			
-	        User regUser = findByEmail(enUser.getEmail());
-	        if (regUser != null)
+	        if (findByEmail(deUser.getEmail()) != null)
 	        	throw new ServiceException(ServiceStatus.DUPLICATE_USER, "Duplicate user email");
+
+	        // validate password
+	    	PasswordUtils.validate(deUser.getPassword());
+	    	String pwd = PasswordUtils.createHash(deUser.getPassword());
+	    	String salt = pwd.split(":")[PasswordUtils.SALT_INDEX];
+			String pwod = pwd.split(":")[PasswordUtils.PBKDF2_INDEX];
 	        
 	        String token = UUID.randomUUID().toString();
 	        Long time = System.currentTimeMillis();
 	        
-	        enUser.setCreateAt(time);
-	        enUser.setModifyAt(time);
-	        enUser.setLoginAt(time);
-	        enUser.setToken(Crypto.encryptString(coreConfig.privateKey(), token));
-	        save(enUser);
+	        deUser.setPassword(pwod);
+	        deUser.setPasswordHash(salt);
+	        deUser.setCreateAt(time);
+	        deUser.setModifyAt(time);
+	        deUser.setLoginAt(time);
+	        deUser.setToken(token);
+	        save(deUser);
 	        
 	        user.setPassword(null);
 	        user.setFirstName(null);
@@ -135,18 +142,43 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public User verify(String userId, String password) throws ServiceException{
+	public User verify(String email, String password) throws ServiceException{
 		try {
-			User user = findByEmail(userId);
-			if (user == null)
-				throw new ServiceException(ServiceStatus.BAD_USER_ID, "Not Found User by userId: " + userId);
-			String correctHash = PasswordUtils.PBKDF2_ITERATIONS + ":" + user.getPassword();
-			if (PasswordUtils.validatePassword(password, correctHash))
-				return user;
-			else
-				throw new ServiceException(ServiceStatus.BAD_PASSWORD, "Invalid Password");
+			if (email == null || email.isEmpty() || password == null || password.isEmpty())
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing email or password");
+			email = Crypto.decryptString(coreConfig.publicKey(), email);
+			password = Crypto.decryptString(coreConfig.publicKey(), password);
+			
+			User user = findByEmail(email);
+			if (user == null) {
+				logger.warn("Not found user by email " + email);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Invalid userid or password");
+			}
+			String correctHash = PasswordUtils.PBKDF2_ITERATIONS + ":" + user.getPasswordHash() + ":" + user.getPassword();
+			if (!PasswordUtils.validatePassword(password, correctHash)) {
+				logger.warn("Invalid password");
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Invalid userid or password");
+			}
+			if (user.getStatus().equals("I")) {
+				logger.warn("Inactive user");
+				throw new ServiceException(ServiceStatus.INACTIVE_USER, "Inactive user");
+			}
+			String token = UUID.randomUUID().toString();
+			user.setToken(token);
+			user.setLoginAt(System.currentTimeMillis());
+			save(user);
+			
+	        user = encryptPublicKey(user);
+			user.setPassword(null);
+	        user.setCreateAt(null);
+	        user.setId(null);
+	        user.setModifyAt(null);
+	        user.setStatus(null);
+	        return user;
+		} catch (ServiceException e) {
+			throw e;
 		} catch (Exception e) {
-			throw new ServiceException(ServiceStatus.BAD_REQUEST, e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Sign-in failed, " + e.getMessage());
 		}
 	}
 

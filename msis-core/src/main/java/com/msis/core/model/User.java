@@ -11,6 +11,7 @@ public class User {
 	private String lastName;
 	private String email;
 	private String password;
+	private String passwordHash;
 	private Long createAt;
 	private Long modifyAt;
 	private String status = "A";
@@ -125,6 +126,14 @@ public class User {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 	
 }

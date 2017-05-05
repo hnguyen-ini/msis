@@ -10,8 +10,12 @@ public interface PatientService {
 	void delete(Patient patient);
 	void deleteByIdn(String idn) throws ServiceException;
 	void deleteByCreator(String creator) throws ServiceException;
+	void deleteAll();
 	
 	Patient findByIdn(String idn);
 	Patient findByName(String name);
 	List<Patient> findByCreator(String creator);
+	
+	Patient create(Patient patient) throws ServiceException;
+	Patient update(Patient patient)  throws ServiceException;
 }

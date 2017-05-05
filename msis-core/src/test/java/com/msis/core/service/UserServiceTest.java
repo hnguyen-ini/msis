@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.google.gson.Gson;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
-import com.msis.core.config.BeanConfig;
 import com.msis.core.config.EsConfig;
 import com.msis.core.model.User;
 import com.msis.core.service.UserService;
@@ -28,7 +27,7 @@ import com.msis.core.service.UserService;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {EsConfig.class, BeanConfig.class})
+@ContextConfiguration(classes = {EsConfig.class})
 @ActiveProfiles("test")
 @FixMethodOrder(value=MethodSorters.NAME_ASCENDING)
 public class UserServiceTest {
@@ -39,26 +38,25 @@ public class UserServiceTest {
 	@Autowired
     private ElasticsearchTemplate esTemplate;
 	
+	private User globalUser;
+	private User encryptUser;
+	
 	@Before
-    public void before() {
+    public void before() throws Exception {
 		log.info("Init UserServiceTest");
-//        esTemplate.deleteIndex(User.class);
-//        esTemplate.createIndex(User.class);
+        esTemplate.deleteIndex(User.class);
+        esTemplate.createIndex(User.class);
         esTemplate.putMapping(User.class);
         esTemplate.refresh(User.class);
+        
+        globalUser = new User("Elasticsearch", "Rambabu", System.currentTimeMillis()+"@gmail.com", "msispass");
+        encryptUser = userService.encryptPublicKey(globalUser);
+        user1Reg();
     }
 	
-	@Test
-    public void user1Save() throws Exception {
-		User user= new User("Elasticsearch", "Rambabu", "Elasticsearch@gmail.com", "password");
-        User testUser = userService.save(user);
-
-        assertNotNull(testUser);
-        assertEquals(testUser.getFirstName(), user.getFirstName());
-        assertEquals(testUser.getLastName(), user.getLastName());
-        assertEquals(testUser.getEmail(), user.getEmail());
-        log.info(new Gson().toJson(testUser));
-		log.info("user1Save Test Case Passed");
+	public void user1Reg() throws Exception {
+		User regUser = userService.regUser(userService.encryptPublicKey(globalUser));
+		assertEquals(encryptUser.getEmail(), regUser.getEmail());
 	}
 
 	@Test
@@ -76,12 +74,31 @@ public class UserServiceTest {
 	}
 	
 	@Test
+	public void user2RegBadReq() throws Exception {
+		try {
+			User user = new User("", "Rambabu", "Elasticsearch@gmail.com", "password");
+			User test = userService.regUser(user);
+			assertNotNull(test);
+		} catch (ServiceException e) {
+			assertEquals(ServiceStatus.BAD_REQUEST.getCode(), e.getStatus().getCode());
+			assertEquals(ServiceStatus.BAD_REQUEST.getStatus(), e.getStatus().getStatus());
+			assertTrue("Invaid user information".equals(e.getMessage()));
+		}
+	}
+	
+	@Test
+	public void user2WSignin() throws Exception {
+		User signin = userService.verify(encryptUser.getEmail(), encryptUser.getPassword());
+		assertEquals(encryptUser.getEmail(), signin.getEmail());
+		log.info("user2WSignin Test Case Passed");
+	}
+	
+	@Test
 	public void user3FindByEmail() throws Exception {
-		User user = userService.findByEmail("Elasticsearch@gmail.com");
+		User user = userService.findByEmail(globalUser.getEmail());
 		assertNotNull(user);
         assertEquals("Elasticsearch", user.getFirstName());
         assertEquals("Rambabu", user.getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.getEmail());
         log.info(new Gson().toJson(user));
 		log.info("user3FindByEmail Test Case Passed");
 	}
@@ -92,7 +109,7 @@ public class UserServiceTest {
 		assertNotNull(user);
         assertEquals("Elasticsearch", user.get(0).getFirstName());
         assertEquals("Rambabu", user.get(0).getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.get(0).getEmail());
+        assertEquals(globalUser.getEmail(), user.get(0).getEmail());
         log.info(new Gson().toJson(user.get(0)));
 		log.info("user4FindByFirstName Test Case Passed");
 	}
@@ -103,7 +120,7 @@ public class UserServiceTest {
 		assertNotNull(user);
         assertEquals("Elasticsearch", user.getContent().get(0).getFirstName());
         assertEquals("Rambabu", user.getContent().get(0).getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.getContent().get(0).getEmail());
+        assertEquals(globalUser.getEmail(), user.getContent().get(0).getEmail());
         log.info(new Gson().toJson(user.getContent().get(0)));
 		log.info("user5FindByFirstName Test Case Passed");
 	}
@@ -114,7 +131,7 @@ public class UserServiceTest {
 		assertNotNull(user);
         assertEquals("Elasticsearch", user.get(0).getFirstName());
         assertEquals("Rambabu", user.get(0).getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.get(0).getEmail());
+        assertEquals(globalUser.getEmail(), user.get(0).getEmail());
         log.info(new Gson().toJson(user.get(0)));
 		log.info("user6FindByLastName Test Case Passed");
 	}
@@ -125,7 +142,7 @@ public class UserServiceTest {
 		assertNotNull(user);
         assertEquals("Elasticsearch", user.getContent().get(0).getFirstName());
         assertEquals("Rambabu", user.getContent().get(0).getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.getContent().get(0).getEmail());
+        assertEquals(globalUser.getEmail(), user.getContent().get(0).getEmail());
         log.info(new Gson().toJson(user.getContent().get(0)));
 		log.info("user7FindByFirstName Test Case Passed");
 	}
@@ -136,7 +153,7 @@ public class UserServiceTest {
 		assertNotNull(user);
         assertEquals("Elasticsearch", user.get(0).getFirstName());
         assertEquals("Rambabu", user.get(0).getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.get(0).getEmail());
+        assertEquals(globalUser.getEmail(), user.get(0).getEmail());
         log.info(new Gson().toJson(user.get(0)));
 		log.info("user8FindAll Test Case Passed");
 	}
@@ -147,22 +164,22 @@ public class UserServiceTest {
 		assertNotNull(user);
         assertEquals("Elasticsearch", user.getContent().get(0).getFirstName());
         assertEquals("Rambabu", user.getContent().get(0).getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.getContent().get(0).getEmail());
+        assertEquals(globalUser.getEmail(), user.getContent().get(0).getEmail());
         log.info(new Gson().toJson(user.getContent().get(0)));
 		log.info("user9FindAll Test Case Passed");
 	}
 	
 	@Test 
 	public void userAUpdateLastName() throws Exception {
-		User user = userService.findByEmail("Elasticsearch@gmail.com");
+		User user = userService.findByEmail(globalUser.getEmail());
 		assertEquals("Rambabu", user.getLastName());
 		
 		user.setLastName("LastNameUpdate");
 		userService.save(user);
-		user = userService.findByEmail("Elasticsearch@gmail.com");
+		user = userService.findByEmail(globalUser.getEmail());
         assertEquals("Elasticsearch", user.getFirstName());
         assertEquals("LastNameUpdate", user.getLastName());
-        assertEquals("Elasticsearch@gmail.com", user.getEmail());
+        assertEquals(globalUser.getEmail(), user.getEmail());
         log.info(new Gson().toJson(user));
 		log.info("userAUpdateLastName Test Case Passed");
 	}

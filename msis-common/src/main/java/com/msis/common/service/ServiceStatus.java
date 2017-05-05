@@ -22,7 +22,7 @@ public class ServiceStatus {
     final static public ServiceStatus SERVER_UNAVAILABLE = new ServiceStatus(503, "Server unavailable");
     
     final static public ServiceStatus DUPLICATE_USER = new ServiceStatus(504, "Duplicate user email");
-    public static final ServiceStatus BAD_USER_TOKEN = new ServiceStatus(505, "Illegal or missing userToken");
+    public static final ServiceStatus INACTIVE_USER = new ServiceStatus(505, "Inactive user");
     public static final ServiceStatus BAD_USER_ID = new ServiceStatus(506, "Illegal userId or userToken");
     public static final ServiceStatus BAD_PASSWORD = new ServiceStatus(507, "Password mismatch"); 
     public static final ServiceStatus DUPLICATION_USER_DEVICE_BINDING = new ServiceStatus(508, "Duplicate user device binding");

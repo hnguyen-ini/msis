@@ -63,7 +63,7 @@ public class RecordServiceImpl implements RecordService {
 	
 	@Override
 	public Record findOne(String id) {
-		return recordRepo.findOne(id);
+		return null;//recordRepo.findOne(id);
 	}
 	
 	@Override

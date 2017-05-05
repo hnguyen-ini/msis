@@ -277,27 +277,29 @@ public class PasswordUtils {
 			"brent"
 	};
 	
-	public static String validate(String password) {
+	public static void validate(String password) throws ServiceException {
+		String msg = null;
 		if (password == null || password == "") {
-			return "Missing password";
+			msg = "Missing password";
 		}
 		if (password.length() < 6) {
-			return "Minimum length: 6 characters";
+			msg = "Minimum length: 6 characters";
 		}
 		if (password.length() > 128) {
-			return "Maximum length: 128 characters";
+			msg = "Maximum length: 128 characters";
 		}
 		for (String simple : simpleList) {
 			if (simple.equalsIgnoreCase(password)) {
-				return "The password is simple";
+				msg = "The password is simple";
 			}
 		}
 		for (String black : blackList) {
 			if (black.equalsIgnoreCase(password)) {
-				return "The password is in the blacklist";
+				msg = "The password is in the blacklist";
 			}
 		}
-		return null;
+		if (msg != null)
+			throw new ServiceException(ServiceStatus.BAD_PASSWORD, msg);
 	}
 	
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";

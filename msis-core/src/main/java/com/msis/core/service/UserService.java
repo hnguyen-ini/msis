@@ -27,7 +27,7 @@ public interface UserService {
 	
 	// login section
 	User regUser(User user) throws ServiceException;
-	User verify(String userId, String password) throws ServiceException;
+	User verify(String email, String password) throws ServiceException;
 	
 	User encryptPublicKey(User user) throws ServiceException;
 	User decryptPublicKey(User user) throws ServiceException;

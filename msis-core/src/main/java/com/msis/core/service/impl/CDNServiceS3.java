@@ -22,7 +22,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
-import com.msis.core.config.BeanConfig;
 import com.msis.core.config.CoreConfig;
 import com.msis.core.service.CDNService;
 

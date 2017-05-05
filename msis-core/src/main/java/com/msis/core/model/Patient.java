@@ -14,8 +14,30 @@ public class Patient {
 	private String addr;
 	private String creator;
 	private Long createAt;
+	private Long modifiedAt;
 	
 	public Patient() {}
+	
+	public Patient(String idn, String name, Integer age, String sex, String addr, String creator) {
+		this.idn = idn;
+		this.name = name;
+		this.age = age;
+		this.sex = sex;
+		this.addr = addr;
+		this.creator = creator;
+	} 
+	
+	public Patient(Patient patient) {
+		this.id = patient.getId();
+		this.idn = patient.getIdn();
+		this.name = patient.getName();
+		this.age = patient.getAge();
+		this.sex = patient.getSex();
+		this.addr = patient.getAddr();
+		this.creator = patient.getCreator();
+		this.createAt = patient.getCreateAt();
+		this.modifiedAt = patient.getModifiedAt();
+	}
 
 	public String getId() {
 		return id;
@@ -79,6 +101,14 @@ public class Patient {
 
 	public void setCreateAt(Long createAt) {
 		this.createAt = createAt;
+	}
+
+	public Long getModifiedAt() {
+		return modifiedAt;
+	}
+
+	public void setModifiedAt(Long modifiedAt) {
+		this.modifiedAt = modifiedAt;
 	}
 	
 }

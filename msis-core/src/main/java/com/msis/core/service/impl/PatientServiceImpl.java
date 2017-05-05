@@ -47,6 +47,11 @@ public class PatientServiceImpl implements PatientService {
 			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by creator " + creator);
 		patientRepositoty.delete(patients);
 	}
+	
+	@Override
+	public void deleteAll() {
+		patientRepositoty.deleteAll();
+	}
 
 	@Override
 	public Patient findByIdn(String idn) {
@@ -62,5 +67,53 @@ public class PatientServiceImpl implements PatientService {
 	public List<Patient> findByCreator(String creator) {
 		return ListUtils.okList(patientRepositoty.findByCreator(creator));
 	}
+
+	@Override
+	public Patient create(Patient patient) throws ServiceException {
+		try {
+			if (!okPatient(patient)) {
+				log.warn("Missing Idn or name");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or name");
+			}
+			if (findByIdn(patient.getIdn()) != null) {
+				log.warn("Duplicated Idn " + patient.getIdn());
+				throw new ServiceException(ServiceStatus.DUPLICATE_USER, "Duplicated Idn");
+			}
+			Long time = System.currentTimeMillis();
+			patient.setCreateAt(time);
+			patient.setModifiedAt(time);
+			save(patient);
+			return patient;
+		} catch (Exception e) {
+			log.warn("Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+
+	@Override
+	public Patient update(Patient patient) throws ServiceException {
+		try {
+			if (!okPatient(patient)) {
+				log.warn("Missing Idn or name");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or name");
+			}
+			Patient editPatient = findByIdn(patient.getIdn()); 
+			if (editPatient == null) {
+				log.warn("Not found patient idn " + patient.getIdn());
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by Idn " + patient.getIdn());
+			}
+			editPatient = new Patient(patient);
+			editPatient.setModifiedAt(System.currentTimeMillis());
+			save(editPatient);
+			return editPatient;
+		} catch (Exception e) {
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
 	
+	private boolean okPatient(Patient patient) {
+		if (patient.getIdn() == null || patient.getIdn().isEmpty() || patient.getName() == null || patient.getName().isEmpty()) 
+			return false;
+		return true;
+	}
 }
