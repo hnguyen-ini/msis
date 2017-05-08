@@ -107,7 +107,6 @@ public class UserServiceImpl implements UserService{
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Invaid user information");
 			// client & server must have the same publicKey and email, password must be validated on client
 	    	User deUser = decryptPublicKey(user);
-	    	User enUser = encryptPrivateKey(deUser);
 			
 	        if (findByEmail(deUser.getEmail()) != null)
 	        	throw new ServiceException(ServiceStatus.DUPLICATE_USER, "Duplicate user email");
@@ -132,6 +131,7 @@ public class UserServiceImpl implements UserService{
 	        user.setPassword(null);
 	        user.setFirstName(null);
 	        user.setLastName(null);
+	        user.setStatus(null);
 	        user.setToken(Crypto.encryptString(coreConfig.publicKey(), token));
 	    	return user;
 		} catch (ServiceException e) {

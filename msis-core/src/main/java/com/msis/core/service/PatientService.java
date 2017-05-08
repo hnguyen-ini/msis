@@ -13,7 +13,7 @@ public interface PatientService {
 	void deleteAll();
 	
 	Patient findByIdn(String idn);
-	Patient findByName(String name);
+	List<Patient> findByName(String name);
 	List<Patient> findByCreator(String creator);
 	
 	Patient create(Patient patient) throws ServiceException;

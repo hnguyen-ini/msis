@@ -8,7 +8,7 @@ import com.msis.core.model.Patient;
 
 public interface PatientRepository extends ElasticsearchRepository<Patient, String> {
 	Patient findByIdn(String idn);
-	Patient findByName(String name);
+	List<Patient> findByName(String name);
 	
 	List<Patient> findByCreator(String creator);
 	

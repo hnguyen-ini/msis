@@ -13,6 +13,7 @@ import com.msis.common.utils.ListUtils;
 import com.msis.core.model.Patient;
 import com.msis.core.repository.PatientRepository;
 import com.msis.core.service.PatientService;
+import com.msis.core.service.UserService;
 
 @Service(value="patientService")
 public class PatientServiceImpl implements PatientService {
@@ -21,6 +22,9 @@ public class PatientServiceImpl implements PatientService {
 	
 	@Autowired
 	private PatientRepository patientRepositoty;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Override
 	public void save(Patient patient) {
@@ -59,7 +63,7 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
-	public Patient findByName(String name) {
+	public List<Patient> findByName(String name) {
 		return patientRepositoty.findByName(name);
 	}
 
@@ -79,11 +83,20 @@ public class PatientServiceImpl implements PatientService {
 				log.warn("Duplicated Idn " + patient.getIdn());
 				throw new ServiceException(ServiceStatus.DUPLICATE_USER, "Duplicated Idn");
 			}
+			String creator = patient.getCreator(); 
+			if (creator != null && !creator.isEmpty()) {
+				if (userService.findByEmail(creator) == null) {
+					log.warn("Not found creator by " + creator);
+					throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found creator by " + creator);
+				}
+			}
 			Long time = System.currentTimeMillis();
 			patient.setCreateAt(time);
 			patient.setModifiedAt(time);
 			save(patient);
 			return patient;
+		} catch (ServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			log.warn("Running Time Error " + e.getMessage());
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
@@ -102,10 +115,24 @@ public class PatientServiceImpl implements PatientService {
 				log.warn("Not found patient idn " + patient.getIdn());
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by Idn " + patient.getIdn());
 			}
-			editPatient = new Patient(patient);
+			String creator = patient.getCreator(); 
+			if (creator != null && !creator.isEmpty()) {
+				if (userService.findByEmail(creator) == null) {
+					log.warn("Not found creator by " + creator);
+					throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found creator by " + creator);
+				}
+			}
+			editPatient.setAddr(patient.getAddr());
+			editPatient.setAge(patient.getAge());
+			editPatient.setCreator(patient.getCreator());
+			editPatient.setIdn(patient.getIdn());
+			editPatient.setName(patient.getName());
+			editPatient.setSex(patient.getSex());
 			editPatient.setModifiedAt(System.currentTimeMillis());
 			save(editPatient);
 			return editPatient;
+		} catch (ServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}

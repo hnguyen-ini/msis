@@ -1,10 +1,14 @@
 package com.msis.rest.controller.patient;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -67,17 +71,12 @@ public class PatientController implements InitializingBean {
 	}
 	
 	@DELETE
-	@Path("/delete")
+	@Path("/delete/{idn}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(String idn) {
+	public Response delete(@PathParam("idn") String idn) {
 		ServiceResponse<Patient> response = new ServiceResponse<Patient>();
 		try {
-			if (idn == null || idn.isEmpty()) {
-				log.warn("-> Missing Idn ");
-				response.setStatus(new ServiceStatus(ServiceStatus.BAD_REQUEST, "Missing Idn"));
-				return Response.status(ServiceStatus.BAD_REQUEST.getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-			}
 			patientService.deleteByIdn(idn);
 		} catch (ServiceException e) {
 			log.warn("-> Delete Failed, " + e.getMessage());
@@ -90,17 +89,12 @@ public class PatientController implements InitializingBean {
 	}
 	
 	@DELETE
-	@Path("/delete/creator")
+	@Path("/delete/creator/{creator}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteByCreator(String creatorId) {
+	public Response deleteByCreator(@PathParam("creator") String creatorId) {
 		ServiceResponse<Patient> response = new ServiceResponse<Patient>();
 		try {
-			if (creatorId == null || creatorId.isEmpty()) {
-				log.warn("-> Missing creatorId ");
-				response.setStatus(new ServiceStatus(ServiceStatus.BAD_REQUEST, "Missing creatorId"));
-				return Response.status(ServiceStatus.BAD_REQUEST.getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-			}
 			patientService.deleteByCreator(creatorId);
 		} catch (ServiceException e) {
 			log.warn("-> Delete Failed, " + e.getMessage());
@@ -108,6 +102,78 @@ public class PatientController implements InitializingBean {
 			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> delete OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@GET
+	@Path("/get/{idn}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get(@PathParam("idn") String idn) {
+		ServiceResponse<Patient> response = new ServiceResponse<Patient>();
+		try {
+			Patient patient = patientService.findByIdn(idn);
+			if (patient == null) {
+				log.info("Not found patient by " + idn);
+				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by " + idn));
+				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			}
+			response.setResult(patient);
+		} catch (Exception e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> get OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@GET
+	@Path("/get/name/{name}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getByName(@PathParam("name") String name) {
+		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
+		try {
+			List<Patient> patients = patientService.findByName(name);
+			if (patients.size() == 0) {
+				log.info("Not found patient by name " + name);
+				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by name " + name));
+				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			}
+			response.setResult(patients);
+		} catch (Exception e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> get OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@GET
+	@Path("/get/creator/{creator}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getByCreator(@PathParam("creator") String creator) {
+		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
+		try {
+			List<Patient> patients = patientService.findByCreator(creator);
+			if (patients.size() == 0) {
+				log.info("Not found patient by creator " + creator);
+				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by creator " + creator));
+				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			}
+			response.setResult(patients);
+		} catch (Exception e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> get OK");
 		response.setStatus(ServiceStatus.OK);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
