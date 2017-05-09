@@ -71,13 +71,14 @@ public class PatientController implements InitializingBean {
 	}
 	
 	@DELETE
-	@Path("/delete/{idn}")
+	@Path("/delete/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("idn") String idn) {
+	public Response delete(@PathParam("id") String id) {
 		ServiceResponse<Patient> response = new ServiceResponse<Patient>();
 		try {
-			patientService.deleteByIdn(idn);
+			log.info("Delete Patient " + id);
+			patientService.deleteById(id);
 		} catch (ServiceException e) {
 			log.warn("-> Delete Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
@@ -95,6 +96,7 @@ public class PatientController implements InitializingBean {
 	public Response deleteByCreator(@PathParam("creator") String creatorId) {
 		ServiceResponse<Patient> response = new ServiceResponse<Patient>();
 		try {
+			log.info("Delete Patient by creator " + creatorId);
 			patientService.deleteByCreator(creatorId);
 		} catch (ServiceException e) {
 			log.warn("-> Delete Failed, " + e.getMessage());
@@ -107,19 +109,45 @@ public class PatientController implements InitializingBean {
 	}
 	
 	@GET
-	@Path("/get/{idn}")
+	@Path("/get/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response get(@PathParam("idn") String idn) {
+	public Response get(@PathParam("id") String id) {
 		ServiceResponse<Patient> response = new ServiceResponse<Patient>();
 		try {
-			Patient patient = patientService.findByIdn(idn);
+			log.info("Get Patient " + id);
+			Patient patient = patientService.findOne(id);
 			if (patient == null) {
-				log.info("Not found patient by " + idn);
-				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by " + idn));
+				log.info("Not found patient by " + id);
+				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by " + id));
 				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 			}
 			response.setResult(patient);
+		} catch (Exception e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> get OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@GET
+	@Path("/get/idn/{idn}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getByIdn(@PathParam("idn") String idn) {
+		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
+		try {
+			log.info("Get Patient " + idn);
+			List<Patient> patients = patientService.findByIdn(idn);
+			if (patients.size() == 0) {
+				log.info("Not found patient by idn " + idn);
+				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by idn" + idn));
+				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			}
+			response.setResult(patients);
 		} catch (Exception e) {
 			log.warn("-> Get Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
@@ -137,10 +165,36 @@ public class PatientController implements InitializingBean {
 	public Response getByName(@PathParam("name") String name) {
 		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
 		try {
+			log.info("Get Patient by name " + name);
 			List<Patient> patients = patientService.findByName(name);
 			if (patients.size() == 0) {
 				log.info("Not found patient by name " + name);
 				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by name " + name));
+				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			}
+			response.setResult(patients);
+		} catch (Exception e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> get OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@GET
+	@Path("/get/phone/{phone}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getByPhone(@PathParam("phone") String phone) {
+		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
+		try {
+			log.info("Get Patient by phone " + phone);
+			List<Patient> patients = patientService.findByPhone(phone);
+			if (patients.size() == 0) {
+				log.info("Not found patient by phone " + phone);
+				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by phone " + phone));
 				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 			}
 			response.setResult(patients);
@@ -161,6 +215,7 @@ public class PatientController implements InitializingBean {
 	public Response getByCreator(@PathParam("creator") String creator) {
 		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
 		try {
+			log.info("Get Patient by creator " + creator);
 			List<Patient> patients = patientService.findByCreator(creator);
 			if (patients.size() == 0) {
 				log.info("Not found patient by creator " + creator);
