@@ -1,5 +1,7 @@
 package com.msis.core.model;
 
+import net.minidev.json.annotate.JsonIgnore;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -11,7 +13,13 @@ public class Test {
 	private String recordId;
 	private Long createAt;
 	private String item;
-	private String result; // text or uri to file
+	private String description;
+	private String uri;
+	@JsonIgnore
+	private String content;
+	@JsonIgnore
+	private String contentType; // type of file .jpg
+	
 	
 	public Test() {}
 
@@ -31,14 +39,6 @@ public class Test {
 		this.idn = idn;
 	}
 
-	public String getRecordId() {
-		return recordId;
-	}
-
-	public void setRecordId(String recordId) {
-		this.recordId = recordId;
-	}
-
 	public Long getCreateAt() {
 		return createAt;
 	}
@@ -55,12 +55,44 @@ public class Test {
 		this.item = item;
 	}
 
-	public String getResult() {
-		return result;
+	public String getRecordId() {
+		return recordId;
 	}
 
-	public void setResult(String result) {
-		this.result = result;
+	public void setRecordId(String recordId) {
+		this.recordId = recordId;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getUri() {
+		return uri;
+	}
+
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 	
 	

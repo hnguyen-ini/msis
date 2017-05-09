@@ -100,6 +100,17 @@ public class CDNServiceS3 implements CDNService{
             throw new ServiceException(ServiceStatus.NO_CONTENT, "Reading Content Failed, " + e.getMessage());
         }
 	}
+	
+	@Override
+	public void deleteContent(String uri) throws ServiceException {
+		try {
+			uri = fixUri(uri);
+			s3client.deleteObject(rootBucketName, uri);
+		} catch (Exception e) {
+			log.warn("Delete content failed, " + e.getMessage());
+			throw new ServiceException(ServiceStatus.NO_CONTENT, "Deleting Content Failed, " + e.getMessage());
+		}
+	}
 
 	private String fixUri(String uri) {
         if (uri.startsWith("/")) {

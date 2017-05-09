@@ -23,5 +23,9 @@
 	<bean id="patientController" class="com.msis.rest.controller.patient.PatientController">
 		<property name="patientService" ref="patientService"></property>
 	</bean>
+	
+	<bean id="recordController" class="com.msis.rest.controller.patient.RecordController">
+		<property name="recordService" ref="recordService"></property>
+	</bean>
 
 </beans>

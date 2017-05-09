@@ -2,6 +2,7 @@ package com.msis.core.service;
 
 import java.util.List;
 
+import com.msis.common.service.ServiceException;
 import com.msis.core.model.Record;
 import com.msis.core.model.Test;
 import com.msis.core.model.Treatment;
@@ -16,12 +17,25 @@ public interface RecordService {
 	void deleteTreatment(List<Treatment> treatments);
 	
 	Record findOne(String id);
-	List<Record> findByIdn(String idn);
+	List<Record> findByPid(String pid);
 	
+	Record createRecord(Record record) throws ServiceException;
+	Record updateRecord(Record record) throws ServiceException;
+	void deleteRecord(String recordId) throws ServiceException;
+	
+	// TEST
 	List<Test> findTestByIdn(String idn);
 	List<Test> findTestByRecordId(String recordId);
+	Test createTest(Test test) throws ServiceException;
+	Test updateTest(Test test) throws ServiceException;
+	void deleteTest(String testId) throws ServiceException;
 	
+	// TREATMENT
 	List<Treatment> findTreatmentByIdn(String idn);
 	List<Treatment> findTreatmentByRecordId(String recordId);
+	
+	// Relationship
+	void deleteAllByRecord(String recordId);
+	void deleteAllByPatient(String patientId);
 	
 }

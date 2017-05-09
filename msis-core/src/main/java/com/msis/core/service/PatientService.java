@@ -8,12 +8,15 @@ import com.msis.core.model.Patient;
 public interface PatientService {
 	void save(Patient patient);
 	void delete(Patient patient);
-	void deleteByIdn(String idn) throws ServiceException;
+	void deleteById(String id) throws ServiceException;
 	void deleteByCreator(String creator) throws ServiceException;
 	void deleteAll();
 	
-	Patient findByIdn(String idn);
+	Patient findOne(String id);
+	Patient findByIdnAndCreator(String idn, String creator);
+	List<Patient> findByIdn(String idn);
 	List<Patient> findByName(String name);
+	List<Patient> findByPhone(String phone);
 	List<Patient> findByCreator(String creator);
 	
 	Patient create(Patient patient) throws ServiceException;

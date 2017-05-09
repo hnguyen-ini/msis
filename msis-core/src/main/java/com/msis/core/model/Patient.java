@@ -12,6 +12,7 @@ public class Patient {
 	private Integer age;
 	private String sex;
 	private String addr;
+	private String phone;
 	private String creator;
 	private Long createAt;
 	private Long modifiedAt;
@@ -109,6 +110,14 @@ public class Patient {
 
 	public void setModifiedAt(Long modifiedAt) {
 		this.modifiedAt = modifiedAt;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	
 }

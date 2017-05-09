@@ -13,6 +13,7 @@ import com.msis.common.utils.ListUtils;
 import com.msis.core.model.Patient;
 import com.msis.core.repository.PatientRepository;
 import com.msis.core.service.PatientService;
+import com.msis.core.service.RecordService;
 import com.msis.core.service.UserService;
 
 @Service(value="patientService")
@@ -21,55 +22,75 @@ public class PatientServiceImpl implements PatientService {
 	static Logger log = LoggerFactory.getLogger(PatientServiceImpl.class);
 	
 	@Autowired
-	private PatientRepository patientRepositoty;
+	private PatientRepository patientRepository;
+	
+	@Autowired
+	private RecordService recordService;
 	
 	@Autowired
 	private UserService userService;
 	
 	@Override
 	public void save(Patient patient) {
-		patientRepositoty.save(patient);
+		patientRepository.save(patient);
 	}
 
 	@Override
 	public void delete(Patient patient) {
-		patientRepositoty.delete(patient);
+		patientRepository.delete(patient);
 	}
 
 	@Override
-	public void deleteByIdn(String idn) throws ServiceException {
-		Patient patient = patientRepositoty.findByIdn(idn);
+	public void deleteById(String id) throws ServiceException {
+		Patient patient = patientRepository.findOne(id);
 		if (patient == null)
-			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by idn " + idn);
+			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by id " + id);
 		delete(patient);
+		// TODO: delete record & other
 	}
 
 	@Override
 	public void deleteByCreator(String creator) throws ServiceException {
-		List<Patient> patients = patientRepositoty.findByCreator(creator);
+		List<Patient> patients = patientRepository.findByCreator(creator);
 		if (patients == null)
 			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by creator " + creator);
-		patientRepositoty.delete(patients);
+		patientRepository.delete(patients);
+		// TODO: delete record & other
 	}
 	
 	@Override
 	public void deleteAll() {
-		patientRepositoty.deleteAll();
+		patientRepository.deleteAll();
 	}
 
 	@Override
-	public Patient findByIdn(String idn) {
-		return patientRepositoty.findByIdn(idn);
+	public Patient findOne(String id) {
+		return patientRepository.findOne(id);
+	}
+	
+	@Override
+	public Patient findByIdnAndCreator(String idn, String creator) {
+		return patientRepository.findByIdnAndCreator(idn, creator);
 	}
 
+	@Override
+	public List<Patient> findByIdn(String idn) {
+		return ListUtils.okList(patientRepository.findByIdn(idn));
+	}
+	
 	@Override
 	public List<Patient> findByName(String name) {
-		return patientRepositoty.findByName(name);
+		return ListUtils.okList(patientRepository.findByName(name));
 	}
+	
+	@Override
+	public List<Patient> findByPhone(String phone) {
+		return ListUtils.okList(patientRepository.findByPhone(phone));
+	} 
 
 	@Override
 	public List<Patient> findByCreator(String creator) {
-		return ListUtils.okList(patientRepositoty.findByCreator(creator));
+		return ListUtils.okList(patientRepository.findByCreator(creator));
 	}
 
 	@Override
@@ -77,9 +98,9 @@ public class PatientServiceImpl implements PatientService {
 		try {
 			if (!okPatient(patient)) {
 				log.warn("Missing Idn or name");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or name");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or Name or Creator");
 			}
-			if (findByIdn(patient.getIdn()) != null) {
+			if (findByIdnAndCreator(patient.getIdn(), patient.getCreator()) != null) {
 				log.warn("Duplicated Idn " + patient.getIdn());
 				throw new ServiceException(ServiceStatus.DUPLICATE_USER, "Duplicated Idn");
 			}
@@ -108,12 +129,16 @@ public class PatientServiceImpl implements PatientService {
 		try {
 			if (!okPatient(patient)) {
 				log.warn("Missing Idn or name");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or name");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or name or creator");
 			}
-			Patient editPatient = findByIdn(patient.getIdn()); 
+			if (patient.getId() == null || patient.getId().isEmpty()) {
+				log.warn("Missing Id");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Id");
+			}
+			Patient editPatient = findOne(patient.getId()); 
 			if (editPatient == null) {
-				log.warn("Not found patient idn " + patient.getIdn());
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by Idn " + patient.getIdn());
+				log.warn("Not found patient id " + patient.getId());
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by Id " + patient.getId());
 			}
 			String creator = patient.getCreator(); 
 			if (creator != null && !creator.isEmpty()) {
@@ -139,7 +164,9 @@ public class PatientServiceImpl implements PatientService {
 	}
 	
 	private boolean okPatient(Patient patient) {
-		if (patient.getIdn() == null || patient.getIdn().isEmpty() || patient.getName() == null || patient.getName().isEmpty()) 
+		if (patient.getIdn() == null || patient.getIdn().isEmpty() 
+				|| patient.getName() == null || patient.getName().isEmpty()
+				|| patient.getCreator() == null || patient.getCreator().isEmpty()) 
 			return false;
 		return true;
 	}

@@ -7,5 +7,5 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import com.msis.core.model.Record;
 
 public interface RecordRepository extends ElasticsearchRepository<Record, String> {
-	List<Record> findByIdn(String idn);
+	List<Record> findByPid(String pid);
 }
