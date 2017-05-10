@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 public class Test {
 	@Id
 	private String id;
-	private String idn;
+	private String pid;
 	private String recordId;
 	private Long createAt;
 	private String item;
@@ -29,14 +29,6 @@ public class Test {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getIdn() {
-		return idn;
-	}
-
-	public void setIdn(String idn) {
-		this.idn = idn;
 	}
 
 	public Long getCreateAt() {
@@ -93,6 +85,14 @@ public class Test {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+
+	public String getPid() {
+		return pid;
+	}
+
+	public void setPid(String pid) {
+		this.pid = pid;
 	}
 	
 	

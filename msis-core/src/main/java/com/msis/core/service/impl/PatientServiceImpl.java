@@ -153,6 +153,7 @@ public class PatientServiceImpl implements PatientService {
 			editPatient.setIdn(patient.getIdn());
 			editPatient.setName(patient.getName());
 			editPatient.setSex(patient.getSex());
+			editPatient.setPhone(patient.getPhone());
 			editPatient.setModifiedAt(System.currentTimeMillis());
 			save(editPatient);
 			return editPatient;

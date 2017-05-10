@@ -65,12 +65,12 @@ public class PatientServiceTest {
 	@Test
 	public void test2Delete() throws Exception {
 		// make sure there is one
-		Patient p1 = patientService.findByIdn(patient.getIdn());
+		Patient p1 = patientService.findOne(patient.getId());
 		assertEquals(patient.getIdn(), p1.getIdn());
 		
-		patientService.deleteByIdn(patient.getIdn());
+		patientService.deleteById(patient.getId());
 		
-		p1 = patientService.findByIdn(patient.getIdn());
+		p1 = patientService.findOne(patient.getId());
 		assertEquals(null, p1);
 	}
 	
@@ -80,7 +80,7 @@ public class PatientServiceTest {
 		List<Patient> p1 = patientService.findByCreator(patient.getCreator());
 		assertEquals(patient.getIdn(), p1.get(0).getIdn());
 		
-		patientService.deleteByIdn(patient.getIdn());
+		patientService.deleteById(patient.getId());
 		
 		p1 = patientService.findByCreator(patient.getCreator());
 		assertEquals(0, p1.size());
@@ -89,7 +89,7 @@ public class PatientServiceTest {
 	@Test
 	public void test9BDelete() throws Exception {
 		patientService.deleteAll();
-		Patient p = patientService.findByIdn(patient.getIdn());
+		Patient p = patientService.findOne(patient.getId());
 		assertNull(p);
 		log.info("patientBDelete Test Case Passed");
 	}

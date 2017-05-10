@@ -22,13 +22,15 @@ public interface RecordService {
 	Record createRecord(Record record) throws ServiceException;
 	Record updateRecord(Record record) throws ServiceException;
 	void deleteRecord(String recordId) throws ServiceException;
+	void deleteRecordByPatient(String pid) throws ServiceException;
 	
 	// TEST
-	List<Test> findTestByIdn(String idn);
 	List<Test> findTestByRecordId(String recordId);
 	Test createTest(Test test) throws ServiceException;
 	Test updateTest(Test test) throws ServiceException;
 	void deleteTest(String testId) throws ServiceException;
+	void deleteTestByRecord(String recordId) throws ServiceException;
+	void deleteTestByPatient(String patientId) throws ServiceException;
 	
 	// TREATMENT
 	List<Treatment> findTreatmentByIdn(String idn);

@@ -166,14 +166,30 @@ public class RecordServiceImpl implements RecordService {
 		}
 	}
 	
+	@Override
+	public void deleteRecordByPatient(String pid) throws ServiceException {
+		try {
+			if (pid == null || pid.isEmpty()) {
+				log.warn("Delete Record By Patient::  Missing pid");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing pid");
+			}
+			List<Record> dels = findByPid(pid);
+			if (dels.size() == 0) {
+				log.warn("Delete Record By Patient:: Not found record by patient " + pid);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by patient " + pid);
+			}
+			recordRepo.delete(dels);
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			log.warn("Delete Record By Patient:: Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+	
 	/**
 	 * TEST ZONE
 	 */
-	@Override
-	public List<Test> findTestByIdn(String idn) {
-		return ListUtils.okList(testRepo.findByIdn(idn));
-	}
-	
 	@Override
 	public List<Test> findTestByRecordId(String recordId) {
 		return ListUtils.okList(testRepo.findByRecordId(recordId));
@@ -182,13 +198,14 @@ public class RecordServiceImpl implements RecordService {
 	@Override
 	public Test createTest(Test test) throws ServiceException {
 		try {
-			if (test.getIdn() == null || test.getIdn().isEmpty()) {
-				log.warn("Create Test:: Missing Idn");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn");
+			String pid = test.getPid(); 
+			if (pid == null || pid.isEmpty()) {
+				log.warn("Create Test:: Missing Pid");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Pid");
 			}
-			if (patientService.findByIdn(test.getIdn()) == null) {
-				log.warn("Create Test:: Not found patient by " + test.getIdn());
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by " + test.getIdn());
+			if (patientService.findOne(pid) == null) {
+				log.warn("Create Test:: Not found patient by " + pid);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by " + pid);
 			}
 			String recordId = test.getRecordId();
 			if (recordId != null && !recordId.isEmpty() && findOne(recordId) == null) {
@@ -197,11 +214,12 @@ public class RecordServiceImpl implements RecordService {
 			}
 			String content = test.getContent(); 
 			if (content != null && !content.isEmpty()) {
-				test.setUri(UriUtils.buildTestUri(test.getIdn(), recordId, test.getItem() + test.getContentType()));
+				test.setUri(UriUtils.buildTestUri(pid, recordId, test.getItem() + test.getContentType()));
 				cdnService.saveContent(new ByteArrayInputStream(content.getBytes()), test.getUri());
 			}
 			test.setCreateAt(System.currentTimeMillis());
 			testRepo.save(test);
+			test.setContent(null);
 			return test;
 		} catch (ServiceException e) {
 			throw e;
@@ -218,30 +236,32 @@ public class RecordServiceImpl implements RecordService {
 				log.warn("Update Test:: Missing Id" );
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Id");
 			}
-			if (patientService.findByIdn(test.getIdn()) == null) {
-				log.warn("Update Test:: Not found patient by " + test.getIdn());
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by " + test.getIdn());
+			String pid = test.getPid();
+			if (patientService.findByIdn(pid) == null) {
+				log.warn("Update Test:: Not found patient by " + pid);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by " + pid);
+			}
+			String recordId = test.getRecordId();
+			if (recordId != null && !recordId.isEmpty() && findOne(recordId) == null) {
+				log.warn("Create Test:: Not found record by " + recordId);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by " + recordId);
 			}
 			Test edit = testRepo.findOne(test.getId());
 			if (edit == null) {
 				log.warn("Update Test:: Not found test by " + test.getId());
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found test by " + test.getId());
 			}
-			String recordId = test.getRecordId();
-			if (recordId != null && !recordId.isEmpty() && findOne(recordId) == null) {
-				log.warn("Update Test:: Not found record by " + recordId);
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by " + recordId);
-			}
 			String content = test.getContent(); 
 			if (content != null && !content.isEmpty()) {
-				edit.setUri(UriUtils.buildTestUri(test.getIdn(), recordId, test.getItem() + test.getContentType()));
+				edit.setUri(UriUtils.buildTestUri(pid, recordId, test.getItem() + test.getContentType()));
 				cdnService.saveContent(new ByteArrayInputStream(content.getBytes()), edit.getUri());
 			}
 			edit.setDescription(test.getDescription());
 			edit.setRecordId(recordId);
-			edit.setIdn(test.getIdn());
+			edit.setPid(pid);
 			edit.setItem(test.getItem());
 			testRepo.save(edit);
+			test.setContent(null);
 			return edit;
 		} catch (ServiceException e) {
 			throw e;
@@ -272,6 +292,62 @@ public class RecordServiceImpl implements RecordService {
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}
 	}
+	
+	@Override
+	public void deleteTestByRecord(String recordId) throws ServiceException {
+		try {
+			if (recordId == null || recordId.isEmpty()) {
+				log.warn("Delete Test:: Missing recordId" );
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing recordId");
+			}
+			List<Test> tests = testRepo.findByRecordId(recordId);
+			if (tests == null) {
+				log.warn("Delete Test By Record:: Not found test by record " + recordId);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found test by record " + recordId);
+			}
+			for (Test del : tests) {
+				cdnService.deleteContent(del.getUri());
+				testRepo.delete(del);
+			}
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			log.warn("Delete Test:: Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+	
+	@Override
+	public void deleteTestByPatient(String patientId) throws ServiceException {
+		try {
+			if (patientId == null || patientId.isEmpty()) {
+				log.warn("Delete Test:: Missing patientId" );
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing patientId");
+			}
+			int count = 0;
+			List<Record> records = findByPid(patientId);
+			for (Record record : records) {
+				List<Test> tests = testRepo.findByRecordId(record.getId());
+				if (tests != null && tests.size() > 0) {
+					for (Test del : tests) {
+						cdnService.deleteContent(del.getUri());
+						testRepo.delete(del);
+						count++;
+					}
+				}
+			}
+			if (count == 0) {
+				log.warn("Delete Test By Patient:: Not found test by patient " + patientId);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found test by record " + patientId);
+			}
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			log.warn("Delete Test:: Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+	
 	
 	/**
 	 * TREATMENT ZONE

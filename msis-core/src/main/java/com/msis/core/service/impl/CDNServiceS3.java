@@ -89,6 +89,8 @@ public class CDNServiceS3 implements CDNService{
 		InputStream is = null;
     	S3Object object = null;
     	try {
+    		if (uri == null || uri.isEmpty())
+				return null;
             uri = fixUri(uri);
         	object = s3client.getObject(new GetObjectRequest(rootBucketName, uri));
         	is = (InputStream)object.getObjectContent();
@@ -104,6 +106,8 @@ public class CDNServiceS3 implements CDNService{
 	@Override
 	public void deleteContent(String uri) throws ServiceException {
 		try {
+			if (uri == null || uri.isEmpty())
+				return;
 			uri = fixUri(uri);
 			s3client.deleteObject(rootBucketName, uri);
 		} catch (Exception e) {
