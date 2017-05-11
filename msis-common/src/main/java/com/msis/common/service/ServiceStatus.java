@@ -15,6 +15,7 @@ public class ServiceStatus {
     final static public ServiceStatus METHOD_NOT_ALLOWED = new ServiceStatus(405, "Method Not Allowed");
     final static public ServiceStatus NOT_ACCEPTABLE = new ServiceStatus(406, "Not Acceptable");
     final static public ServiceStatus REQUEST_TIME_OUT = new ServiceStatus(408, "Request Time Out");
+    final static public ServiceStatus OVER_INSTOCK = new ServiceStatus(409, "Over InStock");
     
     final static public ServiceStatus SERVICE_ERROR = new ServiceStatus(500, "Internal server error");
     final static public ServiceStatus SERVER_CONNECTION = new ServiceStatus(501, "Server connectiion error");
@@ -23,13 +24,7 @@ public class ServiceStatus {
     
     final static public ServiceStatus DUPLICATE_USER = new ServiceStatus(504, "Duplicate user email");
     public static final ServiceStatus INACTIVE_USER = new ServiceStatus(505, "Inactive user");
-    public static final ServiceStatus BAD_USER_ID = new ServiceStatus(506, "Illegal userId or userToken");
     public static final ServiceStatus BAD_PASSWORD = new ServiceStatus(507, "Password mismatch"); 
-    public static final ServiceStatus DUPLICATION_USER_DEVICE_BINDING = new ServiceStatus(508, "Duplicate user device binding");
-    public static final ServiceStatus BAD_EMAIL = new ServiceStatus(509, "No account registered with given email id");
-    final static public ServiceStatus ALREADY_VERIFIED = new ServiceStatus(409, "The token has already been verified");
-    final static public ServiceStatus EXPIRED_TOKEN = new ServiceStatus(403, "An attempt was made to load a token that has expired");
-    final static public ServiceStatus BAD_PROVIDER_FOR_ACCOUNT = new ServiceStatus(510, "Invalid Provider Id used to login with the given account id");
     
     private int code;
     private String status;

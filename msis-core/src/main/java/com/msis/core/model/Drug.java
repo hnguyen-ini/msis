@@ -10,6 +10,7 @@ public class Drug {
 	private String name;
 	private String manufacturer;
 	private String description;
+	private String creator;
 	
 	public Drug() {}
 
@@ -43,6 +44,14 @@ public class Drug {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 	
 	
