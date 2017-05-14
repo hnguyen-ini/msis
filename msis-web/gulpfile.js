@@ -102,7 +102,9 @@ gulp.task('start:watch', function () {
   gulp.watch(['./dist/**/*.html'], ['start:html']);
 });
 
-gulp.task('start', ['start:server', 'start:watch']);
+gulp.task('start', function(){
+  runSequence(['start:server', 'watch']);
+}); 
 
 gulp.task('webserver', function() {
   gulp.src('dist')
@@ -128,20 +130,22 @@ gulp.task('start:server:test', function() {
 });
 
 gulp.task('watch', function () {
-  $.watch(paths.styles)
-    .pipe($.plumber())
-    .pipe(styles())
-    .pipe($.connect.reload());
+  $.watch(paths.styles, function(){
+     gulp.run('style');
+  });
 
-  $.watch(paths.views.files)
-    .pipe($.plumber())
-    .pipe($.connect.reload());
-
-  $.watch(paths.scripts)
-    .pipe($.plumber())
-    .pipe(lintScripts())
-    .pipe($.connect.reload());
-
+  $.watch(paths.views.main, function(){
+    gulp.run('index');
+  });
+  
+  $.watch(paths.views.files, function(){
+    gulp.run('view');
+  });
+    
+  $.watch(paths.scripts, function(){
+    gulp.run('script');
+  });
+   
   $.watch(paths.test)
     .pipe($.plumber())
     .pipe(lintScripts());
