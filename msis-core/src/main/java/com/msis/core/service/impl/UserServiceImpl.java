@@ -3,6 +3,7 @@ package com.msis.core.service.impl;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.msis.common.crypto.AES;
 import com.msis.common.crypto.Crypto;
+import com.msis.common.crypto.KeyGeneration;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
 import com.msis.common.utils.ListUtils;
@@ -126,13 +128,24 @@ public class UserServiceImpl implements UserService{
 	        deUser.setModifyAt(time);
 	        deUser.setLoginAt(time);
 	        deUser.setToken(token);
+	        
+	        // aesKey
+	        KeyGeneration keyGen = new KeyGeneration(2048);
+	        keyGen.createKeys();
+	        String pKey = keyGen.getStr64PublicKey();
+	        deUser.setAse(Crypto.encryptAESKeyByPublicKeyString(RandomStringUtils.random(16), pKey));
+	        deUser.setPublicKey(pKey);
+
 	        save(deUser);
+	        
+	        // TODO: send PrivateKey to client via email
 	        
 	        user.setPassword(null);
 	        user.setFirstName(null);
 	        user.setLastName(null);
 	        user.setStatus(null);
 	        user.setToken(Crypto.encryptString(coreConfig.publicKey(), token));
+	        user.setAse(Crypto.encryptString(coreConfig.publicKey(), deUser.getAse()));
 	    	return user;
 		} catch (ServiceException e) {
 			throw e;
@@ -168,7 +181,8 @@ public class UserServiceImpl implements UserService{
 			user.setLoginAt(System.currentTimeMillis());
 			save(user);
 			
-	        user = encryptPublicKey(user);
+	        user.setToken(user.getToken() + ":" + user.getAse());
+			user = encryptPublicKey(user);
 			user.setPassword(null);
 	        user.setCreateAt(null);
 	        user.setId(null);

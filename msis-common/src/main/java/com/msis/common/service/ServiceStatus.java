@@ -18,12 +18,12 @@ public class ServiceStatus {
     final static public ServiceStatus OVER_INSTOCK = new ServiceStatus(409, "Over InStock");
     
     final static public ServiceStatus SERVICE_ERROR = new ServiceStatus(500, "Internal server error");
-    final static public ServiceStatus SERVER_CONNECTION = new ServiceStatus(501, "Server connectiion error");
+    final static public ServiceStatus SERVER_CONNECTION = new ServiceStatus(501, "Server connection error");
     final static public ServiceStatus RUNNING_TIME_ERROR = new ServiceStatus(502, "Running time trror");
     final static public ServiceStatus SERVER_UNAVAILABLE = new ServiceStatus(503, "Server unavailable");
-    
     final static public ServiceStatus DUPLICATE_USER = new ServiceStatus(504, "Duplicate user email");
     public static final ServiceStatus INACTIVE_USER = new ServiceStatus(505, "Inactive user");
+    public static final ServiceStatus CRYPTO_ERROR = new ServiceStatus(508, "Crypto error");
     public static final ServiceStatus BAD_PASSWORD = new ServiceStatus(507, "Password mismatch"); 
     
     private int code;

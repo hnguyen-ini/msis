@@ -23,7 +23,7 @@ public class AES {
 	        cipher.init(cipherMode, keySpecification);
 	        return cipher;
         } catch (Exception e) {
-        	throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "AES: Initial Cipher Failed " + e.getMessage());
+        	throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Initial Cipher Failed " + e.getMessage());
         }
     }
     
@@ -35,7 +35,7 @@ public class AES {
 	        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
 	        return Base64.encodeBase64String(encryptedBytes);
         } catch (Exception e) {
-        	throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "AES: Encrypting String Failed " + e.getMessage());
+        	throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Encrypting String Failed " + e.getMessage());
         }
     }
     
@@ -47,7 +47,7 @@ public class AES {
 	        byte[] plainBytes = cipher.doFinal(Base64.decodeBase64(encrypted));
 	        return new String(plainBytes);
     	} catch (Exception e) {
-    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "AES: Decrypting String Failed " + e.getMessage());
+    		throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Decrypting String Failed " + e.getMessage());
     	}
     }
 
@@ -56,7 +56,7 @@ public class AES {
 	    	Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
 	        return cipher.doFinal(data);
         } catch (Exception e) {
-        	throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "AES: Encrypting Binary Failed " + e.getMessage());
+        	throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Encrypting Binary Failed " + e.getMessage());
         }
     }
 
@@ -65,7 +65,7 @@ public class AES {
 	        Cipher cipher = getCipher(Cipher.DECRYPT_MODE);        
 	        return cipher.doFinal(encryptedData);
     	} catch (Exception e) {
-    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "AES: Decrypting Binary Failed " + e.getMessage());
+    		throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Decrypting Binary Failed " + e.getMessage());
     	}
     }    
 
@@ -73,7 +73,7 @@ public class AES {
 		try {
 			return Base64.encodeBase64String(encryptBinary(data));
 		} catch (Exception e) {
-			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "AES: Encrypting Binary to String64 Failed " + e.getMessage());
+			throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Encrypting Binary to String64 Failed " + e.getMessage());
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class AES {
 		try {
 			return decryptBinary(Base64.decodeBase64(data));
 		} catch (Exception e) {
-			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "AES: Decrypting String64 to Binary Failed " + e.getMessage());
+			throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Decrypting String64 to Binary Failed " + e.getMessage());
 		}
 	}
 }

@@ -20,6 +20,10 @@ public class User {
 	private String token;
 	private Long loginAt;
 	
+	// aesKey
+	private String ase;
+	private String publicKey;
+	
 	public User() {}
 	
 	public User(String email) {
@@ -134,6 +138,22 @@ public class User {
 
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
+	}
+
+	public String getAse() {
+		return ase;
+	}
+
+	public void setAse(String ase) {
+		this.ase = ase;
+	}
+
+	public String getPublicKey() {
+		return publicKey;
+	}
+
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
 	}
 	
 }
