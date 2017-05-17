@@ -18,10 +18,12 @@
 
 	<bean id="authenController" class="com.msis.rest.controller.user.AuthenController">
 		<property name="userService" ref="userService"></property>
+		<property name="cacheService" ref="cacheService"></property>
 	</bean>
 	
 	<bean id="patientController" class="com.msis.rest.controller.patient.PatientController">
 		<property name="patientService" ref="patientService"></property>
+		<property name="cacheService" ref="cacheService"></property>
 	</bean>
 	
 	<bean id="recordController" class="com.msis.rest.controller.patient.RecordController">

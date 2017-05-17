@@ -22,13 +22,16 @@ import com.msis.common.parser.JsonHelper;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceResponse;
 import com.msis.common.service.ServiceStatus;
+import com.msis.core.cache.CacheService;
 import com.msis.core.model.Patient;
+import com.msis.core.model.Session;
 import com.msis.core.service.PatientService;
 
 @Path("/patient")
 public class PatientController implements InitializingBean {
 	static Logger log = LoggerFactory.getLogger(PatientController.class);
 	private static PatientService patientService;
+	private static CacheService cacheService;
 	
 	@POST
 	@Path("/create")
@@ -237,9 +240,24 @@ public class PatientController implements InitializingBean {
 		PatientController.patientService = patientService;
 	}
 	
+	public void setCacheService(CacheService cacheService) {
+		PatientController.cacheService = cacheService;
+	}
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(patientService, "patientService can't be null");
+		
+Assert.notNull(cacheService, "userService can't be null");
+		
+		String s = new String("Nguyen The Hien");
+		Session co = new Session("12345", s, 2);
+		cacheService.setCache(co);
+		Session obj = cacheService.getCache("12345");
+		if (obj == null)
+			System.out.println("CacheManagerTestProgram.Main:  FAILURE!  Object not Found.");
+		else
+		    System.out.println("CacheManagerTestProgram.Main:  SUCCESS! " + obj.getKey());
 	}
 
 }

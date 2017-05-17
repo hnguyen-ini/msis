@@ -18,6 +18,9 @@ import com.msis.common.parser.JsonHelper;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceResponse;
 import com.msis.common.service.ServiceStatus;
+import com.msis.core.cache.CacheService;
+import com.msis.core.cache.Cacheable;
+import com.msis.core.model.Session;
 import com.msis.core.model.User;
 import com.msis.core.service.UserService;
 
@@ -25,6 +28,7 @@ import com.msis.core.service.UserService;
 public class AuthenController implements InitializingBean {
 	static Logger log = LoggerFactory.getLogger(AuthenController.class);
 	private static UserService userService;
+	private static CacheService cacheService;
 	
 	@POST
 	@Path("/reg")
@@ -70,9 +74,23 @@ public class AuthenController implements InitializingBean {
 		AuthenController.userService = userService;
 	}
 	
+	public static void setCacheService(CacheService cacheService) {
+		AuthenController.cacheService = cacheService;
+	}
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(userService, "userService can't be null");
+		Assert.notNull(cacheService, "userService can't be null");
+		
+		String s = new String("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		Session co = new Session("1234", s, 1);
+		cacheService.setCache(co);
+		Session obj = cacheService.getCache("1234");
+		if (obj == null)
+			System.out.println("CacheManagerTestProgram.Main:  FAILURE!  Object not Found.");
+		else
+		    System.out.println("CacheManagerTestProgram.Main:  SUCCESS! " + obj.getKey());
 	}
 
 }

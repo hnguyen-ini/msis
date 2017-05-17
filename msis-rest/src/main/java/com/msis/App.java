@@ -1,5 +1,9 @@
 package com.msis;
 
+import java.util.UUID;
+
+import org.apache.commons.lang.RandomStringUtils;
+
 import com.msis.common.crypto.AES;
 import com.msis.common.service.ServiceException;
 
@@ -20,9 +24,16 @@ public class App
     	String last = aes.encryptString("Nguyen");
     	String pass = aes.encryptString("hien.nguyen123");
     	
+    	String random = RandomStringUtils.randomAlphabetic(16);
+    	String rannum = RandomStringUtils.randomNumeric(16);
+    	String token = UUID.randomUUID().toString();
+    	
     	System.out.println(email);
     	System.out.println(first);
     	System.out.println(last);
     	System.out.println(pass);
+    	System.out.println(random);
+    	System.out.println(rannum);
+    	System.out.println(token);
     }
 }
