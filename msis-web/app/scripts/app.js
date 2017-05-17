@@ -32,7 +32,11 @@ var scotchApp = angular.module('webappApp', ['ngRoute']);
 
             // route for the contact page
             .when('/login', {
-                templateUrl : 'views/login.html',
+                templateUrl : 'views/signin.html',
+                controller  : 'contactController'
+            })
+            .when('/signup', {
+                templateUrl : 'views/signup.html',
                 controller  : 'contactController'
             });
     }]);
