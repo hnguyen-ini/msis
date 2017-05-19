@@ -10,7 +10,7 @@ var wiredep = require('wiredep').stream;
 var runSequence = require('run-sequence');
 var concat = require('gulp-concat');
 var connect = require('gulp-connect');
-var webserver = require('gulp-webserver');
+//var webserver = require('gulp-webserver');
 
 var yeoman = {
   app: require('./bower.json').appPath || 'app',
@@ -19,10 +19,12 @@ var yeoman = {
 
 var paths = {
   libjs: [
+    'bower_components/jquery/dist/jquery.min.js',
     'bower_components/angular/angular.min.js',
     'bower_components/angular-route/angular-route.min.js',
-    'bower_components/bootstrap/dist/js/bootstrap.min.js',
-    'bower_components/jquery/dist/jquery.min.js'
+    'bower_components/angular-cookies/angular-cookies.min.js',
+    'bower_components/crypto-js/crypto-js.js'
+    //'bower_components/bootstrap/dist/js/bootstrap.min.js',
   ],
   libstyle: [
     'bower_components/bootstrap/dist/css/bootstrap.min.css'
@@ -106,16 +108,16 @@ gulp.task('start', function(){
   runSequence(['start:server', 'watch']);
 }); 
 
-gulp.task('webserver', function() {
-  gulp.src('dist')
-    .pipe(webserver({
-      root: 'dist',
-      port: 9000,
-      livereload: true,
-      directoryListing: true,
-      open: true
-    }));
-});
+// gulp.task('webserver', function() {
+//   gulp.src('dist')
+//     .pipe(webserver({
+//       root: 'dist',
+//       port: 9000,
+//       livereload: true,
+//       directoryListing: true,
+//       open: true
+//     }));
+// });
 
 gulp.task('stop:server', function(){
   connect.serverClose();

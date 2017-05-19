@@ -31,13 +31,15 @@ var scotchApp = angular.module('webappApp', ['ngRoute']);
             })
 
             // route for the contact page
-            .when('/login', {
-                templateUrl : 'views/signin.html',
-                controller  : 'contactController'
+            .when('/signin', {
+                templateUrl : 'views/authen/signin.html',
+                controller  : 'signinController',
+                controllerAs: 'vm'
             })
             .when('/signup', {
-                templateUrl : 'views/signup.html',
-                controller  : 'contactController'
+                templateUrl : 'views/authen/signup.html',
+                controller  : 'SignupController',
+                controllerAs: 'vm'
             });
     }]);
 
@@ -59,3 +61,21 @@ var scotchApp = angular.module('webappApp', ['ngRoute']);
     scotchApp.controller('contactController', function($scope) {
         $scope.message = 'Contact us! JK. This is just a demo.';
     });
+
+//  run.$inject = ['$rootScope', '$location', '$cookies', '$http'];
+//     function run($rootScope, $location, $cookies, $http) {
+//         // keep user logged in after page refresh
+//         $rootScope.globals = $cookies.getObject('globals') || {};
+//         if ($rootScope.globals.currentUser) {
+//             $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata;
+//         }
+
+//         $rootScope.$on('$locationChangeStart', function (event, next, current) {
+//             // redirect to login page if not logged in and trying to access a restricted page
+//             var restrictedPage = $.inArray($location.path(), ['/login', '/register']) === -1;
+//             var loggedIn = $rootScope.globals.currentUser;
+//             if (restrictedPage && !loggedIn) {
+//                 $location.path('/login');
+//             }
+//         });
+//     }
