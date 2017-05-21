@@ -7,6 +7,7 @@ angular.module('webappApp')
         service.create = create;
         service.Update = Update;
         service.Delete = Delete;
+        service.signin = signin;
 
         return service;
 
@@ -24,12 +25,16 @@ angular.module('webappApp')
         }
 
         function create(user) {
-            console.log('Before: ' + angular.toJson(user));
             var enUser = encryptUser(user);
-            console.log('After: ' + angular.toJson(enUser));
-            console.log("user");
+            console.log('Create user: ' + angular.toJson(enUser));
             return RestService.restPost(GlobalService.registerUri, enUser);
-            //return $http.post(GlobalService.registerUri, enUser).then(handleSuccess, handleError);
+        }
+
+        function signin(user) {
+            var enUser = {};
+            enUser.email = CryptoService.encrypt(user.email);
+            enUser.password = CryptoService.encrypt(user.password);
+             return RestService.restPut(GlobalService.signinUri, enUser);
         }
 
         function Update(user) {

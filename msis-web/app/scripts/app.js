@@ -33,7 +33,7 @@ var scotchApp = angular.module('webappApp', ['ngRoute']);
             // route for the contact page
             .when('/signin', {
                 templateUrl : 'views/authen/signin.html',
-                controller  : 'signinController',
+                controller  : 'SigninController',
                 controllerAs: 'vm'
             })
             .when('/signup', {

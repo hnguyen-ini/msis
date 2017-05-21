@@ -1,27 +1,22 @@
 angular.module('webappApp')
-    .factory('authenService', ['$rootScope', '$timeout', 'userService', function($rootScope, $timeout, userService) {
+    .factory('AuthenService', ['$rootScope', '$timeout', 'UserService', function($rootScope, $timeout, UserService) {
         var service = {};
-        service.Login = login;
-        service.SetCredentials = setCredentials;
-        service.ClearCredentials = clearCredentials;
+        service.signin = signin;
+        service.setCredentials = setCredentials;
+        service.clearCredentials = clearCredentials;
 
         return service;
 
-        function Login(username, password, callback) {
-
-            /* Dummy authentication for testing, uses $timeout to simulate api call
-             ----------------------------------------------*/
+        function signin(user, callback) {
             $timeout(function () {
-                var response;
-                UserService.GetByUsername(username)
-                    .then(function (user) {
-                        if (user !== null && user.password === password) {
-                            response = { success: true };
-                        } else {
-                            response = { success: false, message: 'Username or password is incorrect' };
-                        }
-                        callback(response);
-                    });
+                UserService.signin(user).then(function (response) {
+                    if (response.success) {
+                        toastr.info("Signin successfully!!!", 'Msis-Web');
+                        $location.path('/signup');
+                    } else {
+                        toastr.error(response.message, 'Msis-Web');
+                    }
+                });
             }, 1000);
 
             /* Use this for real authentication
@@ -33,7 +28,7 @@ angular.module('webappApp')
 
         }
 
-        function SetCredentials(username, password) {
+        function setCredentials(username, password) {
             var authdata = Base64.encode(username + ':' + password);
 
             $rootScope.globals = {
@@ -52,7 +47,7 @@ angular.module('webappApp')
             $cookies.putObject('globals', $rootScope.globals, { expires: cookieExp });
         }
 
-        function ClearCredentials() {
+        function clearCredentials() {
             $rootScope.globals = {};
             $cookies.remove('globals');
             $http.defaults.headers.common.Authorization = 'Basic';
