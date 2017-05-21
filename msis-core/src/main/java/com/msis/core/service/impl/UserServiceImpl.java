@@ -162,8 +162,9 @@ public class UserServiceImpl implements UserService{
 		try {
 			if (email == null || email.isEmpty() || password == null || password.isEmpty())
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing email or password");
-			email = Crypto.decryptString(coreConfig.publicKey(), email);
-			password = Crypto.decryptString(coreConfig.publicKey(), password);
+			AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
+			email = aes.decryptIV(email);
+			password = aes.decryptIV(password);
 			
 			User user = findByEmail(email);
 			if (user == null) {
