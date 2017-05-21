@@ -39,5 +39,8 @@
   },
   "scripts": {
     "test": "karma start test\\karma.conf.js"
+  },
+  "dependencies": {
+    "toastr": "^2.1.2"
   }
 }

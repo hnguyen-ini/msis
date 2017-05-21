@@ -1,63 +1,33 @@
 angular.module('webappApp')
-    .factory('restService', ['$http', '$q', '$log', function($http, $q, $log) {
+    .factory('RestService', ['$http', '$q', '$log', function($http, $q, $log) {
         function _get(uri) {
             $log.info('-> Get data from: ' + uri.substring(uri.lastIndexOf('/') + 1));
             var deferred = $q.defer();
-            $http.get(uri).then(
-                function getSuccess(response) {
-                    deferred.resolve(response.data);
-                },
-                function getError(response) {
-                    $log.error(response.statusText);
-                    deferred.reject(response.statusText);
-                }
-            );
-            return deferred.promiss;
+            return $http.get(uri).then(successCallback, errorCallback);
         }
 
         function _post(uri, data) {
             $log.info('-> Post data to: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            var deferred = $q.defer();
-            $http.post(uri, data)
-                .then(function (response) {
-                    deferred.resolve(response.data);
-                },
-                function getError(response) {
-                    $log.error(response.statusText);
-                    deferred.reject(response.statusText);
-                }
-            );
-            return deferred.promise;
+            return $http.post(uri, data).then(successCallback, errorCallback);
         }
 
         function _put(uri, data) {
             $log.info('-> Put data to: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            var deferred = $q.defer();
-            $http.put(uri, data)
-                .then(function (response) {
-                    deferred.resolve(response.data);
-                },
-                function getError(response) {
-                    $log.error(response.statusText);
-                    deferred.reject(response.statusText);
-                }
-            );
-            return deferred.promise;
+            return $http.put(uri, data).then(successCallback, errorCallback);
         }
 
         function _delete(uri, id) {
             $log.info('-> Delete data from: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            var deferred = $q.defer();
-            $http.delete(uri + '/' + id)
-                .then(function (response) {
-                    deferred.resolve(response.data);
-                },
-                function (response) {
-                    $log.error(response.statusText);
-                    deferred.reject(response.statusText);
-                }
-            );
-            return deferred.promise;
+            return $http.delete(uri + '/' + id).then(successCallback, errorCallback);
+        }
+
+        function successCallback(response) {
+           return response.data;
+        }
+
+        function errorCallback(response) {
+            var msg = response.data.status.code + ": " + response.data.status.status;
+            return { success: false, message: msg };
         }
 
         return {

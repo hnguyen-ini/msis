@@ -1,5 +1,5 @@
 angular.module('webappApp')
-    .factory('UserService', ['$http', function($http) {
+    .factory('UserService', ['$http', 'RestService', 'CryptoService', 'GlobalService', function($http, RestService, CryptoService, GlobalService) {
         var service = {};
         service.GetAll = GetAll;
         service.GetById = GetById;
@@ -23,34 +23,13 @@ angular.module('webappApp')
             return $http.get('/api/users/' + username).then(handleSuccess, handleError('Error getting user by username'));
         }
 
-        function getKeyAndIV(password) {
-
-            var keyBitLength = 256;
-            var ivBitLength = 128;
-            var iterations = 234;
-
-            var bytesInSalt = 128 / 8;
-            var salt = CryptoJS.lib.WordArray.random(bytesInSalt);
-
-            var iv128Bits = CryptoJS.PBKDF2(password, salt, { keySize: 128 / 32, iterations: iterations });
-            var key256Bits = CryptoJS.PBKDF2(password, salt, { keySize: 256 / 32, iterations: iterations });
-
-            return {
-                iv: iv128Bits,
-                key: key256Bits
-            };
-        };
-
         function create(user) {
-            skey = getKeyAndIV("Password01");
-            var text = "My Secret text";
-            var key = CryptoJS.enc.Base64.parse("253D3FB468A0E24677C28A624BE0F939");
-            var iv  = CryptoJS.enc.Base64.parse("                ");
-            var encrypted = CryptoJS.AES.encrypt(text, skey.key, {iv: skey.iv});
-            console.log(encrypted.toString());
-            var decrypted = CryptoJS.AES.decrypt(encrypted, skey.key, {iv: skey.iv});
-            console.log(decrypted.toString(CryptoJS.enc.Utf8));
-            return $http.post('http://localhost:8085/msis/rest/authen/reg', user).then(handleSuccess, handleError('Error creating user'));
+            console.log('Before: ' + angular.toJson(user));
+            var enUser = encryptUser(user);
+            console.log('After: ' + angular.toJson(enUser));
+            console.log("user");
+            return RestService.restPost(GlobalService.registerUri, enUser);
+            //return $http.post(GlobalService.registerUri, enUser).then(handleSuccess, handleError);
         }
 
         function Update(user) {
@@ -64,13 +43,24 @@ angular.module('webappApp')
         // private functions : MAYBE NOT USAGE -> USE AT RESTSERVICE
 
         function handleSuccess(res) {
+            console.log('Before: ' + res.data.result.email + ', token: ' + res.data.result.token);
+            console.log('After: ' + CryptoService.decrypt(res.data.result.email) +', token: '+ CryptoService.decrypt(res.data.result.token));
             return res.data;
         }
 
         function handleError(error) {
-            return function () {
-                return { success: false, message: error };
-            };
+            var msg = error.data.status.code + ": " + error.data.status.status;
+            return { success: false, message: msg };
+            
+        }
+
+        function encryptUser(user) {
+            var enUser = {};
+            enUser.firstName = CryptoService.encrypt(user.firstName);
+            enUser.lastName = CryptoService.encrypt(user.lastName);
+            enUser.email = CryptoService.encrypt(user.email);
+            enUser.password = CryptoService.encrypt(user.password);
+            return enUser;
         }
     }
 ]);

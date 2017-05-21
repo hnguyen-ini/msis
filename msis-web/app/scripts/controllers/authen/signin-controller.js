@@ -2,7 +2,7 @@
  * Login Controller
  */
 angular.module('webappApp')
-    .controller('signinController', ['$scope', '$log', 'restService', function ($scope, $log, restService) {
+    .controller('SigninController', ['$scope', '$log', 'restService', function ($scope, $log, restService) {
         var vm = this;
         vm.signin = signin;
 

@@ -9,13 +9,17 @@
             vm.register = register;
 
             function register() {
+                toastr.options.positionClass='toast-top-center';
+           
                 vm.dataLoading = true;
                 UserService.create(vm.user).then(function (response) {
                     if (response.success) {
-                        FlashService.Success('Registration successful', true);
+                        toastr.info("Register successfully!!!", 'Msis-Web');
+                        //FlashService.Success('Registration successful', true);
                         $location.path('/signin');
                     } else {
-                        FlashService.Error(response.message);
+                        toastr.error(response.message, 'Msis-Web');
+                        //FlashService.Error(response.message);
                         vm.dataLoading = false;
                     }
                 });

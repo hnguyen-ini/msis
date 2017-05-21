@@ -23,11 +23,13 @@ var paths = {
     'bower_components/angular/angular.min.js',
     'bower_components/angular-route/angular-route.min.js',
     'bower_components/angular-cookies/angular-cookies.min.js',
-    'bower_components/crypto-js/crypto-js.js'
+    'bower_components/crypto-js/crypto-js.js',
+    'bower_components/toastr/toastr.min.js'
     //'bower_components/bootstrap/dist/js/bootstrap.min.js',
   ],
   libstyle: [
-    'bower_components/bootstrap/dist/css/bootstrap.min.css'
+    'bower_components/bootstrap/dist/css/bootstrap.min.css',
+    'bower_components/toastr/toastr.min.css'
   ],
   scripts: [yeoman.app + '/scripts/**/*.js'],
   styles: [yeoman.app + '/styles/**/*.css'],
