@@ -1,5 +1,11 @@
 package com.msis.common.parser;
 
+import java.nio.charset.StandardCharsets;
+
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.commons.codec.binary.Hex;
+
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
 
@@ -45,6 +51,20 @@ public class StringHexParser {
 		}
 	}
 	
+	public static byte[] hexStringToByteArray(String s) {
+
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+
+        return data;
+    }
+	
+	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		StringHexParser strToHex = new StringHexParser();
@@ -55,10 +75,18 @@ public class StringHexParser {
 		  String hex = strToHex.convertStringToHex(str);
 
 		  System.out.println("Hex : " + hex);
-
+		  
 		  System.out.println("\n***** Convert Hex to ASCII *****");
 		  System.out.println("Hex : " + hex);
 		  System.out.println("ASCII : " + strToHex.convertHexToString(hex));
+		  
+		  byte[] bytes = Hex.decodeHex("253D3FB468A0E24677C28A624BE0F939".toCharArray());
+		  System.out.println(new String(bytes, "UTF-8"));
+		  
+		  byte[] b = DatatypeConverter.parseBase64Binary("253D3FB468A0E24677C28A624BE0F939");
+		  
+		  String hexString = Hex.encodeHexString("hello".getBytes(StandardCharsets.UTF_8));
+		  str += str;
 	}
 
 }

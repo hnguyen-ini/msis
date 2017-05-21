@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService{
 	        KeyGeneration keyGen = new KeyGeneration(2048);
 	        keyGen.createKeys();
 	        String pKey = keyGen.getStr64PublicKey();
-	        deUser.setAse(Crypto.encryptAESKeyByPublicKeyString(RandomStringUtils.random(16), pKey));
+	        deUser.setAES(Crypto.encryptAESKeyByPublicKeyString(RandomStringUtils.random(16), pKey));
 	        deUser.setPublicKey(pKey);
 
 	        save(deUser);
@@ -144,8 +144,11 @@ public class UserServiceImpl implements UserService{
 	        user.setFirstName(null);
 	        user.setLastName(null);
 	        user.setStatus(null);
-	        user.setToken(Crypto.encryptString(coreConfig.publicKey(), token));
-	        user.setAse(Crypto.encryptString(coreConfig.publicKey(), deUser.getAse()));
+	        user.setAES(null);
+	        
+	        AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
+	        user.setToken(aes.encryptIV(token));
+	        user.setAES(aes.encryptIV(keyGen.getStr64PrivateKey()));
 	    	return user;
 		} catch (ServiceException e) {
 			throw e;
@@ -181,7 +184,7 @@ public class UserServiceImpl implements UserService{
 			user.setLoginAt(System.currentTimeMillis());
 			save(user);
 			
-	        user.setToken(user.getToken() + ":" + user.getAse());
+	        user.setToken(user.getToken() + ":" + user.getAES());
 			user = encryptPublicKey(user);
 			user.setPassword(null);
 	        user.setCreateAt(null);
@@ -198,28 +201,28 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User encryptPublicKey(User user) throws ServiceException {
-		AES aes = new AES(coreConfig.publicKey());
+		AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
 		
 		User enUser = new User();
-		enUser.setEmail(aes.encryptString(user.getEmail()));
-		enUser.setFirstName(aes.encryptString(user.getFirstName()));
-		enUser.setLastName(aes.encryptString(user.getLastName()));
-		enUser.setPassword(aes.encryptString(user.getPassword()));
-		enUser.setToken(aes.encryptString(user.getToken()));
+		enUser.setEmail(aes.encryptIV(user.getEmail()));
+		enUser.setFirstName(aes.encryptIV(user.getFirstName()));
+		enUser.setLastName(aes.encryptIV(user.getLastName()));
+		enUser.setPassword(aes.encryptIV(user.getPassword()));
+		enUser.setToken(aes.encryptIV(user.getToken()));
 		
 		return enUser;
 	}
 
 	@Override
 	public User decryptPublicKey(User user) throws ServiceException {
-		AES aes = new AES(coreConfig.publicKey());
+		AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
 		
 		User deUser = new User();
-		deUser.setEmail(aes.decryptString(user.getEmail()));
-		deUser.setFirstName(aes.decryptString(user.getFirstName()));
-		deUser.setLastName(aes.decryptString(user.getLastName()));
-		deUser.setPassword(aes.decryptString(user.getPassword()));
-		deUser.setToken(aes.decryptString(user.getToken()));
+		deUser.setEmail(aes.decryptIV(user.getEmail()));
+		deUser.setFirstName(aes.decryptIV(user.getFirstName()));
+		deUser.setLastName(aes.decryptIV(user.getLastName()));
+		deUser.setPassword(aes.decryptIV(user.getPassword()));
+		deUser.setToken(aes.decryptIV(user.getToken()));
 		
 		return deUser;
 	}

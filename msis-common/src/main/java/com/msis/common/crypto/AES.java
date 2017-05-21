@@ -1,19 +1,80 @@
 package com.msis.common.crypto;
 
+import java.security.spec.KeySpec;
+
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.msis.common.parser.StringHexParser;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
 
 public class AES {
 	private static String encryptionAlgorithm =  "AES";    
-    private String encryptionKey;    
+    private String encryptionKey;
+    private byte[] salt;
+    private byte[] iv;
+    private SecretKeySpec secretKey;
     
     public AES(String encryptKey) {
     	this.encryptionKey = encryptKey;
+    }
+    
+    public AES(String key, String salt, String iv) throws ServiceException{
+    	this.encryptionKey = key;
+    	this.salt = StringHexParser.hexStringToByteArray(salt);
+    	this.iv = StringHexParser.hexStringToByteArray(iv);
+    	secretKey = (SecretKeySpec) generateKeyFromPassword(key, this.salt);
+    }
+    
+    private SecretKey generateKeyFromPassword(String password, byte[] saltBytes) throws ServiceException {
+    	try {
+	        KeySpec keySpec = new PBEKeySpec(password.toCharArray(), saltBytes, 234, 128);
+	        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+	        SecretKey secretKey = keyFactory.generateSecret(keySpec);
+	        return new SecretKeySpec(secretKey.getEncoded(), "AES");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Generation Key Error, " + e.getMessage());
+    	}
+    }
+    
+    private Cipher getCipherIV(int mode) throws ServiceException {
+    	try {
+    		IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+    		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+    	    cipher.init(mode, secretKey, ivParameterSpec);
+    	    return cipher;
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Initial Cipher Failed " + e.getMessage());
+    	}
+    }
+    
+    public String decryptIV(String text) throws ServiceException {
+    	try {
+    		if (text == null || text.isEmpty())
+    			return text;
+    		byte[] plainBytes = getCipherIV(Cipher.DECRYPT_MODE).doFinal(Base64.decodeBase64(text));
+            return new String(plainBytes);
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Decryption Failed " + e.getMessage());
+    	}
+    }
+    
+    public String encryptIV(String text) throws ServiceException {
+    	try {
+    		if (text == null || text.isEmpty())
+    			return text;
+    		byte[] plainBytes = getCipherIV(Cipher.ENCRYPT_MODE).doFinal(text.getBytes());
+            return Base64.encodeBase64String(plainBytes);
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.CRYPTO_ERROR, "AES: Decryption Failed " + e.getMessage());
+    	}
     }
 
     private Cipher getCipher(int cipherMode) throws ServiceException {

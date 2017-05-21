@@ -21,7 +21,7 @@ public class User {
 	private Long loginAt;
 	
 	// aesKey
-	private String ase;
+	private String AES;
 	private String publicKey;
 	
 	public User() {}
@@ -140,12 +140,12 @@ public class User {
 		this.passwordHash = passwordHash;
 	}
 
-	public String getAse() {
-		return ase;
+	public String getAES() {
+		return AES;
 	}
 
-	public void setAse(String ase) {
-		this.ase = ase;
+	public void setAES(String aes) {
+		this.AES = aes;
 	}
 
 	public String getPublicKey() {

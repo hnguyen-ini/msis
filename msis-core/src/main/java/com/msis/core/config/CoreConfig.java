@@ -106,6 +106,22 @@ public class CoreConfig {
     	}
     }
     
+    public String salt() throws ServiceException {
+    	try {
+    		return env.getProperty("salt");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Salt Failed, " + e.getMessage());
+    	}
+    }
+    
+    public String iv() throws ServiceException {
+    	try {
+    		return env.getProperty("iv");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: IV Failed, " + e.getMessage());
+    	}
+    }
+    
     public String awsRegion() throws ServiceException {
     	try {
     		return env.getProperty("aws.region");
