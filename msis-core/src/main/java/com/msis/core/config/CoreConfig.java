@@ -161,4 +161,44 @@ public class CoreConfig {
     		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: AWSBase Failed, " + e.getMessage());
     	}
     }
+    
+    public String emailHost() throws ServiceException {
+    	try {
+    		return env.getProperty("smtp.host");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Host Failed, " + e.getMessage());
+    	}
+    }
+    
+    public String emailPort() throws ServiceException {
+    	try {
+    		return env.getProperty("smtp.port");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Port Failed, " + e.getMessage());
+    	}
+    }
+    
+    public String emailUserName() throws ServiceException {
+    	try {
+    		return env.getProperty("smtp.username");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Username Failed, " + e.getMessage());
+    	}
+    }
+    
+    public String emailPassword() throws ServiceException {
+    	try {
+    		return env.getProperty("smtp.password");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Port Failed, " + e.getMessage());
+    	}
+    }
+    
+    public String emailNoreply() throws ServiceException {
+    	try {
+    		return env.getProperty("smtp.noreply");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Noreply Failed, " + e.getMessage());
+    	}
+    }
 }
