@@ -10,7 +10,7 @@
 	<http pattern="/resources" security="none"/>
     <http auto-config="true" use-expressions="true">
         <intercept-url pattern="/" access="permitAll"/>
-        <intercept-url pattern="/*/admin/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_METRICS')"/>
+        <intercept-url pattern="/*/admin111/**" access="hasAnyRole('ROLE_ADMIN', 'ROLE_METRICS')"/>
         <intercept-url pattern="/manage*" access="hasRole('ROLE_ADMIN')"/>
         <intercept-url pattern="/metrics*" access="hasRole('ROLE_METRICS')"/>
 

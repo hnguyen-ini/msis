@@ -11,6 +11,8 @@
     <context:component-scan base-package="com.msis">
         <!-- <context:include-filter type="regex" expression=".controller.*Controller"/> -->
     </context:component-scan>
+    
+    <import resource="classpath*:core-config.xml"/>
 	
     <bean id="adminController" class="com.msis.rest.controller.admin.AdminController">
         <property name="userService" ref="userService"></property>

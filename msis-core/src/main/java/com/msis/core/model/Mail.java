@@ -6,17 +6,19 @@ public class Mail {
 	private String token;
 	private String uri;
 	private String subject;
-	private String velocityModel; // registerEmail.vm"
+	private String template; // registerEmail.vm"
+	private String privateKey;
 	
 	public Mail() {}
 	
-	public Mail(String address, String name, String token, String uri, String subject, String velocityModel) {
+	public Mail(String address, String name, String token, String uri, String subject, String template, String privateKey) {
 		this.setAddress(address);
 		this.setName(name);
 		this.setToken(token);
 		this.setUri(uri);
 		this.setSubject(subject);
-		this.setVelocityModel(velocityModel);
+		this.setTemplate(template);
+		this.setPrivateKey(privateKey);
 	}
 
 	public String getAddress() {
@@ -51,12 +53,12 @@ public class Mail {
 		this.uri = uri;
 	}
 
-	public String getVelocityModel() {
-		return velocityModel;
+	public String getTemplate() {
+		return template;
 	}
 
-	public void setVelocityModel(String velocityModel) {
-		this.velocityModel = velocityModel;
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 
 	public String getSubject() {
@@ -65,5 +67,13 @@ public class Mail {
 
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+
+	public String getPrivateKey() {
+		return privateKey;
+	}
+
+	public void setPrivateKey(String privateKey) {
+		this.privateKey = privateKey;
 	}
 }

@@ -11,6 +11,7 @@ import com.msis.core.model.User;
 public interface UserService {
 	User save(User user);
 	void delete(User user);
+	void deleteByEmail(String email) throws ServiceException;
 	void deleteAll();
 	User findById(String id);
 	User findByEmail(String email);

@@ -19,9 +19,13 @@ import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
 import com.msis.common.utils.ListUtils;
 import com.msis.common.utils.PasswordUtils;
+import com.msis.core.cache.CacheService;
 import com.msis.core.config.CoreConfig;
+import com.msis.core.model.Mail;
+import com.msis.core.model.Session;
 import com.msis.core.model.User;
 import com.msis.core.repository.UserRepository;
+import com.msis.core.service.MailService;
 import com.msis.core.service.UserService;
 
 /**
@@ -45,6 +49,11 @@ public class UserServiceImpl implements UserService{
 		this.coreConfig = coreConfig;
 	}
 	
+	@Autowired
+	private MailService mailService;
+	@Autowired 
+	private CacheService cacheService; 
+	
 	@Override
 	public User save(User user) {
 		return userRepository.save(user);
@@ -53,6 +62,14 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void delete(User user) {
 		userRepository.delete(user);
+	}
+	
+	@Override
+	public void deleteByEmail(String email) throws ServiceException {
+		User user = findByEmail(email);
+		if (user == null)
+			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by id " + email);
+		delete(user);
 	}
 	
 	@Override
@@ -70,7 +87,6 @@ public class UserServiceImpl implements UserService{
 		return userRepository.findByEmail(email);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> findAll() {
 		Iterable iterable = userRepository.findAll();
@@ -132,13 +148,14 @@ public class UserServiceImpl implements UserService{
 	        // aesKey
 	        KeyGeneration keyGen = new KeyGeneration(2048);
 	        keyGen.createKeys();
-	        String pKey = keyGen.getStr64PublicKey();
-	        deUser.setAES(Crypto.encryptAESKeyByPublicKeyString(RandomStringUtils.random(16), pKey));
-	        deUser.setPublicKey(pKey);
+	        String pubKey = keyGen.getStr64PublicKey();
+	        String priKey = keyGen.getStr64PrivateKey();
+	        String aesKey = RandomStringUtils.randomAlphabetic(16);
+	        
+	        deUser.setAES(Crypto.encryptAESKeyByPublicKeyString(aesKey, pubKey));
+	        deUser.setPublicKey(pubKey);
 
 	        save(deUser);
-	        
-	        // TODO: send PrivateKey to client via email
 	        
 	        user.setPassword(null);
 	        user.setFirstName(null);
@@ -148,7 +165,15 @@ public class UserServiceImpl implements UserService{
 	        
 	        AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
 	        user.setToken(aes.encryptIV(token));
-	        user.setAES(aes.encryptIV(keyGen.getStr64PrivateKey()));
+	        
+	        // send email
+	        Mail mail = new Mail(deUser.getEmail(), deUser.getFirstName(), user.getToken(), coreConfig.hostUri(), coreConfig.registerSubject(), "registerEmail.vm", priKey);
+	        mailService.send(mail);
+	        
+	        // cache session
+	        Session session = new Session(token, aesKey, 60*24);
+	        cacheService.setCache(session);
+	        	        
 	    	return user;
 		} catch (ServiceException e) {
 			throw e;

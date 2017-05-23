@@ -12,11 +12,11 @@
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.gmail.com" />
 	  	<property name="port" value="587" />
-	  	<property name="username" value="headphonex.dts@gmail.com" />
-	  	<property name="password" value="12345678headphone" />
+	  	<property name="username" value="hien.nguyen@terrologic.com" />
+	  	<property name="password" value="12345678@Ab1" />
 	  	<property name="javaMailProperties">
 	   	  <props>
-	    	<prop key="mail.debug">false</prop> 
+	    	<prop key="mail.debug">true</prop> 
 	    	<prop key="mail.smtp.auth">true</prop>
 	    	<prop key="mail.smtp.starttls.enable">true</prop>
 	    	<prop key="mail.mime.charset">UTF-8</prop>
@@ -34,10 +34,10 @@
         </props>
       </property>
 	</bean>
-
+<!-- 
 	<bean id="mailer" class="com.msis.core.service.impl.MailServiceImpl">
 	  	<property name="mailSender" ref="mailSender" />
 	  	<property name="velocityEngine" ref="velocityEngine"/>
 	 </bean>
-	 
+ -->
 </beans>

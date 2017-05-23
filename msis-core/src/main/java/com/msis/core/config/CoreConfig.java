@@ -201,4 +201,20 @@ public class CoreConfig {
     		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Noreply Failed, " + e.getMessage());
     	}
     }
+    
+    public String registerSubject() throws ServiceException {
+    	try {
+    		return env.getProperty("register.subject");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Register Subject Failed, " + e.getMessage());
+    	}
+    }
+    
+    public String hostUri() throws ServiceException {
+    	try {
+    		return env.getProperty("host.uri");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Host URI Failed, " + e.getMessage());
+    	}
+    }
 }

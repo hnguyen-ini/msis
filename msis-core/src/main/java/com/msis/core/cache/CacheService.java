@@ -2,8 +2,6 @@ package com.msis.core.cache;
 
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,7 +28,7 @@ public class CacheService implements Cacheable {
                 			Session value = (Session)cacheHashMap.get(key);
                 			if (value != null && isExpired(value.getDateofExpiration())) {
                 				cacheHashMap.remove(key);
-                				logger.info("Running. Found an Expired Object in the Cache  " + value.getToken() +":"+ value.getKey() + ":" + value.getDateofExpiration());
+                				logger.info("Found and Removed an Expired Object:  " + value.getToken() + ":" + value.getDateofExpiration());
                 				break;
                 			}
                 		}
@@ -63,6 +61,7 @@ public class CacheService implements Cacheable {
 
 	@Override
 	public void setCache(Session session) {
+		logger.info("Set to cache: " + session.getToken());
 		cacheHashMap.put(session.getToken(), session);
 	}
 
