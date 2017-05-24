@@ -86,6 +86,11 @@ public class UserServiceImpl implements UserService{
 	public User findByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
+	
+	@Override
+	public User findByToken(String token) {
+		return userRepository.findByToken(token);
+	}
 
 	@Override
 	public List<User> findAll() {
@@ -167,7 +172,7 @@ public class UserServiceImpl implements UserService{
 	        user.setToken(aes.encryptIV(token));
 	        
 	        // send email
-	        Mail mail = new Mail(deUser.getEmail(), deUser.getFirstName(), user.getToken(), coreConfig.hostUri(), coreConfig.registerSubject(), "registerEmail.vm", priKey);
+	        Mail mail = new Mail(deUser.getEmail(), deUser.getFirstName(), user.getToken(), coreConfig.hostUri(), coreConfig.registerSubject(), "register-mail.vm", priKey);
 	        mailService.send(mail);
 	        
 	        // cache session
@@ -181,7 +186,34 @@ public class UserServiceImpl implements UserService{
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Register failed, " + e.getMessage());
 		}
 	}
-
+	
+	@Override
+	public User validateToken(String token) throws ServiceException {
+		AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
+		String deToken = aes.decryptIV(token);
+		
+		User user = findByToken(deToken);
+		if (user == null)
+			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + deToken);
+		
+		Session session = cacheService.getCache(deToken);
+		if (session == null) {
+			throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+		}
+		user.setStatus("A");
+		save(user);
+		
+		cacheService.resetExpiration(session, 30); // TODO: add to config
+		cacheService.setCache(session);
+		
+		User response = new User();
+		response.setFirstName(aes.encryptIV(user.getFirstName()));
+		response.setLastName(aes.encryptIV(user.getLastName()));
+		response.setEmail(aes.encryptIV(user.getEmail()));
+		response.setToken(aes.encryptIV(user.getToken()));
+		return response;
+	}
+	
 	@Override
 	public User verify(String email, String password) throws ServiceException{
 		try {

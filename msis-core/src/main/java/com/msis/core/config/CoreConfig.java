@@ -202,6 +202,14 @@ public class CoreConfig {
     	}
     }
     
+    public String emailReply() throws ServiceException {
+    	try {
+    		return env.getProperty("smtp.reply");
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Email Reply Failed, " + e.getMessage());
+    	}
+    }
+    
     public String registerSubject() throws ServiceException {
     	try {
     		return env.getProperty("register.subject");

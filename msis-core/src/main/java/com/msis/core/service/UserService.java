@@ -15,6 +15,7 @@ public interface UserService {
 	void deleteAll();
 	User findById(String id);
 	User findByEmail(String email);
+	User findByToken(String token);
 	
 	List<User> findAll();
 	Page<User> findAll(Pageable pageable);
@@ -29,6 +30,7 @@ public interface UserService {
 	// login section
 	User regUser(User user) throws ServiceException;
 	User verify(String email, String password) throws ServiceException;
+	User validateToken(String token) throws ServiceException;
 	
 	User encryptPublicKey(User user) throws ServiceException;
 	User decryptPublicKey(User user) throws ServiceException;

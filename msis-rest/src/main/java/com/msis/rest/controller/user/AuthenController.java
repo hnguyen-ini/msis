@@ -2,6 +2,7 @@ package com.msis.rest.controller.user;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -67,6 +68,26 @@ public class AuthenController implements InitializingBean {
 		log.info("-> Sign-in OK");
 		response.setStatus(ServiceStatus.OK);
 		response.setResult(user);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@PUT
+	@Path("/validateToken")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response validateToken(User user) {
+		ServiceResponse<User> response = new ServiceResponse<User>();
+		try {
+			log.info("Validate Token " + user.getToken());
+			User userR = userService.validateToken(user.getToken());
+			response.setResult(userR);
+		} catch (ServiceException e) {
+			log.warn("-> Validate Token Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Validation OK");
+		response.setStatus(ServiceStatus.OK);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	

@@ -11,6 +11,7 @@ import com.msis.core.model.User;
 public interface UserRepository extends ElasticsearchRepository<User, String>{
 	User findById(String id);
 	User findByEmail(String email);
+	User findByToken(String token);
 	
 	List<User> findByLastName(String lastName);
 	Page<User> findByLastName(String lastName, Pageable pageable);

@@ -14,7 +14,7 @@ public class User {
 	private String passwordHash;
 	private Long createAt;
 	private Long modifyAt;
-	private String status = "A";
+	private String status = "P"; // P: Pending (Init); A: Active; I: Inactive 
 	
 	// login info
 	private String token;
