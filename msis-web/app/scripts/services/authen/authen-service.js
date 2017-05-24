@@ -18,14 +18,12 @@ angular.module('webappApp')
                     }
                 });
             }, 1000);
+        }
 
-            /* Use this for real authentication
-             ----------------------------------------------*/
-            //$http.post('/api/authenticate', { username: username, password: password })
-            //    .success(function (response) {
-            //        callback(response);
-            //    });
-
+        function validateToken(token) {
+            $timeout(function() {
+                
+            }, 1000);
         }
 
         function setCredentials(username, password) {

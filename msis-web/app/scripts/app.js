@@ -24,12 +24,6 @@ var scotchApp = angular.module('webappApp', ['ngRoute']);
                 controller  : 'homeController'
             })
 
-            // route for the about page
-            .when('/about', {
-                templateUrl : 'views/about.html',
-                controller  : 'AboutCtrl'
-            })
-
             // route for the contact page
             .when('/signin', {
                 templateUrl : 'views/authen/signin.html',
@@ -40,6 +34,16 @@ var scotchApp = angular.module('webappApp', ['ngRoute']);
                 templateUrl : 'views/authen/signup.html',
                 controller  : 'SignupController',
                 controllerAs: 'vm'
+            })
+            .when('/token-validation', {
+                templateUrl : 'views/authen/token-validation.html',
+                controller  : 'TokenValidationController',
+                controllerAs: 'vm' 
+            })
+             // route for the about page
+            .when('/about', {
+                templateUrl : 'views/about.html',
+                controller  : 'AboutCtrl'
             });
     }]);
 

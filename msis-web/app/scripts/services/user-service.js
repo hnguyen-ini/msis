@@ -5,6 +5,7 @@ angular.module('webappApp')
         service.GetById = GetById;
         service.GetByUsername = GetByUsername;
         service.create = create;
+        service.validateToken = validateToken;
         service.Update = Update;
         service.Delete = Delete;
         service.signin = signin;
@@ -34,7 +35,11 @@ angular.module('webappApp')
             var enUser = {};
             enUser.email = CryptoService.encrypt(user.email);
             enUser.password = CryptoService.encrypt(user.password);
-             return RestService.restPut(GlobalService.signinUri, enUser);
+            return RestService.restPut(GlobalService.signinUri, enUser);
+        }
+
+        function validateToken(token) {
+            return RestService.restPut(GlobalService.validateToken, token);
         }
 
         function Update(user) {

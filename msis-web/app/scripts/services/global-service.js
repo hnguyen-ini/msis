@@ -9,5 +9,6 @@ angular.module('webappApp')
         //authen
         service.registerUri = service.host + "authen/reg";
         service.signinUri = service.host + "authen/signin";
+        service.validateToken = service.host + "authen/validateToken";
         return service;
     });
