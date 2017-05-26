@@ -38,8 +38,10 @@ angular.module('webappApp')
             return RestService.restPut(GlobalService.signinUri, enUser);
         }
 
-        function validateToken(token) {
-            return RestService.restPut(GlobalService.validateToken, token);
+        function validateToken(user) {
+            var enUser = {};
+            enUser.token = CryptoService.encrypt(user.token);
+            return RestService.restPut(GlobalService.validateToken, enUser);
         }
 
         function Update(user) {

@@ -1,5 +1,5 @@
 angular.module('webappApp')
-    .controller('TokenValidationController', ['$location','UserService', function ($location, UserService) {
+    .controller('TokenValidationController', ['$scope', '$location','UserService', function ($scope, $location, UserService) {
         var vm = this;
         var token = $location.url().substring($location.url().indexOf('?') +1 );
         vm.user = {
@@ -7,15 +7,16 @@ angular.module('webappApp')
         };
 
         (function() {
-            vm.loading = true;
+            $scope.message = 'Please wait for validation token..'
+            $scope.loading = true;
             UserService.validateToken(vm.user).then(function(response){
                 if (response.success) {
-                    vm.message = 'Congratulation, your account is active now!'
+                    $scope.message = 'Congratulation, your account is active now!'
                 } else {
-                    vm.message = response.message;
+                    $scope.message = response.message;
                 }
             });
-            vm.loading = false;
+            $scope.loading = false;
         })();
 
         
