@@ -225,4 +225,12 @@ public class CoreConfig {
     		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Host URI Failed, " + e.getMessage());
     	}
     }
+    
+    public int sessionExpired() throws ServiceException {
+    	try {
+    		return Integer.parseInt(env.getProperty("session.expired"));
+    	} catch (Exception e) {
+    		throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Configuration: Host URI Failed, " + e.getMessage());
+    	}
+    }
 }

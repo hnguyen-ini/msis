@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService{
 	        user.setToken(aes.encryptIV(token));
 	        
 	        // send email
-	        Mail mail = new Mail(deUser.getEmail(), deUser.getFirstName(), user.getToken(), coreConfig.hostUri(), coreConfig.registerSubject(), "register-mail.vm", priKey);
+	        Mail mail = new Mail(deUser.getEmail(), deUser.getFirstName(), token, coreConfig.hostUri(), coreConfig.registerSubject(), "register-mail.vm", priKey);
 	        mailService.send(mail);
 	        
 	        // cache session
@@ -203,7 +203,7 @@ public class UserServiceImpl implements UserService{
 		user.setStatus("A");
 		save(user);
 		
-		cacheService.resetExpiration(session, 30); // TODO: add to config
+		cacheService.resetExpiration(session, coreConfig.sessionExpired());
 		cacheService.setCache(session);
 		
 		User response = new User();
@@ -242,14 +242,17 @@ public class UserServiceImpl implements UserService{
 			user.setLoginAt(System.currentTimeMillis());
 			save(user);
 			
-	        user.setToken(user.getToken() + ":" + user.getAES());
-			user = encryptPublicKey(user);
-			user.setPassword(null);
-	        user.setCreateAt(null);
-	        user.setId(null);
-	        user.setModifyAt(null);
-	        user.setStatus(null);
-	        return user;
+			String aesKey = Crypto.encryptAESKeyByPublicKeyString(user.getAES(), user.getPublicKey());
+			Session session = new Session(token, aesKey, coreConfig.sessionExpired());
+	        cacheService.setCache(session);
+	        
+			User response = new User();
+			response.setFirstName(aes.encryptIV(user.getFirstName()));
+			response.setLastName(aes.encryptIV(user.getLastName()));
+			response.setEmail(aes.encryptIV(user.getEmail()));
+			response.setToken(aes.encryptIV(user.getToken()));
+			response.setStatus(user.getStatus());
+			return response;
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {

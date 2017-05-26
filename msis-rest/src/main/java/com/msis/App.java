@@ -43,7 +43,7 @@ public class App
     	String password = "Secret Passphrase";
         String salt = "495ae7e34b9da43b9b4bdac644529aa7";
         String iv = "9609f89caaa074264acf4df75122dbdc";
-        String encrypted = "0Rt0drmqSr5bs6nSILP32xQBQXtJToA4IiA7lvVLhcQ=";
+        String encrypted = "bS+sQL07X5tnKcH6Zon51NXPNKGsu/y4y3KsQmlf9VBN2PCeLqD3PXe4sqEoYYIx";
 
         byte[] saltBytes = hexStringToByteArray(salt);
         byte[] ivBytes = hexStringToByteArray(iv);
