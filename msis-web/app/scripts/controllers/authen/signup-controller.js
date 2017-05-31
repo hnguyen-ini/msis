@@ -14,12 +14,10 @@
                 vm.dataLoading = true;
                 UserService.create(vm.user).then(function (response) {
                     if (response.success) {
-                        toastr.info("Register successfully!!!", 'Msis-Web');
-                        //FlashService.Success('Registration successful', true);
+                        toastr.info("Register successfully! Please check email to active your account (It will be expired after 24h)", 'Msis-Web');
                         $location.path('/signin');
                     } else {
                         toastr.error(response.message, 'Msis-Web');
-                        //FlashService.Error(response.message);
                         vm.dataLoading = false;
                     }
                 });

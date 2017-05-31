@@ -7,10 +7,10 @@
  *
  * Main module of the application.
  */
-var scotchApp = angular.module('webappApp', ['ngRoute']);
+var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies']);
 
     // configure our routes
-    scotchApp.config(['$routeProvider',function($routeProvider) {
+    scotchApp.config(['$routeProvider', function($routeProvider) {
         $routeProvider
 
             // route for the home page
@@ -45,6 +45,21 @@ var scotchApp = angular.module('webappApp', ['ngRoute']);
                 templateUrl : 'views/about.html',
                 controller  : 'AboutCtrl'
             });
+    }]);
+
+    scotchApp.run(['$rootScope', '$http', '$location', '$localStorage', '$cookies', function($rootScope, $http, $location, $localStorage, $cookies) { 
+        // keep user logged in after page refresh
+        if ($localStorage.currentUser) {
+            $http.defaults.headers.common.Authorization = 'Basic ' + $localStorage.currentUser.token;
+        }
+        // redirect to login page if not logged in and trying to access a restricted page
+        $rootScope.$on('$locationChangeStart', function (event, next, current) {
+            var restrictedPage = $.inArray($location.path(), ['/signin', '/signup']) === -1;
+            var loggedIn = $localStorage.currentUser;//$rootScope.globals.currentUser;
+            if (restrictedPage && !loggedIn) {
+                $location.path('/signin');
+            }
+        });
     }]);
 
     // create the controller and inject Angular's $scope

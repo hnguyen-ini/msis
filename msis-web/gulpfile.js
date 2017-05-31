@@ -24,11 +24,18 @@ var paths = {
     'bower_components/angular-route/angular-route.min.js',
     'bower_components/angular-cookies/angular-cookies.min.js',
     'bower_components/crypto-js/crypto-js.js',
-    'bower_components/toastr/toastr.min.js'
-    //'bower_components/bootstrap/dist/js/bootstrap.min.js',
+    'bower_components/toastr/toastr.min.js',
+    'bower_components/angular-idle-service/dist/angular-idle-service.js',
+    'bower_components/ngstorage/ngStorage.min.js',
+    'bower_components/angular-base64/angular-base64.min.js',
+    'bower_components/angular-csrf-cross-domain/dist/angular-csrf-cross-domain.min.js',
+    'bower_components/bootstrap/dist/js/bootstrap.min.js'
   ],
   libstyle: [
     'bower_components/bootstrap/dist/css/bootstrap.min.css',
+    //'bower_components/bootstrap/less/navbar.less',
+    //'bower_components/bootstrap/less/navs.less',
+    //'bower_components/bootstrap/less/normalize.less',
     'bower_components/toastr/toastr.min.css'
   ],
   scripts: [yeoman.app + '/scripts/**/*.js'],
