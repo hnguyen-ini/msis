@@ -40,8 +40,8 @@ public class MailServiceImpl implements MailService {
 	public void init() {
 		try {
 			log.info("Init Mail Server..");
-			String username = config.emailUserName();
-			String password = config.emailPassword();
+			final String username = config.emailUserName();
+			final String password = config.emailPassword();
 			Properties props = new Properties();
   			props.put("mail.smtp.host", config.emailHost());
   			props.put("mail.smtp.port", config.emailPort());

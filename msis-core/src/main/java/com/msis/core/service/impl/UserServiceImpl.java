@@ -25,6 +25,7 @@ import com.msis.core.model.Mail;
 import com.msis.core.model.Session;
 import com.msis.core.model.User;
 import com.msis.core.repository.UserRepository;
+import com.msis.core.service.CryptoService;
 import com.msis.core.service.MailService;
 import com.msis.core.service.UserService;
 
@@ -37,22 +38,16 @@ import com.msis.core.service.UserService;
 public class UserServiceImpl implements UserService{
 	static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
+	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	public void setUserRepository(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
-	
 	private CoreConfig coreConfig;
-	@Autowired
-	public void setCoreConfig(CoreConfig coreConfig) {
-		this.coreConfig = coreConfig;
-	}
-	
 	@Autowired
 	private MailService mailService;
 	@Autowired 
-	private CacheService cacheService; 
+	private CacheService cacheService;
+	@Autowired
+	private CryptoService cryptoService;
 	
 	@Override
 	public User save(User user) {
@@ -157,8 +152,10 @@ public class UserServiceImpl implements UserService{
 	        String priKey = keyGen.getStr64PrivateKey();
 	        String aesKey = RandomStringUtils.randomAlphabetic(16);
 	        
-	        deUser.setAES(Crypto.encryptAESKeyByPublicKeyString(aesKey, pubKey));
+	        //deUser.setAES(Crypto.encryptAESKeyByPublicKeyString(aesKey, pubKey));
+	        deUser.setAES(cryptoService.encryptSystem(aesKey));
 	        deUser.setPublicKey(pubKey);
+	        deUser.setPrivateKey(priKey);
 
 	        save(deUser);
 	        
@@ -189,8 +186,7 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User validateToken(String token) throws ServiceException {
-		AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
-		String deToken = aes.decryptIV(token);
+		String deToken = cryptoService.decryptNetwork(token);
 		
 		User user = findByToken(deToken);
 		if (user == null)
@@ -207,10 +203,11 @@ public class UserServiceImpl implements UserService{
 		cacheService.setCache(session);
 		
 		User response = new User();
-		response.setFirstName(aes.encryptIV(user.getFirstName()));
-		response.setLastName(aes.encryptIV(user.getLastName()));
-		response.setEmail(aes.encryptIV(user.getEmail()));
-		response.setToken(aes.encryptIV(user.getToken()));
+		response.setStatus("A");
+		response.setFirstName(cryptoService.encryptNetwork(user.getFirstName()));
+		response.setLastName(cryptoService.encryptNetwork(user.getLastName()));
+		response.setEmail(cryptoService.encryptNetwork(user.getEmail()));
+		response.setToken(cryptoService.encryptNetwork(user.getToken()));
 		return response;
 	}
 	
@@ -219,9 +216,8 @@ public class UserServiceImpl implements UserService{
 		try {
 			if (email == null || email.isEmpty() || password == null || password.isEmpty())
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing email or password");
-			AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
-			email = aes.decryptIV(email);
-			password = aes.decryptIV(password);
+			email = cryptoService.decryptNetwork(email);
+			password = cryptoService.decryptNetwork(password);
 			
 			User user = findByEmail(email);
 			if (user == null) {
@@ -233,24 +229,24 @@ public class UserServiceImpl implements UserService{
 				logger.warn("Invalid password");
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Invalid userid or password");
 			}
-			if (user.getStatus().equals("I")) {
-				logger.warn("Inactive user");
-				throw new ServiceException(ServiceStatus.INACTIVE_USER, "Inactive user");
+			if (!user.getStatus().equals("A")) {
+				logger.warn("None Active user");
+				throw new ServiceException(ServiceStatus.INACTIVE_USER, "None active user");
 			}
 			String token = UUID.randomUUID().toString();
 			user.setToken(token);
 			user.setLoginAt(System.currentTimeMillis());
 			save(user);
 			
-			String aesKey = Crypto.encryptAESKeyByPublicKeyString(user.getAES(), user.getPublicKey());
+			String aesKey = cryptoService.decryptSystem(user.getAES());
 			Session session = new Session(token, aesKey, coreConfig.sessionExpired());
 	        cacheService.setCache(session);
 	        
 			User response = new User();
-			response.setFirstName(aes.encryptIV(user.getFirstName()));
-			response.setLastName(aes.encryptIV(user.getLastName()));
-			response.setEmail(aes.encryptIV(user.getEmail()));
-			response.setToken(aes.encryptIV(user.getToken()));
+			response.setFirstName(cryptoService.encryptNetwork(user.getFirstName()));
+			response.setLastName(cryptoService.encryptNetwork(user.getLastName()));
+			response.setEmail(cryptoService.encryptNetwork(user.getEmail()));
+			response.setToken(cryptoService.encryptNetwork(user.getToken()));
 			response.setStatus(user.getStatus());
 			return response;
 		} catch (ServiceException e) {
@@ -262,29 +258,23 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User encryptPublicKey(User user) throws ServiceException {
-		AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
-		
 		User enUser = new User();
-		enUser.setEmail(aes.encryptIV(user.getEmail()));
-		enUser.setFirstName(aes.encryptIV(user.getFirstName()));
-		enUser.setLastName(aes.encryptIV(user.getLastName()));
-		enUser.setPassword(aes.encryptIV(user.getPassword()));
-		enUser.setToken(aes.encryptIV(user.getToken()));
-		
+		enUser.setEmail(cryptoService.encryptNetwork(user.getEmail()));
+		enUser.setFirstName(cryptoService.encryptNetwork(user.getFirstName()));
+		enUser.setLastName(cryptoService.encryptNetwork(user.getLastName()));
+		enUser.setPassword(cryptoService.encryptNetwork(user.getPassword()));
+		enUser.setToken(cryptoService.encryptNetwork(user.getToken()));
 		return enUser;
 	}
 
 	@Override
 	public User decryptPublicKey(User user) throws ServiceException {
-		AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
-		
 		User deUser = new User();
-		deUser.setEmail(aes.decryptIV(user.getEmail()));
-		deUser.setFirstName(aes.decryptIV(user.getFirstName()));
-		deUser.setLastName(aes.decryptIV(user.getLastName()));
-		deUser.setPassword(aes.decryptIV(user.getPassword()));
-		deUser.setToken(aes.decryptIV(user.getToken()));
-		
+		deUser.setEmail(cryptoService.decryptNetwork(user.getEmail()));
+		deUser.setFirstName(cryptoService.decryptNetwork(user.getFirstName()));
+		deUser.setLastName(cryptoService.decryptNetwork(user.getLastName()));
+		deUser.setPassword(cryptoService.decryptNetwork(user.getPassword()));
+		deUser.setToken(cryptoService.decryptNetwork(user.getToken()));
 		return deUser;
 	}
 
