@@ -9,6 +9,7 @@ public class User {
 	private String id;
 	private String firstName;
 	private String lastName;
+	private String phone;
 	private String email;
 	private String password;
 	private String passwordHash;
@@ -23,6 +24,7 @@ public class User {
 	// aesKey
 	private String AES;
 	private String publicKey;
+	private String privateKey;
 	
 	public User() {}
 	
@@ -154,6 +156,22 @@ public class User {
 
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
+	}
+
+	public String getPrivateKey() {
+		return privateKey;
+	}
+
+	public void setPrivateKey(String privateKey) {
+		this.privateKey = privateKey;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	
 }
