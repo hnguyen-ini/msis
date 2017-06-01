@@ -45,8 +45,11 @@
     <script src="scripts/services/crypto-service.js"></script>
     <script src="scripts/services/rest-service.js"></script>
 
+    <script src="scripts/controllers/authen/authen-controller.js"></script>
+    <!--
     <script src="scripts/controllers/authen/signup-controller.js"></script>
     <script src="scripts/controllers/authen/signin-controller.js"></script>
+    -->
     <script src="scripts/controllers/authen/tokenvalidation-controller.js"></script>
     
     <script src="scripts/directives/pw-check.js"></script>
@@ -83,16 +86,16 @@
               <li class="fa fa-comment"><a href="#!contact">Contact</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#!signin" ng-hide="AuthenService.isSignined()"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+              <li><a href="#!signin" ng-hide="isSignin || signining" ng-click="signining=true"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
 
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" ng-show="AuthenService.isSignined()" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <li class="dropdown" ng-show="isSignin">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{userName}}<span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li><a href="#">Action</a></li>
                   <li><a href="#">Another action</a></li>
                   <li><a href="#">Something else here</a></li>
                   <li role="separator" class="divider"></li>
-                  <li><a href="#">Sign Out</a></li>
+                  <li><a href="" ng-controller="AuthenController as Ctrl" ng-click="Ctrl.signout()">Sign Out</a></li>
                 </ul>
               </li>
             </ul>

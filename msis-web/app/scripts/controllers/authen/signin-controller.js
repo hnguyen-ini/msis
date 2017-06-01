@@ -2,7 +2,7 @@
  * Login Controller
  */
 angular.module('webappApp')
-    .controller('SigninController', ['$timeout', 'UserService', 'AuthenService', function ($timeout, UserService, AuthenService) {
+    .controller('SigninController', ['$timeout', '$location', 'UserService', 'AuthenService', function ($timeout, $location, UserService, AuthenService) {
         var vm = this;
         vm.signin = signin;
 

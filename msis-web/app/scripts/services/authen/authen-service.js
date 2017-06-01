@@ -1,17 +1,16 @@
 angular.module('webappApp')
-    .factory('AuthenService', ['$rootScope', '$http', '$localStorage', '$cookies', function($rootScope, $http, $localStorage, $cookies) {
+    .factory('AuthenService', ['$rootScope', '$http', '$localStorage', '$cookies', 'CryptoService', function($rootScope, $http, $localStorage, $cookies, CryptoService) {
         var service = {};
         service.setCredentials = setCredentials;
         service.clearCredentials = clearCredentials;
-        service.isSignined = isSignined;
 
         return service;
 
         function setCredentials(user) {
 
-            $rootScope.globals = {
-                currentUser: user
-            };
+            $rootScope.currentUser = user
+            $rootScope.isSignin = true;
+            $rootScope.userName = CryptoService.decrypt(user.firstName) + ' ' + CryptoService.decrypt(user.lastName);
 
             $localStorage.currentUser = user;
             
@@ -25,16 +24,11 @@ angular.module('webappApp')
         }
 
         function clearCredentials() {
-            $rootScope.globals = {};
+            $rootScope.currentUser = {};
+            $rootScope.isSignin = false;
             $localStorage.currentUser = {};
             $cookies.remove('webwebApp');
-            $http.defaults.headers.common.Authorization = 'Basic';
-        }
-
-        function isSignined() {
-            if ($rootScope.globals != null && $rootScope.globals.currentUser != null)
-                return true;
-            return false;
+            //$http.defaults.headers.common.Authorization = 'Basic';
         }
 
 

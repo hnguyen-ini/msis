@@ -27,12 +27,12 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
             // route for the contact page
             .when('/signin', {
                 templateUrl : 'views/authen/signin.html',
-                controller  : 'SigninController',
+                controller  : 'AuthenController',
                 controllerAs: 'vm'
             })
             .when('/signup', {
                 templateUrl : 'views/authen/signup.html',
-                controller  : 'SignupController',
+                controller  : 'AuthenController',
                 controllerAs: 'vm'
             })
             .when('/token-validation', {
@@ -49,10 +49,15 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
 
     scotchApp.run(['$rootScope', '$http', '$location', '$localStorage', '$cookies', function($rootScope, $http, $location, $localStorage, $cookies) { 
         // keep user logged in after page refresh
-        if ($localStorage.currentUser) {
-            $http.defaults.headers.common.Authorization = 'Basic ' + $localStorage.currentUser.token;
-        }
+        // if ($localStorage.currentUser) {
+        //     $http.defaults.headers.common.Authorization = 'Basic ' + $localStorage.currentUser.token;
+        // }
         // redirect to login page if not logged in and trying to access a restricted page
+
+        toastr.options.positionClass='toast-top-center';
+
+        $rootScope.signining = false;
+
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
             var restrictedPage = $.inArray($location.path(), ['/signin', '/signup']) === -1;
             var loggedIn = $localStorage.currentUser;//$rootScope.globals.currentUser;
