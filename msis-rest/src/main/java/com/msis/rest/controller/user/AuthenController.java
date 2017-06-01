@@ -2,7 +2,6 @@ package com.msis.rest.controller.user;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,13 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
-import com.google.gson.Gson;
 import com.msis.common.parser.JsonHelper;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceResponse;
 import com.msis.common.service.ServiceStatus;
 import com.msis.core.cache.CacheService;
-import com.msis.core.cache.Cacheable;
 import com.msis.core.model.Session;
 import com.msis.core.model.User;
 import com.msis.core.service.UserService;
@@ -89,6 +86,26 @@ public class AuthenController implements InitializingBean {
 		log.info("-> Validation OK");
 		response.setStatus(ServiceStatus.OK);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@PUT
+	@Path("/changePassword")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response changePassword(User user) {
+		ServiceResponse<User> response = new ServiceResponse<User>();
+		try {
+			log.info("Change Password / session: " + user.getToken());
+			User userChange = userService.changePassword(user);
+			response.setResult(userChange);
+		} catch (ServiceException e) {
+			log.warn("-> Change Password Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Change Password OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build(); 
 	}
 	
 	public static void setUserService(UserService userService) {

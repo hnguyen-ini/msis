@@ -202,13 +202,7 @@ public class UserServiceImpl implements UserService{
 		cacheService.resetExpiration(session, coreConfig.sessionExpired());
 		cacheService.setCache(session);
 		
-		User response = new User();
-		response.setStatus("A");
-		response.setFirstName(cryptoService.encryptNetwork(user.getFirstName()));
-		response.setLastName(cryptoService.encryptNetwork(user.getLastName()));
-		response.setEmail(cryptoService.encryptNetwork(user.getEmail()));
-		response.setToken(cryptoService.encryptNetwork(user.getToken()));
-		return response;
+		return response(user);
 	}
 	
 	@Override
@@ -238,21 +232,59 @@ public class UserServiceImpl implements UserService{
 			user.setLoginAt(System.currentTimeMillis());
 			save(user);
 			
-			String aesKey = cryptoService.decryptSystem(user.getAES());
+			String aesKey = "testtesttts";//cryptoService.decryptSystem(user.getAES());
 			Session session = new Session(token, aesKey, coreConfig.sessionExpired());
 	        cacheService.setCache(session);
 	        
-			User response = new User();
-			response.setFirstName(cryptoService.encryptNetwork(user.getFirstName()));
-			response.setLastName(cryptoService.encryptNetwork(user.getLastName()));
-			response.setEmail(cryptoService.encryptNetwork(user.getEmail()));
-			response.setToken(cryptoService.encryptNetwork(user.getToken()));
-			response.setStatus(user.getStatus());
-			return response;
+			return response(user);
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Sign-in failed, " + e.getMessage());
+		}
+	}
+	
+	@Override
+	public User changePassword(User user) throws ServiceException {
+		try {
+			if (user.getToken() == null || user.getToken().isEmpty() || user.getPassword() == null || user.getPassword().isEmpty()) {
+				logger.warn("Missing token or password");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing token or password");
+			}
+			String token = cryptoService.decryptNetwork(user.getToken());
+			User userC = findByToken(token);
+			if (userC == null) {
+				logger.warn("Not found user by token " + token);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + token);
+			}
+			String[] pair = cryptoService.decryptNetwork(user.getPassword()).split(":");
+			if (pair.length != 2) {
+				logger.warn("Invalid passwords");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Invalid passwords");
+			}
+			String _old = pair[0];
+			String _new = pair[1];
+			
+			verify(userC.getEmail(), _old);
+			
+	    	PasswordUtils.validate(_new);
+	    	String pwd = PasswordUtils.createHash(_new);
+	    	String salt = pwd.split(":")[PasswordUtils.SALT_INDEX];
+			String pwod = pwd.split(":")[PasswordUtils.PBKDF2_INDEX];
+			
+			userC.setPassword(pwod);
+			userC.setPasswordHash(salt);
+			userC.setModifyAt(System.currentTimeMillis());
+			save(userC);
+			
+			Session session = new Session(token, cryptoService.decryptSystem(userC.getAES()), coreConfig.sessionExpired());
+			cacheService.setCache(session);
+			
+			return response(userC);			
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Change-Password failed, " + e.getMessage());
 		}
 	}
 
@@ -316,5 +348,14 @@ public class UserServiceImpl implements UserService{
 		return true;
 	}
 
+	private User response(User user) throws ServiceException {
+		User response = new User();
+		response.setFirstName(cryptoService.encryptNetwork(user.getFirstName()));
+		response.setLastName(cryptoService.encryptNetwork(user.getLastName()));
+		response.setEmail(cryptoService.encryptNetwork(user.getEmail()));
+		response.setToken(cryptoService.encryptNetwork(user.getToken()));
+		response.setStatus(user.getStatus());
+		return response;
+	}
 	
 }
