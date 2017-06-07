@@ -265,7 +265,11 @@ public class UserServiceImpl implements UserService{
 			String _old = pair[0];
 			String _new = pair[1];
 			
-			verify(userC.getEmail(), _old);
+			String correctHash = PasswordUtils.PBKDF2_ITERATIONS + ":" + userC.getPasswordHash() + ":" + userC.getPassword();
+			if (!PasswordUtils.validatePassword(_old, correctHash)) {
+				logger.warn("Invalid current password");
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Invalid current password");
+			}
 			
 	    	PasswordUtils.validate(_new);
 	    	String pwd = PasswordUtils.createHash(_new);
@@ -277,8 +281,8 @@ public class UserServiceImpl implements UserService{
 			userC.setModifyAt(System.currentTimeMillis());
 			save(userC);
 			
-			Session session = new Session(token, cryptoService.decryptSystem(userC.getAES()), coreConfig.sessionExpired());
-			cacheService.setCache(session);
+//			Session session = new Session(token, cryptoService.decryptSystem(userC.getAES()), coreConfig.sessionExpired());
+//			cacheService.setCache(session);
 			
 			return response(userC);			
 		} catch (ServiceException e) {

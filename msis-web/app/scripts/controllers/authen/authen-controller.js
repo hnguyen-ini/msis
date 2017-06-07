@@ -7,6 +7,8 @@ angular.module('webappApp')
         vm.signin = signin;
         vm.signup = signup;
         vm.signout = signout;
+        vm.changePassword = changePassword;
+
 
         function signup() {
             vm.dataLoading = true;
@@ -42,6 +44,24 @@ angular.module('webappApp')
             AuthenService.clearCredentials();
             $rootScope.signining = true;
             $location.path('/signin');
+        }
+
+        function changePassword() {
+            vm.dataLoading = true;
+            $timeout(function () {
+                vm.user.token = $rootScope.currentUser.token;
+                vm.user.password = vm.user.currentPassword + ":" + vm.user.password;
+                UserService.changePassword(vm.user).then(function (response) {
+                    if (response.success) {
+                        toastr.info("Change password successfully!!!", 'Msis-Web');
+                        AuthenService.clearCredentials();
+                        $location.path('/signin');
+                    } else {
+                        toastr.error(response.message, 'Msis-Web');
+                    }
+                });
+            }, 1000);
+            vm.dataLoading = false;
         }
     }
 ]);

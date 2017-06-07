@@ -20,7 +20,7 @@ angular.module('webappApp')
             // store user details in globals cookie that keeps user logged in for 1 week (or until they logout)
             var cookieExp = new Date();
             cookieExp.setDate(cookieExp.getDate() + 7);
-            $cookies.putObject('webwebApp', $rootScope.globals, { expires: cookieExp });
+            $cookies.putObject('webapApp', $rootScope.globals, { expires: cookieExp });
         }
 
         function clearCredentials() {
@@ -31,6 +31,6 @@ angular.module('webappApp')
             //$http.defaults.headers.common.Authorization = 'Basic';
         }
 
-
+       
     }
 ]);

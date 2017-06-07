@@ -35,6 +35,11 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 controller  : 'AuthenController',
                 controllerAs: 'vm'
             })
+            .when('/change-password', {
+                templateUrl : 'views/authen/change-password.html',
+                controller  : 'AuthenController',
+                controllerAs: 'vm' 
+            })
             .when('/token-validation', {
                 templateUrl : 'views/authen/token-validation.html',
                 controller  : 'TokenValidationController',
@@ -59,7 +64,7 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
         $rootScope.signining = false;
 
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
-            var restrictedPage = $.inArray($location.path(), ['/signin', '/signup']) === -1;
+            var restrictedPage = $.inArray($location.path(), ['/signin', '/signup', '/token-validation']) === -1;
             var loggedIn = $localStorage.currentUser;//$rootScope.globals.currentUser;
             if (restrictedPage && !loggedIn) {
                 $location.path('/signin');

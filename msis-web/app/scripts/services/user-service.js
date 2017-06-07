@@ -9,6 +9,7 @@ angular.module('webappApp')
         service.Update = Update;
         service.Delete = Delete;
         service.signin = signin;
+        service.changePassword = changePassword;
 
         return service;
 
@@ -42,6 +43,13 @@ angular.module('webappApp')
             var enUser = {};
             enUser.token = CryptoService.encrypt(user.token);
             return RestService.restPut(GlobalService.validateToken, enUser);
+        }
+
+        function changePassword(user) {
+            var enUser = {};
+            enUser.token = user.token;
+            enUser.password = CryptoService.encrypt(user.password);
+            return RestService.restPut(GlobalService.changePassword, enUser);
         }
 
         function Update(user) {
