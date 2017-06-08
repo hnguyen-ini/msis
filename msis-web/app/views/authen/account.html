@@ -1,0 +1,53 @@
+<div class="panel panel-info" >
+    <div class="panel-heading">
+        <div class="panel-title" style="font-weight:bold">My Account Infomation</div>
+    </div>
+    <div style="padding-top:10px" class="panel-body">
+        <form name="form" ng-submit="vm.update()" role="form">
+            <div class="row">
+                <div class="col-sm-3">First name</div>
+                <div class="col-sm-6">
+                    <label ng-hide="editMode" ng-model="vm.account.firstName"></label>
+                    <input ng-show="editMode" class="form-control" ng-model="vm.account.firstName">
+                </div>
+                <div class="col-sm-3" style="float:right"><button ng-click="editMode=true">Edit</button></div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-3">Last name</div>
+                <div class="col-sm-6">Nguyen</div>
+                <div class="col-sm-3" style="float:right"><button ng-click="editMode=true">Edit</button></div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-3">Sex</div>
+                <div class="col-sm-6">Nguyen</div>
+                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-3">Job title</div>
+                <div class="col-sm-6">Nguyen</div>
+                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-3">Phone Number</div>
+                <div class="col-sm-6">Nguyen</div>
+                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-3">Home address</div>
+                <div class="col-sm-6">Nguyen</div>
+                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-sm-3">Work address</div>
+                <div class="col-sm-6">Nguyen</div>
+                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+            </div>
+        </form>
+    </div>
+</div>

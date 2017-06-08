@@ -45,6 +45,11 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 controller  : 'TokenValidationController',
                 controllerAs: 'vm' 
             })
+            .when('/account', {
+                templateUrl : 'views/authen/account.html',
+                controller  : 'AccountController',
+                controllerAs: 'vm' 
+            })
              // route for the about page
             .when('/about', {
                 templateUrl : 'views/about.html',

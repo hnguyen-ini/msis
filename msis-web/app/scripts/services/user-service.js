@@ -3,7 +3,7 @@ angular.module('webappApp')
         var service = {};
         service.GetAll = GetAll;
         service.GetById = GetById;
-        service.GetByUsername = GetByUsername;
+        service.GetByToken = GetByToken;
         service.create = create;
         service.validateToken = validateToken;
         service.Update = Update;
@@ -22,8 +22,8 @@ angular.module('webappApp')
             return $http.get('/api/users/' + id).then(handleSuccess, handleError('Error getting user by id'));
         }
 
-        function GetByUsername(username) {
-            return $http.get('/api/users/' + username).then(handleSuccess, handleError('Error getting user by username'));
+        function GetByToken(token) {
+            return RestService.restGet(GlobalService.accountinfo + token);
         }
 
         function create(user) {

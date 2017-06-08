@@ -11,5 +11,6 @@ angular.module('webappApp')
         service.signinUri = service.host + "authen/signin";
         service.validateToken = service.host + "authen/validateToken";
         service.changePassword = service.host + "authen/changePassword";
+        service.accountinfo = service.host + "authen/account/";
         return service;
     });

@@ -291,6 +291,27 @@ public class UserServiceImpl implements UserService{
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Change-Password failed, " + e.getMessage());
 		}
 	}
+	
+	@Override
+	public User getAccountByToken(String token) throws ServiceException {
+		try {
+			if (token == null || token.isEmpty()) {
+				logger.warn("Missing token");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing token");
+			}
+			String to = cryptoService.decryptNetwork(token);
+			User userC = findByToken(token);
+			if (userC == null) {
+				logger.warn("Not found user by token " + to);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + token);
+			}
+			return account(userC);
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, "Get Account failed, " + e.getMessage());
+		}
+	}
 
 	@Override
 	public User encryptPublicKey(User user) throws ServiceException {
@@ -362,4 +383,16 @@ public class UserServiceImpl implements UserService{
 		return response;
 	}
 	
+	private User account(User user) throws ServiceException {
+		User response = new User();
+		response.setFirstName(user.getFirstName());
+		response.setLastName(user.getLastName());
+		response.setDob(user.getDob());
+		response.setHomeAddress(user.getHomeAddress());
+		response.setJobTitle(user.getJobTitle());
+		response.setPhone(user.getPhone());
+		response.setSex(user.getSex());
+		response.setWorkAddress(user.getWorkAddress());
+		return response;
+	}
 }

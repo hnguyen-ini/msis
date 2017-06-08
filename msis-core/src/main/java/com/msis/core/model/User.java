@@ -9,10 +9,17 @@ public class User {
 	private String id;
 	private String firstName;
 	private String lastName;
+	private String sex;
+	private Long dob;
+	private String jobTitle;
+	private String homeAddress;
+	private String workAddress;
 	private String phone;
+	
 	private String email;
 	private String password;
 	private String passwordHash;
+	
 	private Long createAt;
 	private Long modifyAt;
 	private String status = "P"; // P: Pending (Init); A: Active; I: Inactive 
@@ -172,6 +179,46 @@ public class User {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public Long getDob() {
+		return dob;
+	}
+
+	public void setDob(Long dob) {
+		this.dob = dob;
+	}
+
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
+	}
+
+	public String getHomeAddress() {
+		return homeAddress;
+	}
+
+	public void setHomeAddress(String homeAddress) {
+		this.homeAddress = homeAddress;
+	}
+
+	public String getWorkAddress() {
+		return workAddress;
+	}
+
+	public void setWorkAddress(String workAddress) {
+		this.workAddress = workAddress;
 	}
 	
 }
