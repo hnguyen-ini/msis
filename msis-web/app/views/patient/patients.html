@@ -1,0 +1,42 @@
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <div class="panel-title">List</div>
+    </div>     
+    <div style="padding-top:30px" class="panel-body">
+        <table ng-table="vm.tableParams"  class="table table-condensed table-bordered table-striped" >
+        <thead>
+            <tr>
+                <th rowspan="2">ID</th>
+                <th colspan="2">primary</th>
+                <th colspan="2">secondary</th>
+            </tr>
+            <tr>
+                <th>NAME</th>
+                <th>AGE</th>
+                <th>NAME</th>
+                <th>AGE</th>
+            </tr>
+        <thead>
+        <tbody>
+            <tr ng-repeat="person in vm.data">
+                <td data-title="'id'" >
+                    {{person.id}}
+                </td>
+                <td data-title="'Name'">
+                    {{person.primary.name}}
+                </td>
+                <td data-title="'Age'">
+                    {{person.primary.age}}
+                </td>
+                <td data-title="'Name'">
+                    {{person.secondary.name}}
+                </td>
+                <td data-title="'Age'">
+                    {{person.secondary.age}}
+                </td>
+            </tr>
+        </tbody>
+        </tbody>
+    </table>
+    </div>
+</div>

@@ -300,7 +300,7 @@ public class UserServiceImpl implements UserService{
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing token");
 			}
 			String to = cryptoService.decryptNetwork(token);
-			User userC = findByToken(token);
+			User userC = findByToken(to);
 			if (userC == null) {
 				logger.warn("Not found user by token " + to);
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + token);

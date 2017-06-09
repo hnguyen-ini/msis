@@ -29,17 +29,17 @@ var paths = {
     'bower_components/ngstorage/ngStorage.min.js',
     'bower_components/angular-base64/angular-base64.min.js',
     'bower_components/angular-csrf-cross-domain/dist/angular-csrf-cross-domain.min.js',
-    'bower_components/bootstrap/dist/js/bootstrap.min.js'
+    'bower_components/bootstrap/dist/js/bootstrap.min.js',
+    'app/libs/js/ng-table.min.js'
   ],
   libstyle: [
     'bower_components/bootstrap/dist/css/bootstrap.min.css',
-    //'bower_components/bootstrap/less/navbar.less',
-    //'bower_components/bootstrap/less/navs.less',
-    //'bower_components/bootstrap/less/normalize.less',
-    'bower_components/toastr/toastr.min.css'
+    'bower_components/toastr/toastr.min.css',
+    'app/libs/styles/ng-table.min.css'
   ],
   scripts: [yeoman.app + '/scripts/**/*.js'],
   styles: [yeoman.app + '/styles/**/*.css'],
+  data: [yeoman.app + '/data/**/*.json'],
   test: ['test/spec/**/*.js'],
   testRequire: [
     yeoman.app + '/bower_components/angular/angular.js',
@@ -275,8 +275,13 @@ gulp.task('libstyle', function(){
     .pipe(gulp.dest(yeoman.dist + '/libs/styles'));
 });
 
+gulp.task('data', function(){
+  return gulp.src(paths.data)
+    .pipe(gulp.dest(yeoman.dist + '/data'))
+});
+
 gulp.task('build', ['clean:dist'], function () {
-  runSequence(['index', 'view', 'style' ,'images', 'copy:fonts' ,'script' ,'libjs', 'libstyle']);
+  runSequence(['index', 'view', 'style' ,'images', 'copy:fonts' ,'script' ,'libjs', 'libstyle', 'data']);
 });
 
 gulp.task('default', ['build']);

@@ -7,7 +7,7 @@
  *
  * Main module of the application.
  */
-var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies']);
+var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies', 'ngTable']);
 
     // configure our routes
     scotchApp.config(['$routeProvider', function($routeProvider) {
@@ -20,8 +20,9 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
             })
 
             .when('/home', {
-                templateUrl : 'views/home.html',
-                controller  : 'homeController'
+                templateUrl : 'views/patient/patients.html',
+                controller  : 'PatientsController',
+                controllerAs: 'vm'
             })
 
             // route for the contact page

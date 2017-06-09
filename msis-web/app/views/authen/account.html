@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-sm-3">First name</div>
                 <div class="col-sm-6">
-                    <label ng-hide="editMode" ng-model="vm.account.firstName"></label>
+                    <label ng-hide="editMode" ng-model="vm.account.firstName">{{vm.account.firstName}}</label>
                     <input ng-show="editMode" class="form-control" ng-model="vm.account.firstName">
                 </div>
                 <div class="col-sm-3" style="float:right"><button ng-click="editMode=true">Edit</button></div>
