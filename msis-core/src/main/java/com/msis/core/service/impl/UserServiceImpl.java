@@ -227,13 +227,13 @@ public class UserServiceImpl implements UserService{
 				logger.warn("None Active user");
 				throw new ServiceException(ServiceStatus.INACTIVE_USER, "None active user");
 			}
-			String token = UUID.randomUUID().toString();
-			user.setToken(token);
+//			String token = UUID.randomUUID().toString();
+//			user.setToken(token);
 			user.setLoginAt(System.currentTimeMillis());
 			save(user);
 			
 			String aesKey = "testtesttts";//cryptoService.decryptSystem(user.getAES());
-			Session session = new Session(token, aesKey, coreConfig.sessionExpired());
+			Session session = new Session(user.getToken(), aesKey, coreConfig.sessionExpired());
 	        cacheService.setCache(session);
 	        
 			return response(user);

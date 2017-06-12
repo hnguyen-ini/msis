@@ -248,7 +248,7 @@ public class PatientController implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(patientService, "patientService can't be null");
 		
-Assert.notNull(cacheService, "userService can't be null");
+		Assert.notNull(cacheService, "userService can't be null");
 		
 		String s = new String("Nguyen The Hien");
 		Session co = new Session("12345", s, 2);

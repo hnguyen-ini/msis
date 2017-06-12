@@ -3,6 +3,7 @@ angular.module('webappApp')
         var service = {};
         service.setCredentials = setCredentials;
         service.clearCredentials = clearCredentials;
+        service.getCookies = getCookies;
 
         return service;
 
@@ -19,8 +20,8 @@ angular.module('webappApp')
 
             // store user details in globals cookie that keeps user logged in for 1 week (or until they logout)
             var cookieExp = new Date();
-            cookieExp.setDate(cookieExp.getDate() + 7);
-            $cookies.putObject('webapApp', $rootScope.globals, { expires: cookieExp });
+            cookieExp.setDate(cookieExp.getMinutes() + 30);
+            $cookies.putObject('webappApp', $rootScope.currentUser, { expires: cookieExp });
         }
 
         function clearCredentials() {
@@ -31,6 +32,8 @@ angular.module('webappApp')
             //$http.defaults.headers.common.Authorization = 'Basic';
         }
 
-       
+        function getCookies() {
+            return $cookies.getObject('webwebApp');
+        }
     }
 ]);

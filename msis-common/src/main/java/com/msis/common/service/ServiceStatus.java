@@ -23,6 +23,7 @@ public class ServiceStatus {
     final static public ServiceStatus SERVER_UNAVAILABLE = new ServiceStatus(503, "Server unavailable");
     final static public ServiceStatus DUPLICATE_USER = new ServiceStatus(504, "Duplicate user email");
     public static final ServiceStatus INACTIVE_USER = new ServiceStatus(505, "Inactive user");
+    final static public ServiceStatus DUPLICATE_PATIENT = new ServiceStatus(504, "Duplicate patient");
     public static final ServiceStatus CRYPTO_ERROR = new ServiceStatus(508, "Crypto error");
     public static final ServiceStatus BAD_PASSWORD = new ServiceStatus(507, "Password mismatch"); 
     

@@ -12,6 +12,7 @@ import com.msis.common.service.ServiceStatus;
 import com.msis.common.utils.ListUtils;
 import com.msis.core.model.Patient;
 import com.msis.core.repository.PatientRepository;
+import com.msis.core.service.CryptoService;
 import com.msis.core.service.PatientService;
 import com.msis.core.service.RecordService;
 import com.msis.core.service.UserService;
@@ -29,6 +30,9 @@ public class PatientServiceImpl implements PatientService {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private CryptoService cryptoService;
 	
 	@Override
 	public void save(Patient patient) {
@@ -97,23 +101,22 @@ public class PatientServiceImpl implements PatientService {
 	public Patient create(Patient patient) throws ServiceException {
 		try {
 			if (!okPatient(patient)) {
-				log.warn("Missing Idn or name");
+				log.warn("Missing Idn or name or creator");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or Name or Creator");
 			}
-			if (findByIdnAndCreator(patient.getIdn(), patient.getCreator()) != null) {
+			if (findByIdn(patient.getIdn()) != null) {
 				log.warn("Duplicated Idn " + patient.getIdn());
-				throw new ServiceException(ServiceStatus.DUPLICATE_USER, "Duplicated Idn");
+				throw new ServiceException(ServiceStatus.DUPLICATE_PATIENT, "Duplicated Patient");
 			}
-			String creator = patient.getCreator(); 
-			if (creator != null && !creator.isEmpty()) {
-				if (userService.findByEmail(creator) == null) {
-					log.warn("Not found creator by " + creator);
-					throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found creator by " + creator);
-				}
+			String token = cryptoService.decryptNetwork(patient.getCreator());
+			if (userService.findByToken(token) == null) {
+				log.warn("Not found creator by " + token);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found creator by " + token);
 			}
 			Long time = System.currentTimeMillis();
 			patient.setCreateAt(time);
 			patient.setModifiedAt(time);
+			patient.setCreator(token);
 			save(patient);
 			return patient;
 		} catch (ServiceException e) {
