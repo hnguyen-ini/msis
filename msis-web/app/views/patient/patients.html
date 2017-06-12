@@ -2,19 +2,29 @@
     <div class="panel-heading">
         <div class="panel-title">List</div>
     </div>     
-    <div style="padding-top:30px" class="panel-body" ng-init="vm.loadData()">
+    <div style="padding-top:10px" class="panel-body" ng-init="vm.loadData()">
         <table ng-table="vm.tableParams"  class="table table-condensed table-bordered table-striped" >
        
         <tbody>
-            <tr ng-repeat="person in $data">
-                <td data-title="'id'" >
-                    {{person.id}}
+            <tr ng-repeat="p in $data">
+                <td>{{ $index + 1 }}</td>
+                <td data-title="'Id'" >
+                    {{p.idn}}
                 </td>
-                <td data-title="'First Name'" sortable="'firstName'" filter="{firstName: 'text'}">
-                    {{person.firstName}}
+                <td data-title="'Name'" sortable="'name'" filter="{name: 'text'}">
+                    {{p.name}}
                 </td>
-                <td data-title="'Last Name'" sortable="'lastName'">
-                    {{person.lastName}}
+                <td data-title="'Age'">
+                    {{p.age}
+                </td>
+                <td data-title="'Sex'">
+                    {{p.sex}
+                </td>
+                <td data-title="'Address'">
+                    {{p.addr}
+                </td>
+                <td data-title="'Phone'">
+                    {{p.phone}
                 </td>
             </tr>
         </tbody>
