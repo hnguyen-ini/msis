@@ -59,10 +59,10 @@ body {
   margin-top: 28px;
 }
 
-/* Responsive: Portrait tablets and up */
+/* Responsive: Portrait tablets and up (iPad)*/
 @media screen and (min-width: 768px) {
   .container {
-    max-width: 780px;
+    max-width: 1024px;
     background-color: #ffffff;
   }
 
@@ -84,16 +84,5 @@ body {
   }
 }
 
-table, th , td {
-  border: 1px solid grey;
-  border-collapse: collapse;
-  padding: 5px;
-}
-table tr:nth-child(odd) {
-  background-color: #f1f1f1;
-}
-table tr:nth-child(even) {
-  background-color: #ffffff;
-}
 
 

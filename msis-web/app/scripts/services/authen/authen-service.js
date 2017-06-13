@@ -28,12 +28,12 @@ angular.module('webappApp')
             $rootScope.currentUser = {};
             $rootScope.isSignin = false;
             $localStorage.currentUser = {};
-            $cookies.remove('webwebApp');
+            $cookies.remove('webappApp');
             //$http.defaults.headers.common.Authorization = 'Basic';
         }
 
         function getCookies() {
-            return $cookies.getObject('webwebApp');
+            return $cookies.getObject('webappApp');
         }
     }
 ]);

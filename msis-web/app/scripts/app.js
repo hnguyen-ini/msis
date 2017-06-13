@@ -18,10 +18,15 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 templateUrl : 'views/main.html',
                 controller  : 'MainCtrl'
             })
-
+            // patient
             .when('/home', {
                 templateUrl : 'views/patient/patients.html',
                 controller  : 'PatientsController',
+                controllerAs: 'vm'
+            })
+            .when('/patient', {
+                templateUrl : 'views/patient/patient.html',
+                controller  : 'PatientController',
                 controllerAs: 'vm'
             })
 

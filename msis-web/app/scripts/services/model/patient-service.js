@@ -6,11 +6,11 @@ angular.module('webappApp')
         return service;
 
         function create(patient) {
-            return RestService.postRest(GlobalService.createPatient, patient);
+            return RestService.restPost(GlobalService.createPatient, patient);
         }
 
         function getByCreator(creator) {
-            return RestService.getRest(GlobalService.getPatientByCreator + creator);
+            return RestService.restGet(GlobalService.getPatientByCreator + creator);
         }
     }
 ]);

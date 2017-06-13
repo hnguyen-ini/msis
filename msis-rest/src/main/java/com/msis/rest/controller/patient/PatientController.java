@@ -141,16 +141,16 @@ public class PatientController implements InitializingBean {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getByIdn(@PathParam("idn") String idn) {
-		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
+		ServiceResponse<Patient> response = new ServiceResponse<Patient>();
 		try {
 			log.info("Get Patient " + idn);
-			List<Patient> patients = patientService.findByIdn(idn);
-			if (patients.size() == 0) {
+			Patient patient = patientService.findByIdn(idn);
+			if (patient == null) {
 				log.info("Not found patient by idn " + idn);
 				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by idn" + idn));
 				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 			}
-			response.setResult(patients);
+			response.setResult(patient);
 		} catch (Exception e) {
 			log.warn("-> Get Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
@@ -226,6 +226,10 @@ public class PatientController implements InitializingBean {
 				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 			}
 			response.setResult(patients);
+		} catch (ServiceException e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 		} catch (Exception e) {
 			log.warn("-> Get Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));

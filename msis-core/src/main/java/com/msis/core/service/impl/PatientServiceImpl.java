@@ -78,8 +78,8 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
-	public List<Patient> findByIdn(String idn) {
-		return ListUtils.okList(patientRepository.findByIdn(idn));
+	public Patient findByIdn(String idn) {
+		return patientRepository.findByIdn(idn);
 	}
 	
 	@Override
@@ -93,8 +93,9 @@ public class PatientServiceImpl implements PatientService {
 	} 
 
 	@Override
-	public List<Patient> findByCreator(String creator) {
-		return ListUtils.okList(patientRepository.findByCreator(creator));
+	public List<Patient> findByCreator(String creator) throws ServiceException {
+		String token = cryptoService.decryptNetwork(creator);
+		return ListUtils.okList(patientRepository.findByCreator(token));
 	}
 
 	@Override

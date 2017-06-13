@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import com.msis.core.model.Patient;
 
 public interface PatientRepository extends ElasticsearchRepository<Patient, String> {
-	List<Patient> findByIdn(String idn);
+	Patient findByIdn(String idn);
 	List<Patient> findByName(String name);
 	List<Patient> findByPhone(String phone);
 	

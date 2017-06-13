@@ -2,33 +2,58 @@
     <div class="panel-heading">
         <div class="panel-title">List</div>
     </div>     
-    <div style="padding-top:10px" class="panel-body" ng-init="vm.loadData()">
+    <div style="padding-top:15px" class="panel-body" ng-init="vm.loadData()">
+        <div class="row" style="padding-bottom:5px">
+            <div class="col-lg-6">
+                <button class="btn btn-primary" ng-click="vm.addNew()">Add New </button>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for ID or Name.." key-enter="vm.search()">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" ng-click="vm.search()">Go!</button>
+                    </span>
+                </div>
+            </div>
+        </div>
         <table ng-table="vm.tableParams"  class="table table-condensed table-bordered table-striped" >
-       
         <tbody>
             <tr ng-repeat="p in $data">
                 <td>{{ $index + 1 }}</td>
-                <td data-title="'Id'" >
+                <td data-title="'ID'" >
                     {{p.idn}}
                 </td>
-                <td data-title="'Name'" sortable="'name'" filter="{name: 'text'}">
+                <td data-title="'Name'" sortable="'name'">
                     {{p.name}}
                 </td>
                 <td data-title="'Age'">
-                    {{p.age}
+                    {{p.age}}
                 </td>
                 <td data-title="'Sex'">
-                    {{p.sex}
+                    {{p.sex}}
                 </td>
                 <td data-title="'Address'">
-                    {{p.addr}
+                    {{p.addr}}
                 </td>
                 <td data-title="'Phone'">
-                    {{p.phone}
+                    {{p.phone}}
+                </td>
+                <td style="width:10px">
+                    <p data-placement="top" data-toggle="tooltip" title="Edit" style="margin-bottom:0px">
+                        <button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ng-click="vm.edit(p)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </p>
+                </td>
+                <td style="width:10px">
+                    <p data-placement="top" data-toggle="tooltip" title="Delete" style="margin-bottom:0px">
+                        <button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ng-click="vm.del(p.id)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </p>
                 </td>
             </tr>
         </tbody>
-        </tbody>
-    </table>
+        </table>
     </div>
 </div>

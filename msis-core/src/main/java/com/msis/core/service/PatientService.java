@@ -14,10 +14,10 @@ public interface PatientService {
 	
 	Patient findOne(String id);
 	Patient findByIdnAndCreator(String idn, String creator);
-	List<Patient> findByIdn(String idn);
+	Patient findByIdn(String idn);
 	List<Patient> findByName(String name);
 	List<Patient> findByPhone(String phone);
-	List<Patient> findByCreator(String creator);
+	List<Patient> findByCreator(String creator) throws ServiceException;
 	
 	Patient create(Patient patient) throws ServiceException;
 	Patient update(Patient patient)  throws ServiceException;
