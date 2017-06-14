@@ -19,5 +19,6 @@ angular.module('webappApp')
         service.updatePatientById = service.host + "patient/get/";
         service.updatePatientByIdn = service.host + "patient/get/idn/";
         service.getPatientByCreator = service.host + "patient/get/creator/";
+        service.searchPatient = service.host + "patient/search/";
         return service;
     });

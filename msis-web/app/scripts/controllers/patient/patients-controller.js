@@ -10,13 +10,14 @@ angular.module('webappApp')
         vm.edit = edit;
         vm.del = del;
         vm.data = {};
+        vm.searchText = '';
 
         function loadData() {
             var gedIn = $rootScope.currentUser;
             var loggedIn = $localStorage.currentUser;
             var cookies = AuthenService.getCookies();
             if (cookies == null) {
-                toastr.error("Session was expired. Please signin again!", 'Msis-Web');
+                toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
                 AuthenService.clearCredentials();
                 $location.path('/signin');
             } else {
@@ -37,15 +38,35 @@ angular.module('webappApp')
         }
 
         function search() {
-            toastr.info("Search...", "Msis-Web");
+            if (vm.searchText.length === 0) {
+                toastr.warning("Please enter ID or name to search!", "Msis-Web");
+            } else {
+                var cookies = AuthenService.getCookies();
+                if (cookies == null) {
+                    toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
+                    AuthenService.clearCredentials();
+                    $location.path('/signin');
+                } else {
+                    PatientService.search(vm.searchText).then(function (response) {
+                        if (response.success) {
+                            vm.data = response.result;
+                            vm.tableParams = new NgTableParams({count:10}, {counts:[10,20,50,100], dataset: vm.data});
+                            vm.tableParams._settings.total = vm.data.length;
+                        } else {
+                            toastr.error(response.message, 'Msis-Web');
+                        }
+                    });
+                }
+            }
         }
 
-        function edit(id) {
-            toastr.warn("Edit " + id, 'Msis-Web');
+        function edit(p) {
+            $rootScope.patient = p;
+            $location.path('/patient');
         }
 
         function del(id) {
-            toastr.warn("Delete " + id, 'Msis-Web');
+            toastr.warning("Delete " + id, 'Msis-Web');
         }
     }
 ]);

@@ -1,6 +1,9 @@
 package com.msis.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +91,11 @@ public class PatientServiceImpl implements PatientService {
 	}
 	
 	@Override
+	public List<Patient> findByNameLike(String name) {
+		return ListUtils.okList(patientRepository.findByNameLike(name));
+	}
+	
+	@Override
 	public List<Patient> findByPhone(String phone) {
 		return ListUtils.okList(patientRepository.findByPhone(phone));
 	} 
@@ -144,16 +152,15 @@ public class PatientServiceImpl implements PatientService {
 				log.warn("Not found patient id " + patient.getId());
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by Id " + patient.getId());
 			}
-			String creator = patient.getCreator(); 
-			if (creator != null && !creator.isEmpty()) {
-				if (userService.findByEmail(creator) == null) {
-					log.warn("Not found creator by " + creator);
-					throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found creator by " + creator);
-				}
+			String token = cryptoService.decryptNetwork(patient.getCreator()); 
+			if (userService.findByToken(token) == null) {
+				log.warn("Not found creator by " + token);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found creator by " + patient.getCreator());
 			}
 			editPatient.setAddr(patient.getAddr());
 			editPatient.setAge(patient.getAge());
-			editPatient.setCreator(patient.getCreator());
+			editPatient.setCreator(token);
+			editPatient.setDescription(patient.getDescription());
 			editPatient.setIdn(patient.getIdn());
 			editPatient.setName(patient.getName());
 			editPatient.setSex(patient.getSex());
@@ -163,6 +170,35 @@ public class PatientServiceImpl implements PatientService {
 			return editPatient;
 		} catch (ServiceException e) {
 			throw e;
+		} catch (Exception e) {
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+	
+	@Override
+	public List<Patient> findByNameOrIDn(String search) throws ServiceException {
+		try {
+			List<Patient> patients = new ArrayList<>();
+			Patient patient = findByIdn(search);
+			if (patient != null) {
+				patients.add(patient);
+				return patients;
+			}
+			for (String s : search.split(" ")) {
+				List<Patient> list = findByNameLike(s);
+				for (Patient p : list) {
+					boolean exist = false;
+					for (Patient p1 : patients) {
+						if (p.getId().equals(p1.getId())) {
+							exist = true;
+							break;
+						}
+					}
+					if (!exist)
+						patients.add(p);
+				}
+			}
+			return patients;
 		} catch (Exception e) {
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}

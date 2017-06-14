@@ -240,6 +240,25 @@ public class PatientController implements InitializingBean {
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
+	@GET
+	@Path("/search/{search}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response search(@PathParam("search") String search) {
+		ServiceResponse<List<Patient>> response = new ServiceResponse<List<Patient>>();
+		try {
+			List<Patient> patients = patientService.findByNameOrIDn(search);
+			response.setResult(patients);
+		} catch(ServiceException e) {
+			log.warn("-> Search Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> search OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
 	public void setPatientService(PatientService patientService) {
 		PatientController.patientService = patientService;
 	}

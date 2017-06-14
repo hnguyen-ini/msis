@@ -10,6 +10,7 @@ public interface PatientRepository extends ElasticsearchRepository<Patient, Stri
 	Patient findByIdn(String idn);
 	List<Patient> findByName(String name);
 	List<Patient> findByPhone(String phone);
+	List<Patient> findByNameLike(String name);
 	
 	List<Patient> findByCreator(String creator);
 	Patient findByIdnAndCreator(String idn, String creator);

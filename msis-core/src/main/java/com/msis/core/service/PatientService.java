@@ -16,9 +16,14 @@ public interface PatientService {
 	Patient findByIdnAndCreator(String idn, String creator);
 	Patient findByIdn(String idn);
 	List<Patient> findByName(String name);
+	List<Patient> findByNameLike(String name);
 	List<Patient> findByPhone(String phone);
 	List<Patient> findByCreator(String creator) throws ServiceException;
+	List<Patient> findByNameOrIDn(String search) throws ServiceException;
 	
 	Patient create(Patient patient) throws ServiceException;
 	Patient update(Patient patient)  throws ServiceException;
+	
+	
+	
 }
