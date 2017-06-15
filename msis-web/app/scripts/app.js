@@ -81,6 +81,8 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 $location.path('/signin');
             }
         });
+
+       
     }]);
 
     // create the controller and inject Angular's $scope

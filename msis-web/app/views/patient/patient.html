@@ -18,8 +18,9 @@
                     <input type="text" name="age" id="age" class="form-control" placeholder="Age" ng-model="vm.patient.age" required />
                 </div>
                 <div class="form-group">
-                    <label for="Sex">Sex</label>
-                    <input type="text" name="sex" id="sex" class="form-control" placeholder="Sex" ng-model="vm.patient.sex" required />
+                    <label for="Sex" style="padding-right:50px">Sex</label>
+                    <label for="Male" style="padding-right:50px"><input type="radio" i-check id="male" value="Male" ng-model="vm.patient.sex"> Male</label>
+                    <label for="Female"><input type="radio" i-check value="Female" id="female" ng-model="vm.patient.sex"> Female</label>
                 </div>
                 <div class="form-group">
                     <label for="Address">Address</label>

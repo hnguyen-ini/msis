@@ -7,11 +7,15 @@ angular.module('webappApp')
         vm.patient = {};
         vm.edit = false;
 
+
         function loadData() {
             vm.patient = $rootScope.patient;
             if (vm.patient != null) {
                 vm.edit = true;
                 $rootScope.patient = null;
+            } else {
+                vm.patient = {};
+                vm.patient.sex = 'Male';
             }
         }
 
@@ -44,5 +48,7 @@ angular.module('webappApp')
                 }
             }
         }
+
+       
     }
 ]);

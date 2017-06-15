@@ -37,6 +37,9 @@ var paths = {
     'bower_components/toastr/toastr.min.css',
     'app/libs/styles/ng-table.min.css'
   ],
+  icheck: [
+    'app/libs/icheck/**/*.*'
+  ],
   scripts: [yeoman.app + '/scripts/**/*.js'],
   styles: [yeoman.app + '/styles/**/*.css'],
   data: [yeoman.app + '/data/**/*.json'],
@@ -275,13 +278,18 @@ gulp.task('libstyle', function(){
     .pipe(gulp.dest(yeoman.dist + '/libs/styles'));
 });
 
+gulp.task('icheck', function(){
+  return gulp.src(paths.icheck)
+    .pipe(gulp.dest(yeoman.dist + '/libs/icheck'));
+});
+
 gulp.task('data', function(){
   return gulp.src(paths.data)
     .pipe(gulp.dest(yeoman.dist + '/data'))
 });
 
 gulp.task('build', ['clean:dist'], function () {
-  runSequence(['index', 'view', 'style' ,'images', 'copy:fonts' ,'script' ,'libjs', 'libstyle', 'data']);
+  runSequence(['index', 'view', 'style' ,'images', 'copy:fonts' ,'script' ,'libjs', 'libstyle', 'icheck', 'data']);
 });
 
 gulp.task('default', ['build']);
