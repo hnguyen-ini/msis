@@ -247,7 +247,7 @@ public class UserServiceImpl implements UserService{
 				logger.warn("Missing token or password");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing token or password");
 			}
-			String token = cryptoService.decryptNetwork(user.getStatus());
+			String token = user.getStatus();
 			Session session = cacheService.getCache(token);
 			if (session == null) {
 				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
@@ -299,8 +299,7 @@ public class UserServiceImpl implements UserService{
 				logger.warn("Missing tokens");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing tokens");
 			}
-			String ac = cryptoService.decryptNetwork(accessToken);
-			Session session = cacheService.getCache(ac);
+			Session session = cacheService.getCache(accessToken);
 			if (session == null) {
 				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
 			}
@@ -384,7 +383,7 @@ public class UserServiceImpl implements UserService{
 		response.setLastName(cryptoService.encryptNetwork(user.getLastName()));
 		response.setEmail(cryptoService.encryptNetwork(user.getEmail()));
 		response.setToken(cryptoService.encryptNetwork(user.getToken()));
-		response.setStatus(cryptoService.encryptNetwork(token)); // status is token session
+		response.setStatus(token); // status is token session
 		return response;
 	}
 	

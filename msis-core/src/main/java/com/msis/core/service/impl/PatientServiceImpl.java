@@ -108,8 +108,7 @@ public class PatientServiceImpl implements PatientService {
 			throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
 		}
 		String token = cryptoService.decryptNetwork(creator);
-		String access = cryptoService.decryptNetwork(accessToken);
-		Session session = cacheService.getCache(access);
+		Session session = cacheService.getCache(accessToken);
 		if (session == null) {
 			throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
 		}
@@ -123,8 +122,7 @@ public class PatientServiceImpl implements PatientService {
 				log.warn("Missing accessToken");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
 			}
-			String access = cryptoService.decryptNetwork(accessToken);
-			Session session = cacheService.getCache(access);
+			Session session = cacheService.getCache(accessToken);
 			if (session == null) {
 				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
 			}
@@ -162,8 +160,7 @@ public class PatientServiceImpl implements PatientService {
 				log.warn("Missing accessToken");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
 			}
-			String access = cryptoService.decryptNetwork(accessToken);
-			Session session = cacheService.getCache(access);
+			Session session = cacheService.getCache(accessToken);
 			if (session == null) {
 				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
 			}
@@ -210,8 +207,7 @@ public class PatientServiceImpl implements PatientService {
 				log.warn("Missing accessToken");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
 			}
-			String token = cryptoService.decryptNetwork(accessToken);
-			Session session = cacheService.getCache(token);
+			Session session = cacheService.getCache(accessToken);
 			if (session == null) {
 				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
 			}
