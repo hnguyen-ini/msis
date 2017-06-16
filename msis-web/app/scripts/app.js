@@ -76,7 +76,7 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
 
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
             var restrictedPage = $.inArray($location.path(), ['/signin', '/signup', '/token-validation']) === -1;
-            var loggedIn = $localStorage.currentUser;//$rootScope.globals.currentUser;
+            var loggedIn = $rootScope.currentUser;
             if (restrictedPage && !loggedIn) {
                 $location.path('/signin');
             }
