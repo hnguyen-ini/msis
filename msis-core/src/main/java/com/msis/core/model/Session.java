@@ -4,12 +4,14 @@ import java.util.Date;
 
 public class Session {
 	private String token;
-	private String key;
+	private String userToken;
+	private String aesKey;
 	private Date dateofExpiration;
 	
-	public Session(String token, String key, int minuteToLive) {
-		this.key = key;
+	public Session(String token, String userToken, String aesKey, int minuteToLive) {
 		this.token = token;
+		this.userToken = userToken;
+		this.aesKey = aesKey;
 		if (minuteToLive != 0) {
 			this.dateofExpiration = new java.util.Date();
 	        java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -27,12 +29,12 @@ public class Session {
 		this.token = token;
 	}
 
-	public String getKey() {
-		return key;
+	public String getAESKey() {
+		return aesKey;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setAESKey(String aesKey) {
+		this.aesKey = aesKey;
 	}
 
 	public Date getDateofExpiration() {
@@ -41,6 +43,14 @@ public class Session {
 
 	public void setDateofExpiration(Date dateofExpiration) {
 		this.dateofExpiration = dateofExpiration;
+	}
+
+	public String getUserToken() {
+		return userToken;
+	}
+
+	public void setUserToken(String userToken) {
+		this.userToken = userToken;
 	}
 	
 }

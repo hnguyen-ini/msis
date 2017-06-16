@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
 import com.msis.common.utils.ListUtils;
+import com.msis.core.cache.CacheService;
 import com.msis.core.model.Patient;
+import com.msis.core.model.Session;
 import com.msis.core.repository.PatientRepository;
 import com.msis.core.service.CryptoService;
 import com.msis.core.service.PatientService;
@@ -27,15 +29,14 @@ public class PatientServiceImpl implements PatientService {
 	
 	@Autowired
 	private PatientRepository patientRepository;
-	
 	@Autowired
 	private RecordService recordService;
-	
 	@Autowired
 	private UserService userService;
-	
 	@Autowired
 	private CryptoService cryptoService;
+	@Autowired
+	private CacheService cacheService;
 	
 	@Override
 	public void save(Patient patient) {
@@ -101,14 +102,32 @@ public class PatientServiceImpl implements PatientService {
 	} 
 
 	@Override
-	public List<Patient> findByCreator(String creator) throws ServiceException {
+	public List<Patient> findByCreator(String creator, String accessToken) throws ServiceException {
+		if (accessToken == null || accessToken.isEmpty()) {
+			log.warn("Missing accessToken");
+			throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
+		}
 		String token = cryptoService.decryptNetwork(creator);
+		String access = cryptoService.decryptNetwork(accessToken);
+		Session session = cacheService.getCache(access);
+		if (session == null) {
+			throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+		}
 		return ListUtils.okList(patientRepository.findByCreator(token));
 	}
 
 	@Override
-	public Patient create(Patient patient) throws ServiceException {
+	public Patient create(Patient patient, String accessToken) throws ServiceException {
 		try {
+			if (accessToken == null || accessToken.isEmpty()) {
+				log.warn("Missing accessToken");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
+			}
+			String access = cryptoService.decryptNetwork(accessToken);
+			Session session = cacheService.getCache(access);
+			if (session == null) {
+				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+			}
 			if (!okPatient(patient)) {
 				log.warn("Missing Idn or name or creator");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or Name or Creator");
@@ -137,8 +156,17 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
-	public Patient update(Patient patient) throws ServiceException {
+	public Patient update(Patient patient, String accessToken) throws ServiceException {
 		try {
+			if (accessToken == null || accessToken.isEmpty()) {
+				log.warn("Missing accessToken");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
+			}
+			String access = cryptoService.decryptNetwork(accessToken);
+			Session session = cacheService.getCache(access);
+			if (session == null) {
+				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+			}
 			if (!okPatient(patient)) {
 				log.warn("Missing Idn or name");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or name or creator");
@@ -176,8 +204,17 @@ public class PatientServiceImpl implements PatientService {
 	}
 	
 	@Override
-	public List<Patient> findByNameOrIDn(String search) throws ServiceException {
+	public List<Patient> findByNameOrIDn(String search, String accessToken) throws ServiceException {
 		try {
+			if (accessToken == null || accessToken.isEmpty()) {
+				log.warn("Missing accessToken");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
+			}
+			String token = cryptoService.decryptNetwork(accessToken);
+			Session session = cacheService.getCache(token);
+			if (session == null) {
+				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+			}
 			List<Patient> patients = new ArrayList<>();
 			Patient patient = findByIdn(search);
 			if (patient != null) {

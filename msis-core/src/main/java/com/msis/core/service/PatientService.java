@@ -18,11 +18,11 @@ public interface PatientService {
 	List<Patient> findByName(String name);
 	List<Patient> findByNameLike(String name);
 	List<Patient> findByPhone(String phone);
-	List<Patient> findByCreator(String creator) throws ServiceException;
-	List<Patient> findByNameOrIDn(String search) throws ServiceException;
+	List<Patient> findByCreator(String creator, String accessToken) throws ServiceException;
+	List<Patient> findByNameOrIDn(String search, String accessToken) throws ServiceException;
 	
-	Patient create(Patient patient) throws ServiceException;
-	Patient update(Patient patient)  throws ServiceException;
+	Patient create(Patient patient, String accessToken) throws ServiceException;
+	Patient update(Patient patient, String accessToken)  throws ServiceException;
 	
 	
 	

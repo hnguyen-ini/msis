@@ -1,5 +1,7 @@
 package com.msis.rest.controller.user;
 
+import java.util.UUID;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -7,6 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -114,11 +117,11 @@ public class AuthenController implements InitializingBean {
 	@Path("/account/{token}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getByToken(@PathParam("token") String token) {
+	public Response getByToken(@PathParam("token") String token, @QueryParam("accessToken") String accessToken) {
 		ServiceResponse<User> response = new ServiceResponse<User>();
 		try {
 			log.info("Get account by token: " + token);
-			User user = userService.getAccountByToken(token);
+			User user = userService.getAccountByToken(accessToken, token);
 			response.setResult(user);
 		} catch (ServiceException e) {
 			log.warn("-> Get account by token Failed, " + e.getMessage());
@@ -144,13 +147,13 @@ public class AuthenController implements InitializingBean {
 		Assert.notNull(cacheService, "userService can't be null");
 		
 		String s = new String("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-		Session co = new Session("1234", s, 1);
+		Session co = new Session("1234", UUID.randomUUID().toString(), s, 1);
 		cacheService.setCache(co);
 		Session obj = cacheService.getCache("1234");
 		if (obj == null)
 			System.out.println("CacheManagerTestProgram.Main:  FAILURE!  Object not Found.");
 		else
-		    System.out.println("CacheManagerTestProgram.Main:  SUCCESS! " + obj.getKey());
+		    System.out.println("CacheManagerTestProgram.Main:  SUCCESS! " + obj.getAESKey());
 	}
 
 }

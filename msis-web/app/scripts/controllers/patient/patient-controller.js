@@ -20,15 +20,15 @@ angular.module('webappApp')
         }
 
         function save() {
-            var cookies = AuthenService.getCookies();
-            if (cookies == null) {
+            var currentUser = $rootScope.currentUser;
+            if (currentUser == null) {
                 toastr.error("Session was expired. Please signin again!", 'Msis-Web');
                 AuthenService.clearCredentials();
                 $location.path('/signin');
             } else {
-                vm.patient.creator = cookies.token;
+                vm.patient.creator = currentUser.token;
                 if (vm.edit == false) {
-                    PatientService.create(vm.patient).then(function (response) {
+                    PatientService.create(vm.patient, currentUser.status).then(function (response) {
                         if (response.success) {
                             toastr.success("The Patient is saved!", 'Msis-Web');
                             $location.path('/patients');
@@ -37,7 +37,7 @@ angular.module('webappApp')
                         }
                     });
                 } else {
-                    PatientService.update(vm.patient).then(function (response) {
+                    PatientService.update(vm.patient, currentUser.status).then(function (response) {
                         if (response.success) {
                             toastr.success("The Patient is updated!", 'Msis-Web');
                             $location.path('/home');

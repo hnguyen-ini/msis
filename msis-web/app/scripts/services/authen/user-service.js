@@ -22,8 +22,8 @@ angular.module('webappApp')
             return $http.get('/api/users/' + id).then(handleSuccess, handleError('Error getting user by id'));
         }
 
-        function GetByToken(token) {
-            return RestService.restGet(GlobalService.accountinfo + token);
+        function GetByToken(user) {
+            return RestService.restGet(GlobalService.accountinfo + user.token + '?accessToken=' + user.status);
         }
 
         function create(user) {
@@ -49,6 +49,7 @@ angular.module('webappApp')
             var enUser = {};
             enUser.token = user.token;
             enUser.password = CryptoService.encrypt(user.password);
+            enUser.status = user.status;
             return RestService.restPut(GlobalService.changePassword, enUser);
         }
 

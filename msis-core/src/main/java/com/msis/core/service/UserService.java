@@ -33,7 +33,7 @@ public interface UserService {
 	User validateToken(String token) throws ServiceException;
 	User changePassword(User user) throws ServiceException;
 	
-	User getAccountByToken(String token) throws ServiceException;
+	User getAccountByToken(String accessToken, String userToken) throws ServiceException;
 	
 	User encryptPublicKey(User user) throws ServiceException;
 	User decryptPublicKey(User user) throws ServiceException;

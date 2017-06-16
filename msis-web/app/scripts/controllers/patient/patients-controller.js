@@ -13,15 +13,15 @@ angular.module('webappApp')
         vm.searchText = '';
 
         function loadData() {
-            var gedIn = $rootScope.currentUser;
-            var loggedIn = $localStorage.currentUser;
-            var cookies = AuthenService.getCookies();
-            if (cookies == null) {
+            var currentUser = $rootScope.currentUser;
+            // var loggedIn = $localStorage.currentUser;
+            // var cookies = AuthenService.getCookies();
+            if (currentUser == null) {
                 toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
                 AuthenService.clearCredentials();
                 $location.path('/signin');
             } else {
-                PatientService.getByCreator(cookies.token).then(function (response) {
+                PatientService.getByCreator(currentUser.token, currentUser.status).then(function (response) {
                     if (response.success) {
                         vm.data = response.result;
                         vm.tableParams = new NgTableParams({count:10}, {counts:[10,20,50,100], dataset: vm.data});
@@ -41,13 +41,13 @@ angular.module('webappApp')
             if (vm.searchText.length === 0) {
                 toastr.warning("Please enter ID or name to search!", "Msis-Web");
             } else {
-                var cookies = AuthenService.getCookies();
-                if (cookies == null) {
+                var currentUser = $rootScope.currentUser;
+                if (currentUser == null) {
                     toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
                     AuthenService.clearCredentials();
                     $location.path('/signin');
                 } else {
-                    PatientService.search(vm.searchText).then(function (response) {
+                    PatientService.search(vm.searchText, currentUser.status).then(function (response) {
                         if (response.success) {
                             vm.data = response.result;
                             vm.tableParams = new NgTableParams({count:10}, {counts:[10,20,50,100], dataset: vm.data});

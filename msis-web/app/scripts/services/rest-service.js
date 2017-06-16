@@ -1,52 +1,23 @@
 angular.module('webappApp')
-    .factory('RestService', ['$http', '$q', '$log', '$rootScope', function($http, $q, $log, $rootScope) {
+    .factory('RestService', ['$http', '$log', function($http, $log) {
         function _get(uri) {
             $log.info('-> Get data from: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            // TODO: check signin/reg
-            if ($rootScope.currentUser == null) {
-                toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
-                AuthenService.clearCredentials();
-                $location.path('/signin');
-            } else {
-                return $http.get(uri).then(successCallback, errorCallback);
-            }
-            return false;
+            return $http.get(uri).then(successCallback, errorCallback);
         }
 
         function _post(uri, data) {
             $log.info('-> Post data to: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            if ($rootScope.currentUser == null) {
-                toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
-                AuthenService.clearCredentials();
-                $location.path('/signin');
-            } else {
-                return $http.post(uri, data).then(successCallback, errorCallback);
-            }
-            return false;
+            return $http.post(uri, data).then(successCallback, errorCallback);
         }
 
         function _put(uri, data) {
             $log.info('-> Put data to: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            if ($rootScope.currentUser == null) {
-                toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
-                AuthenService.clearCredentials();
-                $location.path('/signin');
-            } else {
-                return $http.put(uri, data).then(successCallback, errorCallback);
-            }
-            return false;
+            return $http.put(uri, data).then(successCallback, errorCallback);
         }
 
         function _delete(uri, id) {
             $log.info('-> Delete data from: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            if ($rootScope.currentUser == null) {
-                toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
-                AuthenService.clearCredentials();
-                $location.path('/signin');
-            } else {
-                return $http.delete(uri + '/' + id).then(successCallback, errorCallback);
-            }
-            return false;
+            return $http.delete(uri + '/' + id).then(successCallback, errorCallback);
         }
 
         function successCallback(response) {

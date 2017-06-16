@@ -49,8 +49,17 @@ angular.module('webappApp')
         function changePassword() {
             vm.dataLoading = true;
             $timeout(function () {
-                vm.user.token = $rootScope.currentUser.token;
+                var currentUser = $rootScope.currentUser;
+                if (currentUser == null) {
+                    toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
+                    AuthenService.clearCredentials();
+                    $location.path('/signin');
+                    return false;
+                }
+                vm.user.token = currentUser.token;
                 vm.user.password = vm.user.currentPassword + ":" + vm.user.password;
+                vm.user.status = currentUser.status;
+
                 UserService.changePassword(vm.user).then(function (response) {
                     if (response.success) {
                         toastr.info("Change password successfully!!!", 'Msis-Web');

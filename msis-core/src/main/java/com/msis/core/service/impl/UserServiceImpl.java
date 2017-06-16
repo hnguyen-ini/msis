@@ -135,7 +135,6 @@ public class UserServiceImpl implements UserService{
 	    	String salt = pwd.split(":")[PasswordUtils.SALT_INDEX];
 			String pwod = pwd.split(":")[PasswordUtils.PBKDF2_INDEX];
 	        
-	        String token = UUID.randomUUID().toString();
 	        Long time = System.currentTimeMillis();
 	        
 	        deUser.setPassword(pwod);
@@ -143,7 +142,7 @@ public class UserServiceImpl implements UserService{
 	        deUser.setCreateAt(time);
 	        deUser.setModifyAt(time);
 	        deUser.setLoginAt(time);
-	        deUser.setToken(token);
+	        deUser.setToken(UUID.randomUUID().toString());
 	        
 	        // aesKey
 	        KeyGeneration keyGen = new KeyGeneration(2048);
@@ -165,15 +164,13 @@ public class UserServiceImpl implements UserService{
 	        user.setStatus(null);
 	        user.setAES(null);
 	        
-	        AES aes = new AES(coreConfig.publicKey(), coreConfig.salt(), coreConfig.iv());
-	        user.setToken(aes.encryptIV(token));
-	        
+	        String token = UUID.randomUUID().toString();
 	        // send email
 	        Mail mail = new Mail(deUser.getEmail(), deUser.getFirstName(), token, coreConfig.hostUri(), coreConfig.registerSubject(), "register-mail.vm", priKey);
 	        mailService.send(mail);
 	        
 	        // cache session
-	        Session session = new Session(token, aesKey, 60*24);
+	        Session session = new Session(token, deUser.getToken(), aesKey, 60*24);
 	        cacheService.setCache(session);
 	        	        
 	    	return user;
@@ -187,22 +184,22 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public User validateToken(String token) throws ServiceException {
 		String deToken = cryptoService.decryptNetwork(token);
-		
-		User user = findByToken(deToken);
-		if (user == null)
-			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + deToken);
-		
+
 		Session session = cacheService.getCache(deToken);
 		if (session == null) {
 			throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
 		}
+		User user = findByToken(session.getUserToken());
+		if (user == null)
+			throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + deToken);
+		
 		user.setStatus("A");
 		save(user);
 		
 		cacheService.resetExpiration(session, coreConfig.sessionExpired());
 		cacheService.setCache(session);
 		
-		return response(user);
+		return response(user, deToken);
 	}
 	
 	@Override
@@ -227,16 +224,15 @@ public class UserServiceImpl implements UserService{
 				logger.warn("None Active user");
 				throw new ServiceException(ServiceStatus.INACTIVE_USER, "None active user");
 			}
-//			String token = UUID.randomUUID().toString();
-//			user.setToken(token);
 			user.setLoginAt(System.currentTimeMillis());
 			save(user);
 			
-			String aesKey = "testtesttts";//cryptoService.decryptSystem(user.getAES());
-			Session session = new Session(user.getToken(), aesKey, coreConfig.sessionExpired());
+			String token = UUID.randomUUID().toString();
+			String aesKey = "testtesttts";//cryptoService.decryptSystem(user.getAES()); // TODO
+			Session session = new Session(token, user.getToken(), aesKey, coreConfig.sessionExpired());
 	        cacheService.setCache(session);
 	        
-			return response(user);
+			return response(user, token);
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -247,12 +243,16 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public User changePassword(User user) throws ServiceException {
 		try {
-			if (user.getToken() == null || user.getToken().isEmpty() || user.getPassword() == null || user.getPassword().isEmpty()) {
+			if (user.getToken() == null || user.getToken().isEmpty() || user.getPassword() == null || user.getPassword().isEmpty() || user.getStatus() == null || user.getStatus().isEmpty()) {
 				logger.warn("Missing token or password");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing token or password");
 			}
-			String token = cryptoService.decryptNetwork(user.getToken());
-			User userC = findByToken(token);
+			String token = cryptoService.decryptNetwork(user.getStatus());
+			Session session = cacheService.getCache(token);
+			if (session == null) {
+				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+			}
+			User userC = findByToken(session.getUserToken());
 			if (userC == null) {
 				logger.warn("Not found user by token " + token);
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + token);
@@ -284,7 +284,7 @@ public class UserServiceImpl implements UserService{
 //			Session session = new Session(token, cryptoService.decryptSystem(userC.getAES()), coreConfig.sessionExpired());
 //			cacheService.setCache(session);
 			
-			return response(userC);			
+			return response(userC, token);			
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -293,17 +293,22 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	public User getAccountByToken(String token) throws ServiceException {
+	public User getAccountByToken(String accessToken, String userToken) throws ServiceException {
 		try {
-			if (token == null || token.isEmpty()) {
-				logger.warn("Missing token");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing token");
+			if (accessToken == null || accessToken.isEmpty() || userToken == null || userToken.isEmpty()) {
+				logger.warn("Missing tokens");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing tokens");
 			}
-			String to = cryptoService.decryptNetwork(token);
+			String ac = cryptoService.decryptNetwork(accessToken);
+			Session session = cacheService.getCache(ac);
+			if (session == null) {
+				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+			}
+			String to = cryptoService.decryptNetwork(userToken);
 			User userC = findByToken(to);
 			if (userC == null) {
 				logger.warn("Not found user by token " + to);
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + token);
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found user by token " + userToken);
 			}
 			return account(userC);
 		} catch (ServiceException e) {
@@ -373,13 +378,13 @@ public class UserServiceImpl implements UserService{
 		return true;
 	}
 
-	private User response(User user) throws ServiceException {
+	private User response(User user, String token) throws ServiceException {
 		User response = new User();
 		response.setFirstName(cryptoService.encryptNetwork(user.getFirstName()));
 		response.setLastName(cryptoService.encryptNetwork(user.getLastName()));
 		response.setEmail(cryptoService.encryptNetwork(user.getEmail()));
 		response.setToken(cryptoService.encryptNetwork(user.getToken()));
-		response.setStatus(user.getStatus());
+		response.setStatus(cryptoService.encryptNetwork(token)); // status is token session
 		return response;
 	}
 	
