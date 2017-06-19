@@ -11,6 +11,7 @@ angular.module('webappApp')
         vm.del = del;
         vm.data = {};
         vm.searchText = '';
+        vm.dataLoading = true;
 
         function loadData() {
             var currentUser = $rootScope.currentUser;
@@ -26,8 +27,10 @@ angular.module('webappApp')
                         vm.data = response.result;
                         vm.tableParams = new NgTableParams({count:10}, {counts:[10,20,50,100], dataset: vm.data});
                         vm.tableParams._settings.total = vm.data.length;
+                        vm.dataLoading = false;
                     } else {
                         toastr.error(response.message, 'Msis-Web');
+                        vm.dataLoading = false;
                     }
                 });
             }
@@ -47,13 +50,16 @@ angular.module('webappApp')
                     AuthenService.clearCredentials();
                     $location.path('/signin');
                 } else {
+                    vm.dataLoading = true;
                     PatientService.search(vm.searchText, currentUser.status).then(function (response) {
                         if (response.success) {
                             vm.data = response.result;
                             vm.tableParams = new NgTableParams({count:10}, {counts:[10,20,50,100], dataset: vm.data});
                             vm.tableParams._settings.total = vm.data.length;
+                            vm.dataLoading = false;
                         } else {
                             toastr.error(response.message, 'Msis-Web');
+                            vm.dataLoading = false;
                         }
                     });
                 }

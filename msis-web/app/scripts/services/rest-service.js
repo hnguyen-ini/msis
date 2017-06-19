@@ -1,5 +1,5 @@
 angular.module('webappApp')
-    .factory('RestService', ['$http', '$log', function($http, $log) {
+    .factory('RestService', ['$http', '$log', '$location', function($http, $log, $location) {
         function _get(uri) {
             $log.info('-> Get data from: ' + uri.substring(uri.lastIndexOf('/') + 1));
             return $http.get(uri).then(successCallback, errorCallback);
@@ -26,7 +26,12 @@ angular.module('webappApp')
 
         function errorCallback(response) {
             var msg = response.data.status.code + ": " + response.data.status.status;
-            return { success: false, message: msg };
+            if (response.data.status.code == 408) {
+                toastr.warning(response.message, 'Msis-Web');
+                $location.path('/signin');
+            } else {
+                return { success: false, message: msg };
+            }
         }
 
         return {

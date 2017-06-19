@@ -9,6 +9,7 @@ angular.module('webappApp')
         vm.signout = signout;
         vm.changePassword = changePassword;
 
+        vm.dataLoading = false;
 
         function signup() {
             vm.dataLoading = true;
@@ -34,10 +35,11 @@ angular.module('webappApp')
                         $location.path('/');
                     } else {
                         toastr.error(response.message, 'Msis-Web');
+                        vm.dataLoading = false;
+
                     }
                 });
             }, 1000);
-            vm.dataLoading = false;
         };
 
         function signout() {
