@@ -10,6 +10,7 @@ public class Record {
 	private String pid;
 	private Long createAt;
 	private String complain;
+	private String test;
 	private String diagnose;
 	private Long remindAt;
 	private String description;
@@ -70,6 +71,14 @@ public class Record {
 
 	public void setPid(String pid) {
 		this.pid = pid;
+	}
+
+	public String getTest() {
+		return test;
+	}
+
+	public void setTest(String test) {
+		this.test = test;
 	}
 	
 }

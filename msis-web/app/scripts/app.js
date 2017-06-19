@@ -29,6 +29,11 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 controller  : 'PatientController',
                 controllerAs: 'vm'
             })
+            .when('/patient', {
+                templateUrl : 'views/patient/records.html',
+                controller  : 'RecordsController',
+                controllerAs: 'vm'
+            })
 
             // route for the contact page
             .when('/signin', {
