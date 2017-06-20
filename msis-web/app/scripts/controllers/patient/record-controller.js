@@ -5,7 +5,7 @@ var app = angular.module('webappApp');
     app.controller('RecordController', ['$uibModal', 'NgTableParams', function($uibModal, NgTableParams) {
         var vm = this;
         vm.record = {};
-        vm.record.test = {};
+        vm.record.test = [];
         vm.addNewTest = addNewTest;
 
         function addNewTest() {
@@ -19,8 +19,8 @@ var app = angular.module('webappApp');
                 }
             });
             vm.modalInstance.result.then(function (test) {
-                vm.record.test = test;
-                vm.tableParams = new NgTableParams({count:10}, {counts:[10,20,50,100], dataset: vm.record.test});
+                vm.record.test.push(test);
+                vm.tableParams = new NgTableParams({count:50}, {dataset: vm.record.test});
                 vm.tableParams._settings.total = vm.record.test;
             });
         };

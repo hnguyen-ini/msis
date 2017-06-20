@@ -8,20 +8,18 @@
                 <label for="Complain">Complain</label>
                 <textarea class="form-control" placeholder="Complain" ng-model="vm.record.complain" required />
             </div>
-            <div class="form-group">
-                <div class="row" style="padding-bottom:5px">
-                    <div class="col-lg-6">
-                        <button class="btn btn-primary" ng-click="vm.addNewTest()">Add New Test</button>
-                    </div>
-                </div>
-                <table ng-table="vm.tableParams"  class="table table-condensed table-bordered table-striped" >
-                    <tbody>
-                        <tr ng-repeat="t in $data">
-                            <td>{{ $index + 1 }}</td>
-                            <td data-title="'Item'">{{p.item}}</td>
-                            <td data-title="'Description'" sortable="'name'">{{p.description}}</td>
-                        </tr>
-                    </tbody>
+            <div class="form-group table-responsive">
+                <table id="tableTest" class="table">
+                    <thead>
+                    <tr>
+                        <th>Test <button class="btn btn-link" ng-click="vm.addNewTest()">Add New Test</button></th>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Age</th>
+                        <th>City</th>
+                        <th>Country</th>
+                    </tr>
+                    </thead>
                 </table>
             </div>
             <div class="form-group">
