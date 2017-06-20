@@ -10,8 +10,9 @@ public class Record {
 	private String pid;
 	private Long createAt;
 	private String complain;
-	private String test;
+	private String test; // json string obj
 	private String diagnose;
+	private String treatment; // json string obj
 	private Long remindAt;
 	private String description;
 	
@@ -79,6 +80,14 @@ public class Record {
 
 	public void setTest(String test) {
 		this.test = test;
+	}
+
+	public String getTreatment() {
+		return treatment;
+	}
+
+	public void setTreatment(String treatment) {
+		this.treatment = treatment;
 	}
 	
 }

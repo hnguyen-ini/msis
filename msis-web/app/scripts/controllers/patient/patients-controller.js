@@ -8,7 +8,7 @@ angular.module('webappApp')
         vm.addNew = addNew;
         vm.search = search;
         vm.edit = edit;
-        vm.del = del;
+        vm.record = record;
         vm.data = {};
         vm.searchText = '';
         vm.dataLoading = true;
@@ -71,8 +71,9 @@ angular.module('webappApp')
             $location.path('/patient');
         }
 
-        function del(id) {
-            toastr.warning("Delete " + id, 'Msis-Web');
+        function record(p) {
+            $rootScope.patient = p;
+            $location.path('/records');
         }
     }
 ]);
