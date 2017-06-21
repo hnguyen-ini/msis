@@ -13,7 +13,7 @@ public class Record {
 	private String test; // json string obj
 	private String diagnose;
 	private String treatment; // json string obj
-	private Long remindAt;
+	private String remindAt;
 	private String description;
 	
 	public Record() {}
@@ -50,11 +50,11 @@ public class Record {
 		this.diagnose = diagnose;
 	}
 
-	public Long getRemindAt() {
+	public String getRemindAt() {
 		return remindAt;
 	}
 
-	public void setRemindAt(Long remindAt) {
+	public void setRemindAt(String remindAt) {
 		this.remindAt = remindAt;
 	}
 

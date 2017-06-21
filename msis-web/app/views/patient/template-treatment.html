@@ -1,0 +1,24 @@
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <div class="panel-title">Treatment Information</div>
+    </div>     
+    <div style="padding-top:15px" class="panel-body">
+        <form name="form" role="form" ng-submit="saveTreatment()">
+            <div class="form-group">
+                <label for="treatmentItem">Item</label>
+                <input type="text" class="form-control" placeholder="Treatment item" ng-model="treatment.item" required />
+            </div>
+            <div class="form-group">
+                <label for="treatmentNumber">Number</label>
+                <input type="number" class="form-control" placeholder="Number" ng-model="treatment.number" min="0" required />
+            </div>
+            <div class="form-group">
+                <label for="treatmentDescription">Description</label>
+                <textarea class="form-control" autoheight placeholder="Treatment descriptions" ng-model="treatment.description" required />
+            </div>
+            <hr/>
+            <button ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
+            <button class="btn btn-default" type="button" ng-click="closeTreatment()">Cancel</button>
+        </form>
+    </div>
+</div>

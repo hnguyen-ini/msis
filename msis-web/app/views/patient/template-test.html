@@ -1,19 +1,20 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        <div class="panel-title">Test Info</div>
+        <div class="panel-title">Test Information</div>
     </div>     
-    <div style="padding-top:15px" class="panel-body" ng-init="loadDataTest()">
-        <form name="form" role="form">
+    <div style="padding-top:15px" class="panel-body">
+        <form name="form" role="form" ng-submit="saveTest()">
             <div class="form-group">
-                <label for="testItem">Test item</label>
-                <textarea class="form-control" placeholder="Test item" ng-model="record.test.item" required />
+                <label for="testItem">Item</label>
+                <input type="text" class="form-control" placeholder="Item" ng-model="test.item" required />
             </div>
             <div class="form-group">
-                <label for="testResult">Test results or descriptions</label>
-                <textarea class="form-control" placeholder="Test results or descriptions" ng-model="record.test.description" required />
+                <label for="testResult">Description</label>
+                <textarea class="form-control" autoheight placeholder="Description" ng-model="test.description" required />
             </div>
             <hr/>
-                <button ng-disabled="form.$invalid" class="btn btn-primary" ng-click="saveTest()">Save</button>
+            <button ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
+            <button class="btn btn-default" type="button" ng-click="closeTest()">Cancel</button>
         </form>
     </div>
 </div>

@@ -6,33 +6,78 @@
         <form name="form" ng-submit="vm.save()" role="form">
             <div class="form-group">
                 <label for="Complain">Complain</label>
-                <textarea class="form-control" placeholder="Complain" ng-model="vm.record.complain" required />
+                <textarea class="form-control" placeholder="Complain" ng-model="vm.record.complain" autoheight required />
             </div>
-            <div class="form-group table-responsive">
+            <div class="angular-background-color form-group table-responsive">
                 <table id="tableTest" class="table">
                     <thead>
                     <tr>
-                        <th>Test <button class="btn btn-link" ng-click="vm.addNewTest()">Add New Test</button></th>
-                        <th>Firstname</th>
-                        <th>Lastname</th>
-                        <th>Age</th>
-                        <th>City</th>
-                        <th>Country</th>
+                        <th style="width:150px">Test</th>
+                        <th style="font-size:90%">Item</th>
+                        <th style="font-size:90%">Description</th>
+                        <th style="width:50px"><button class="btn btn-primary btn-sm" type="button" ng-click="vm.addNewTest()">Add New</button></th>
                     </tr>
                     </thead>
+                    <tbody>
+                        <tr ng-repeat="t in vm.record.test">
+                            <td></td>
+                            <td>{{t.item}}</td>
+                            <td><span class="angular-with-newlines">{{t.description}}</span></td>
+                            <td>
+                                <span data-toggle="tooltip" title="Delete">
+                                    <button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ng-click="vm.deleteTest(t)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div class="form-group">
                 <label for="Diagnose">Diagnose</label>
-                <textarea class="form-control" placeholder="Diagnose" ng-model="vm.record.diagnose" required />
+                <textarea class="form-control" placeholder="Diagnose" ng-model="vm.record.diagnose" autoheight required />
+            </div>
+            <div class="angular-background-color form-group table-responsive">
+                <table id="tableTest" class="table">
+                    <thead>
+                    <tr>
+                        <th style="width:150px">Treatment</th>
+                        <th style="font-size:90%">Item</th>
+                        <th style="font-size:90%">Number</th>
+                        <th style="font-size:90%">Description</th>
+                        <th style="width:50px"></span><button class="btn btn-primary btn-sm" type="button" ng-click="vm.addNewTreatment()">Add New</button></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="t in vm.record.treatment">
+                            <td></td>
+                            <td>{{t.item}}</td>
+                            <td>{{t.number}}</td>
+                            <td><span class="angular-with-newlines">{{t.description}}</span></td>
+                            <td>
+                                <span data-toggle="tooltip" title="Delete">
+                                    <button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ng-click="vm.deleteTreatment(t)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="form-group">
-                <label for="Treatment">Treatment</label>
-                <textarea class="form-control" placeholder="Treatment" ng-model="vm.record.treatment" required />
+                <label for="Remind">Remind</label>
+                <input datetime-picker class="form-control" ng-model="vm.record.remindAt" />
+            </div>
+            <div class="angular-background-color form-group">
+                <label for="Description">Description</label>
+                <textarea class="form-control" placeholder="Description" ng-model="vm.record.description" autoheight required />
             </div>
             <hr/>
             <div class="form-actions">
                 <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
+                <button  type="button" class="btn btn-default" ng-click="vm.cancel()">Cancel</button>
             </div>
         </form>
     </div>

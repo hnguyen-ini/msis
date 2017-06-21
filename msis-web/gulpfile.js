@@ -31,12 +31,14 @@ var paths = {
     'bower_components/angular-csrf-cross-domain/dist/angular-csrf-cross-domain.min.js',
     'bower_components/bootstrap/dist/js/bootstrap.min.js',
     'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+    'bower_components/angularjs-datetime-picker/angularjs-datetime-picker.js',
     'app/libs/js/ng-table.min.js'
   ],
   libstyle: [
     'bower_components/bootstrap/dist/css/bootstrap.min.css',
     'bower_components/angular-bootstrap/ui-bootstrap-csp.css',
     'bower_components/toastr/toastr.min.css',
+    'bower_components/angularjs-datetime-picker/angularjs-datetime-picker.css',
     'app/libs/styles/ng-table.min.css'
   ],
   icheck: [

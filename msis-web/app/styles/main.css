@@ -84,5 +84,13 @@ body {
   }
 }
 
+.angular-with-newlines {
+    white-space: pre-wrap;
+}
+
+.angular-background-color {
+  background: #EBEDEF;
+}
+
 
 
