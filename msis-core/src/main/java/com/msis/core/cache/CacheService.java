@@ -4,14 +4,21 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.msis.common.service.ServiceException;
+import com.msis.common.service.ServiceStatus;
+import com.msis.core.config.CoreConfig;
 import com.msis.core.model.Session;
 
 @Service(value="cacheService")
 public class CacheService implements Cacheable {
 	static Logger logger = LoggerFactory.getLogger(CacheService.class);
 	private static java.util.HashMap<Object, Object> cacheHashMap = new java.util.HashMap<Object, Object>();
+	
+	@Autowired
+	private CoreConfig config;
 	
 	static {
         try {
@@ -90,5 +97,24 @@ public class CacheService implements Cacheable {
 			session.setDateofExpiration(null);
 	}
 	
-	
+	@Override
+	public Session checkAccessToken(String accessToken) throws ServiceException {
+		try {
+			if (accessToken == null || accessToken.isEmpty()) {
+				logger.warn("Missing accessToken");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
+			}
+			Session session = getCache(accessToken);
+			if (session == null) {
+				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
+			}
+			resetExpiration(session, config.sessionExpired());
+			return session;
+		} catch(ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.warn("Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
 }

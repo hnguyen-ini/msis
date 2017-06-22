@@ -103,29 +103,15 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public List<Patient> findByCreator(String creator, String accessToken) throws ServiceException {
-		if (accessToken == null || accessToken.isEmpty()) {
-			log.warn("Missing accessToken");
-			throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
-		}
+		cacheService.checkAccessToken(accessToken);
 		String token = cryptoService.decryptNetwork(creator);
-		Session session = cacheService.getCache(accessToken);
-		if (session == null) {
-			throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
-		}
 		return ListUtils.okList(patientRepository.findByCreator(token));
 	}
 
 	@Override
 	public Patient create(Patient patient, String accessToken) throws ServiceException {
 		try {
-			if (accessToken == null || accessToken.isEmpty()) {
-				log.warn("Missing accessToken");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
-			}
-			Session session = cacheService.getCache(accessToken);
-			if (session == null) {
-				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
-			}
+			cacheService.checkAccessToken(accessToken);
 			if (!okPatient(patient)) {
 				log.warn("Missing Idn or name or creator");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or Name or Creator");
@@ -156,14 +142,7 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Patient update(Patient patient, String accessToken) throws ServiceException {
 		try {
-			if (accessToken == null || accessToken.isEmpty()) {
-				log.warn("Missing accessToken");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
-			}
-			Session session = cacheService.getCache(accessToken);
-			if (session == null) {
-				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
-			}
+			cacheService.checkAccessToken(accessToken);
 			if (!okPatient(patient)) {
 				log.warn("Missing Idn or name");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Idn or name or creator");
@@ -203,14 +182,7 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public List<Patient> findByNameOrIDn(String search, String accessToken) throws ServiceException {
 		try {
-			if (accessToken == null || accessToken.isEmpty()) {
-				log.warn("Missing accessToken");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing accessToken");
-			}
-			Session session = cacheService.getCache(accessToken);
-			if (session == null) {
-				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
-			}
+			cacheService.checkAccessToken(accessToken);
 			List<Patient> patients = new ArrayList<>();
 			Patient patient = findByIdn(search);
 			if (patient != null) {

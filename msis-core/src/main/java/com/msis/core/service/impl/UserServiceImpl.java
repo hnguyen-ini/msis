@@ -243,15 +243,12 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public User changePassword(User user) throws ServiceException {
 		try {
-			if (user.getToken() == null || user.getToken().isEmpty() || user.getPassword() == null || user.getPassword().isEmpty() || user.getStatus() == null || user.getStatus().isEmpty()) {
+			if (user.getToken() == null || user.getToken().isEmpty() || user.getPassword() == null || user.getPassword().isEmpty()) {
 				logger.warn("Missing token or password");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing token or password");
 			}
 			String token = user.getStatus();
-			Session session = cacheService.getCache(token);
-			if (session == null) {
-				throw new ServiceException(ServiceStatus.REQUEST_TIME_OUT, "Your token had been expired!");
-			}
+			Session session = cacheService.checkAccessToken(token);
 			User userC = findByToken(session.getUserToken());
 			if (userC == null) {
 				logger.warn("Not found user by token " + token);
