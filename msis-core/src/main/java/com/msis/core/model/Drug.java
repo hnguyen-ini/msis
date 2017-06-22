@@ -1,5 +1,7 @@
 package com.msis.core.model;
 
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -8,11 +10,22 @@ public class Drug {
 	@Id
 	private String id;
 	private String name;
-	private String manufacturer;
 	private String description;
+	private Integer inStock;
 	private String creator;
 	
-	public Drug() {}
+	public Drug() {
+		this.setId(UUID.randomUUID().toString());
+		this.setInStock(0);
+	}
+	
+	public Drug(String name, String description, String creator) {
+		this.setId(UUID.randomUUID().toString());
+		this.setInStock(0);
+		this.setName(name);
+		this.setDescription(description);
+		this.setCreator(creator);
+	}
 
 	public String getId() {
 		return id;
@@ -30,20 +43,20 @@ public class Drug {
 		this.name = name;
 	}
 
-	public String getManufacturer() {
-		return manufacturer;
-	}
-
-	public void setManufacturer(String manufacturer) {
-		this.manufacturer = manufacturer;
-	}
-
 	public String getDescription() {
 		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Integer getInStock() {
+		return inStock;
+	}
+
+	public void setInStock(Integer inStock) {
+		this.inStock = inStock;
 	}
 
 	public String getCreator() {

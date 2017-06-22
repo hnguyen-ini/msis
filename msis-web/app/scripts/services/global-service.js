@@ -20,5 +20,13 @@ angular.module('webappApp')
         service.updatePatientByIdn = service.host + "patient/get/idn/";
         service.getPatientByCreator = service.host + "patient/get/creator/";
         service.searchPatient = service.host + "patient/search/";
+
+        // drugstore
+        service.createDrug = service.host + "drugstore/create/drug";
+        service.updateDrug = service.host + "drugstore/update/drug";
+        service.deleteDrug = service.host + "drugstore/delete/drug/";
+        service.getDrugByCreator = service.host + "drugstore/get/drug/creator/";
+        service.searchDrug = service.host + "drugstore/search/drug/";
+
         return service;
     });

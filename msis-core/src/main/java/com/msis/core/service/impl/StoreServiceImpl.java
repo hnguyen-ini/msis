@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceStatus;
+import com.msis.common.utils.ListUtils;
+import com.msis.core.cache.CacheService;
 import com.msis.core.model.Drug;
 import com.msis.core.model.Store;
 import com.msis.core.repository.DrugRepository;
@@ -23,18 +25,21 @@ public class StoreServiceImpl implements StoreService {
 	private DrugRepository drugRepo;
 	@Autowired
 	private StoreRepository storeRepo;
+	@Autowired
+	private CacheService cacheService;
 	
 	/**
 	 * DRUG ZONE
 	 */
 	@Override
-	public Drug createDrug(Drug drug) throws ServiceException {
+	public Drug createDrug(Drug drug, String accessToken) throws ServiceException {
 		try {
 			if (drug.getName() == null || drug.getName().isEmpty()
 					|| drug.getCreator() == null || drug.getCreator().isEmpty()) {
 				log.warn("Create Drug:: Missing name or creator");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing name or creator");
 			}
+			cacheService.checkAccessToken(accessToken);
 			drugRepo.save(drug);
 			return drug;
 		} catch (ServiceException e) {
@@ -45,7 +50,7 @@ public class StoreServiceImpl implements StoreService {
 		}
 	}
 	@Override
-	public Drug updateDrug(Drug drug) throws ServiceException {
+	public Drug updateDrug(Drug drug, String accessToken) throws ServiceException {
 		try {
 			if (drug.getId() == null || drug.getId().isEmpty() 
 					||drug.getName() == null || drug.getName().isEmpty()
@@ -53,6 +58,7 @@ public class StoreServiceImpl implements StoreService {
 				log.warn("Update Drug:: Missing id or name or creator");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing id or name or creator");
 			}
+			cacheService.checkAccessToken(accessToken);
 			Drug edit = drugRepo.findOne(drug.getId());
 			if (edit == null) {
 				log.warn("Update Drug:: Not found drug by " + drug.getId());
@@ -68,12 +74,13 @@ public class StoreServiceImpl implements StoreService {
 		}
 	}
 	@Override
-	public void deleteDrug(String id) throws ServiceException {
+	public void deleteDrug(String id, String accessToken) throws ServiceException {
 		try {
 			if (id == null || id.isEmpty()) {
 				log.warn("Delete Drug:: Missing id");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing id");
 			}
+			cacheService.checkAccessToken(accessToken);
 			Drug del = drugRepo.findOne(id);
 			if (del == null) {
 				log.warn("Delete Drug:: Not found drug by " + id);
@@ -84,6 +91,17 @@ public class StoreServiceImpl implements StoreService {
 			throw e;
 		} catch (Exception e) {
 			log.warn("Delete Drug:: Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+	
+	@Override
+	public List<Drug> findDrugByCreator(String creator, String accessToken) throws ServiceException {
+		try {
+			cacheService.checkAccessToken(accessToken);
+			return ListUtils.okList(drugRepo.findByCreator(creator));
+		} catch(Exception e) {
+			log.warn("Find Drug by Creator:: Running Time Error " + e.getMessage());
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}
 	}
