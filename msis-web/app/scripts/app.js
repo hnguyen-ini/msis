@@ -63,15 +63,15 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
             })
 
             .when('/account', {
-                templateUrl : 'views/drugstore/drugs.html',
-                controller  : 'DrugsController',
+                templateUrl : 'views/authen/account.html',
+                controller  : 'AccountController',
                 controllerAs: 'vm' 
             })
             
-             // route for the about page
             .when('/about', {
-                templateUrl : 'views/about.html',
-                controller  : 'AboutCtrl'
+                templateUrl : 'views/drugstore/drugs.html',
+                controller  : 'DrugsController',
+                controllerAs: 'vm'
             });
     }]);
 

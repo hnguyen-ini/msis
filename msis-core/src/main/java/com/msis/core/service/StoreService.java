@@ -7,10 +7,10 @@ import com.msis.core.model.Drug;
 import com.msis.core.model.Store;
 
 public interface StoreService {
-	Drug createDrug(Drug drug, String accessToken) throws ServiceException;
-	Drug updateDrug(Drug drug, String accessToken) throws ServiceException;
+	Drug saveDrug(Drug drug, String accessToken) throws ServiceException;
 	void deleteDrug(String id, String accessToken) throws ServiceException;
 	List<Drug> findDrugByCreator(String creator, String accessToken) throws ServiceException;
+	List<Drug> searchDrugByCreatorAndNameLike(String creator, String name, String accessToken) throws ServiceException;
 	
 	Store createStore(Store store) throws ServiceException;
 	Store updateStore(Store store) throws ServiceException;

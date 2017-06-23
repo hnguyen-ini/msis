@@ -1,0 +1,20 @@
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <div class="panel-title">Drug Information</div>
+    </div>     
+    <div style="padding-top:15px" class="panel-body">
+        <form name="form" role="form" ng-submit="saveDrug()">
+            <div class="form-group">
+                <label for="Name">Name</label>
+                <input type="text" class="form-control" placeholder="Name" ng-model="drug.name" required />
+            </div>
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <textarea class="form-control" autoheight placeholder="Description" ng-model="drug.description" required />
+            </div>
+            <hr/>
+            <button ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
+            <button class="btn btn-default" type="button" ng-click="closeDrug()">Cancel</button>
+        </form>
+    </div>
+</div>

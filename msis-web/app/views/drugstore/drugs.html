@@ -19,11 +19,11 @@
         </div>
         <table ng-table="vm.tableParams"  class="table table-condensed table-bordered table-striped" >
         <tbody>
-            <tr ng-repeat="p in $data">
-                <td>{{ $index + 1 }}</td>
+            <tr ng-repeat="d in $data">
+                <td style="width:30px">{{ $index + 1 }}</td>
                 <td data-title="'Name'" sortable="'name'">{{d.name}}</td>
-                <td data-title="'Description'">{{d.description}}</td>
-                <td data-title="'InStock'">{{d.instock}}</td>
+                <td data-title="'Description'"><span class="angular-with-newlines">{{d.description}}</span></td>
+                <td data-title="'InStock'" style="width:100px" class="text-right">{{d.inStock}}</td>
                 <td data-title="'Actions'" style="width:50px">
                     <span data-toggle="tooltip" title="Edit">
                         <button class="btn btn-primary btn-xs" ng-click="vm.edit(d)">
@@ -31,7 +31,7 @@
                         </button>
                     </span>
                     <span data-toggle="tooltip" title="Delete">
-                        <button class="btn btn-info btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ng-click="vm.del(d)">
+                        <button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ng-click="vm.del(d)">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
                     </span>

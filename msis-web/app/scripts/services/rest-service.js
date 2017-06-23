@@ -15,9 +15,9 @@ angular.module('webappApp')
             return $http.put(uri, data).then(successCallback, errorCallback);
         }
 
-        function _delete(uri, id) {
+        function _delete(uri) {
             $log.info('-> Delete data from: ' + uri.substring(uri.lastIndexOf('/') + 1));
-            return $http.delete(uri + '/' + id).then(successCallback, errorCallback);
+            return $http.delete(uri).then(successCallback, errorCallback);
         }
 
         function successCallback(response) {
@@ -27,7 +27,7 @@ angular.module('webappApp')
         function errorCallback(response) {
             var msg = response.data.status.code + ": " + response.data.status.status;
             if (response.data.status.code == 408) {
-                toastr.warning(response.message, 'Msis-Web');
+                toastr.warning(msg, 'Msis-Web');
                 $location.path('/signin');
             } else {
                 return { success: false, message: msg };

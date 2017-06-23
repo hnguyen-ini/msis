@@ -1,5 +1,6 @@
 package com.msis.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import com.msis.common.service.ServiceStatus;
 import com.msis.common.utils.ListUtils;
 import com.msis.core.cache.CacheService;
 import com.msis.core.model.Drug;
+import com.msis.core.model.Patient;
 import com.msis.core.model.Store;
 import com.msis.core.repository.DrugRepository;
 import com.msis.core.repository.StoreRepository;
@@ -32,7 +34,7 @@ public class StoreServiceImpl implements StoreService {
 	 * DRUG ZONE
 	 */
 	@Override
-	public Drug createDrug(Drug drug, String accessToken) throws ServiceException {
+	public Drug saveDrug(Drug drug, String accessToken) throws ServiceException {
 		try {
 			if (drug.getName() == null || drug.getName().isEmpty()
 					|| drug.getCreator() == null || drug.getCreator().isEmpty()) {
@@ -40,8 +42,15 @@ public class StoreServiceImpl implements StoreService {
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing name or creator");
 			}
 			cacheService.checkAccessToken(accessToken);
-			drugRepo.save(drug);
-			return drug;
+			
+			Drug d = drugRepo.findByNameAndCreator(drug.getName(), drug.getCreator());
+			if (d != null) {
+				d.setDescription(drug.getDescription());
+			} else {
+				d = new Drug(drug.getName(), drug.getDescription(), drug.getCreator());
+			}
+			drugRepo.save(d);
+			return d;
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -49,30 +58,7 @@ public class StoreServiceImpl implements StoreService {
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}
 	}
-	@Override
-	public Drug updateDrug(Drug drug, String accessToken) throws ServiceException {
-		try {
-			if (drug.getId() == null || drug.getId().isEmpty() 
-					||drug.getName() == null || drug.getName().isEmpty()
-					|| drug.getCreator() == null || drug.getCreator().isEmpty()) {
-				log.warn("Update Drug:: Missing id or name or creator");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing id or name or creator");
-			}
-			cacheService.checkAccessToken(accessToken);
-			Drug edit = drugRepo.findOne(drug.getId());
-			if (edit == null) {
-				log.warn("Update Drug:: Not found drug by " + drug.getId());
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found drug by " + drug.getId());
-			}
-			drugRepo.save(drug);
-			return drug;
-		} catch (ServiceException e) {
-			throw e;
-		} catch (Exception e) {
-			log.warn("Update Drug:: Running Time Error " + e.getMessage());
-			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
-		}
-	}
+
 	@Override
 	public void deleteDrug(String id, String accessToken) throws ServiceException {
 		try {
@@ -100,7 +86,39 @@ public class StoreServiceImpl implements StoreService {
 		try {
 			cacheService.checkAccessToken(accessToken);
 			return ListUtils.okList(drugRepo.findByCreator(creator));
+		} catch (ServiceException e) {
+			throw e;
 		} catch(Exception e) {
+			log.warn("Find Drug by Creator:: Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+	
+	@Override
+	public List<Drug> searchDrugByCreatorAndNameLike(String creator, String name, String accessToken) throws ServiceException {
+		try {
+			cacheService.checkAccessToken(accessToken);
+			List<Drug> drugs = new ArrayList<Drug>();
+			for (String n : name.split(" ")) {
+				List<Drug> list = drugRepo.findByNameLikeAndCreator(n, creator);
+				if (list != null) {
+					for (Drug d : list) {
+						boolean exist = false;
+						for (Drug p1 : drugs) {
+							if (d.getId().equals(p1.getId())) {
+								exist = true;
+								break;
+							}
+						}
+						if (!exist)
+							drugs.add(d);
+					}
+				}
+			}
+			return drugs;
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
 			log.warn("Find Drug by Creator:: Running Time Error " + e.getMessage());
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}

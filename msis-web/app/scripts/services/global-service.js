@@ -22,11 +22,10 @@ angular.module('webappApp')
         service.searchPatient = service.host + "patient/search/";
 
         // drugstore
-        service.createDrug = service.host + "drugstore/create/drug";
-        service.updateDrug = service.host + "drugstore/update/drug";
+        service.saveDrug = service.host + "drugstore/save/drug";
         service.deleteDrug = service.host + "drugstore/delete/drug/";
         service.getDrugByCreator = service.host + "drugstore/get/drug/creator/";
-        service.searchDrug = service.host + "drugstore/search/drug/";
+        service.searchDrug = service.host + "drugstore/get/drug/creator/";
 
         return service;
     });

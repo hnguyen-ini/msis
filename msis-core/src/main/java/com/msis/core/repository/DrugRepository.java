@@ -8,6 +8,7 @@ import com.msis.core.model.Drug;
 
 public interface DrugRepository  extends ElasticsearchRepository<Drug, String>{
 	Drug findByNameAndCreator(String name, String creator);
+	List<Drug> findByNameLikeAndCreator(String name, String creator);
 	List<Drug> findByCreator(String creator);
  	
 }

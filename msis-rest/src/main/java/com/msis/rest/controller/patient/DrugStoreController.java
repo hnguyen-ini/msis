@@ -32,40 +32,20 @@ public class DrugStoreController implements InitializingBean {
 	private static StoreService storeService;
 	
 	@POST
-	@Path("/create/drug")
+	@Path("/save/drug")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createDrug(Drug drug, @QueryParam("accessToken") String accessToken) {
+	public Response saveDrug(Drug drug, @QueryParam("accessToken") String accessToken) {
 		ServiceResponse<Drug> response = new ServiceResponse<Drug>();
 		try {
 			log.info("Create Drug " + JsonHelper.toString(drug));
-			drug = storeService.createDrug(drug, accessToken);
+			drug = storeService.saveDrug(drug, accessToken);
 		} catch (ServiceException e) {
 			log.warn("-> Create Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
 			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> Create Drug OK");
-		response.setStatus(ServiceStatus.OK);
-		response.setResult(drug);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-	}
-	
-	@PUT
-	@Path("/update/drug")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateDrug(Drug drug, @QueryParam("accessToken") String accessToken) {
-		ServiceResponse<Drug> response = new ServiceResponse<Drug>();
-		try {
-			log.info("Update Drug " + JsonHelper.toString(drug));
-			drug = storeService.updateDrug(drug, accessToken);
-		} catch (ServiceException e) {
-			log.warn("-> Update Failed, " + e.getMessage());
-			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-		}
-		log.info("-> Update OK");
 		response.setStatus(ServiceStatus.OK);
 		response.setResult(drug);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
@@ -95,15 +75,31 @@ public class DrugStoreController implements InitializingBean {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDrugByCreator(@PathParam("creator") String creator, @QueryParam("accessToken") String accessToken) {
-		ServiceResponse<Drug> response = new ServiceResponse<Drug>();
+		ServiceResponse<List<Drug>> response = new ServiceResponse<List<Drug>>();
 		try {
 			log.info("Get Drug by Creator " + creator);
 			List<Drug> drugs = storeService.findDrugByCreator(creator, accessToken);
-			if (drugs.size() == 0) {
-				log.warn("-> Not found drug by creator " + creator);
-				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found drug by creator " + creator));
-				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-			}
+			response.setResult(drugs);
+		} catch (ServiceException e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Get OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@GET
+	@Path("/get/drug/creator/{creator}/name/{name}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getDrugByCreatorAndName(@PathParam("creator") String creator, @PathParam("name") String name, @QueryParam("accessToken") String accessToken) {
+		ServiceResponse<List<Drug>> response = new ServiceResponse<List<Drug>>();
+		try {
+			log.info("Get Drug by Creator " + creator + " And Name " + name);
+			List<Drug> drugs = storeService.searchDrugByCreatorAndNameLike(creator, name, accessToken);
+			response.setResult(drugs);
 		} catch (ServiceException e) {
 			log.warn("-> Get Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
