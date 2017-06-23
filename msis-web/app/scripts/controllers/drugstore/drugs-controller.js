@@ -12,6 +12,7 @@ angular.module('webappApp')
         vm.renderData = renderData;
         vm.data = {};
         vm.drugs = [];
+        vm.drug = {};
         vm.searchText = '';
         vm.dataLoading = true;
 
