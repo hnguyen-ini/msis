@@ -36,8 +36,4 @@
 		<property name="storeService" ref="storeService"></property>
 	</bean>
 	
-	<bean id="testController" class="com.msis.rest.controller.patient.TestController">
-		<property name="recordService" ref="recordService"></property>
-	</bean>
-
 </beans>

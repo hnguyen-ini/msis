@@ -5,6 +5,7 @@ angular.module('webappApp')
         service.getByCreator = getByCreator;
         service.search = search;
         service.del = del;
+        service.saveStore = saveStore;
         return service;
 
         function save(drug, token) {
@@ -21,6 +22,10 @@ angular.module('webappApp')
 
         function del(id, token) {
             return RestService.restDelete(GlobalService.deleteDrug + id + '?accessToken=' + token);
+        }
+
+        function saveStore(drug, token) {
+            return RestService.restPost(GlobalService.saveStore + '?accessToken=' + token, drug);
         }
     }
 ]);

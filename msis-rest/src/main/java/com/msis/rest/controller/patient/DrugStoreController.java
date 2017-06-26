@@ -24,6 +24,7 @@ import com.msis.common.service.ServiceResponse;
 import com.msis.common.service.ServiceStatus;
 import com.msis.core.model.Drug;
 import com.msis.core.model.Patient;
+import com.msis.core.model.Store;
 import com.msis.core.service.StoreService;
 
 @Path("/drugstore")
@@ -106,6 +107,26 @@ public class DrugStoreController implements InitializingBean {
 			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> Get OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@POST
+	@Path("/save/store")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createStore(Store store, @QueryParam("accessToken") String accessToken) {
+		ServiceResponse<Drug> response = new ServiceResponse<Drug>();
+		try {
+			log.info("Create Store " + JsonHelper.toString(store));
+			Drug drug = storeService.createStore(store, accessToken);
+			response.setResult(drug);
+		} catch (ServiceException e) {
+			log.warn("-> Create Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Create Store OK");
 		response.setStatus(ServiceStatus.OK);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}

@@ -9,6 +9,7 @@ angular.module('webappApp')
         vm.search = search;
         vm.edit = edit;
         vm.del = del;
+        vm.receipt = receipt;
         vm.renderData = renderData;
         vm.data = {};
         vm.drugs = [];
@@ -83,27 +84,55 @@ angular.module('webappApp')
             });
         }
 
+        function receipt() {
+            vm.modalInstance = $uibModal.open({
+                templateUrl: '/views/drugstore/receipt.html',
+                controller: ModalReceiptCtrl,
+                resolve: {
+                    drugs: function () {
+                        return vm.drugs;
+                    }
+                }
+            });
+            vm.modalInstance.result.then(function (drugs) {
+                if (drugs != null) {
+                    vm.drugs = drugs;
+                    renderData();
+                }
+            });
+        }
+
         function del(d) {
             if ($rootScope.currentUser == null) {
                 toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
                 AuthenService.clearCredentials();
                 $location.path('/signin');
             } else {
-                vm.dataLoading = true;
-                DrugStoreService.del(d.id, $rootScope.currentUser.status).then(function (response) {
-                    if (response.success) {
-                        toastr.success("The drug is deleted", 'Msis-Web');
-                        var found = false;
-                        angular.forEach(vm.drugs, function(drug, i){
-                            if (drug.id === d.id) {
-                                vm.drugs.splice(i, 1);
-                                renderData();
-                            }
+                toastr.warning("<br /><button type='button' id='confirDelete' class='btn btn-danger'>Yes </button>&nbsp;<button type='button' id='cancelDelete' class='btn btn-default'>Cancel</button>",'Are you sure to delete item?', 
+                {
+                    closeButton: false,
+                    allowHtml: true,
+                    onShown: function (toast) {
+                        $("#confirDelete").click(function(){
+                            vm.dataLoading = true;
+                            DrugStoreService.del(d.id, $rootScope.currentUser.status).then(function (response) {
+                                if (response.success) {
+                                    toastr.success("The drug is deleted", 'Msis-Web');
+                                    var found = false;
+                                    angular.forEach(vm.drugs, function(drug, i){
+                                        if (drug.id === d.id) {
+                                            vm.drugs.splice(i, 1);
+                                            renderData();
+                                        }
+                                    });
+                                    vm.dataLoading = false;
+                                } else {
+                                    toastr.error(response.message, 'Msis-Web');
+                                    vm.dataLoading = false;
+                                }
+                            });
+
                         });
-                        vm.dataLoading = false;
-                    } else {
-                        toastr.error(response.message, 'Msis-Web');
-                        vm.dataLoading = false;
                     }
                 });
             }
@@ -169,6 +198,48 @@ var ModalDrugCtrl = function ($scope, $uibModalInstance, drugs, drug, $rootScope
                     toastr.error(response.message, 'Msis-Web');
                 }
             });
+        }
+    };
+
+    $scope.closeDrug = function() {
+        $uibModalInstance.close(null);
+    }
+};
+
+/*
+* ModelReceiptCtrl
+*/
+var ModalReceiptCtrl = function ($scope, $uibModalInstance, drugs, $rootScope, $location, AuthenService, DrugStoreService) {
+
+    $scope.drugs = drugs;
+    $scope.drug = {};
+    $scope.store = {};
+
+    $scope.saveDrug = function() {
+        if ($rootScope.currentUser == null) {
+            toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
+            AuthenService.clearCredentials();
+            $location.path('/signin');
+        } else {
+            if ($scope.selectedObject == null) {
+                toastr.warning('Please choose one in the list', 'Msis Web');
+            } else {
+                $scope.store.drugId = $scope.selectedObject.originalObject.id;
+                $scope.store.number = $scope.drug.number;
+                DrugStoreService.saveStore($scope.store, $rootScope.currentUser.status).then(function (response) {
+                    if (response.success) {
+                        $scope.drug = response.result;
+                        angular.forEach($scope.drugs, function(drug, i){
+                            if (drug.id === response.result.id) {
+                                $scope.drugs[i] = response.result;
+                            }
+                        });
+                        $uibModalInstance.close($scope.drugs);
+                    } else {
+                        toastr.error(response.message, 'Msis-Web');
+                    }
+                });
+            }
         }
     };
 

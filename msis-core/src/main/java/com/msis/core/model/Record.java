@@ -1,5 +1,7 @@
 package com.msis.core.model;
 
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -16,7 +18,9 @@ public class Record {
 	private String remindAt;
 	private String description;
 	
-	public Record() {}
+	public Record() {
+		UUID.randomUUID().toString();
+	}
 
 	public String getId() {
 		return id;

@@ -10,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -22,9 +23,7 @@ import com.msis.common.parser.JsonHelper;
 import com.msis.common.service.ServiceException;
 import com.msis.common.service.ServiceResponse;
 import com.msis.common.service.ServiceStatus;
-import com.msis.core.model.Patient;
 import com.msis.core.model.Record;
-import com.msis.core.model.Test;
 import com.msis.core.service.RecordService;
 
 @Path("/record")
@@ -36,11 +35,11 @@ public class RecordController implements InitializingBean{
 	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(Record record) {
+	public Response create(Record record, @QueryParam("accessToken") String accessToken) {
 		ServiceResponse<Record> response = new ServiceResponse<Record>();
 		try {
 			log.info("Create Record " + JsonHelper.toString(record));
-			record = recordService.createRecord(record);
+			record = recordService.createRecord(record, accessToken);
 			response.setResult(record);
 		} catch (ServiceException e) {
 			log.warn("-> Create Failed, " + e.getMessage());

@@ -1,6 +1,6 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        <div class="panel-title">Info</div>
+        <div class="panel-title">Record Information</div>
     </div>     
     <div style="padding-top:15px" class="panel-body" ng-init="vm.loadData()">
         <form name="form" ng-submit="vm.save()" role="form">
@@ -19,8 +19,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="t in vm.record.test">
-                            <td></td>
+                        <tr ng-repeat="t in vm.record.tests">
+                            <td style="width:30px">{{ $index + 1 }}</td>
                             <td>{{t.item}}</td>
                             <td><span class="angular-with-newlines">{{t.description}}</span></td>
                             <td>
@@ -50,9 +50,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="t in vm.record.treatment">
-                            <td></td>
-                            <td>{{t.item}}</td>
+                        <tr ng-repeat="t in vm.record.treatments">
+                            <td style="width:30px">{{ $index + 1 }}</td>
+                            <td>{{t.name}}</td>
                             <td>{{t.number}}</td>
                             <td><span class="angular-with-newlines">{{t.description}}</span></td>
                             <td>

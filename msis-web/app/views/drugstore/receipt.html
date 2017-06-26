@@ -1,9 +1,9 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        <div class="panel-title">Treatment Information</div>
+        <div class="panel-title">Drug Information</div>
     </div>     
     <div style="padding-top:15px" class="panel-body">
-        <form name="form" role="form" ng-submit="saveTreatment()">
+        <form name="form" role="form" ng-submit="saveDrug()">
             <div class="form-group">
                 <label for="Name">Name</label>
                 <angucomplete id="ex1"
@@ -12,22 +12,18 @@
                     selectedObject="selectedObject"
                     localdata="drugs"
                     searchfields="name"
-                    titlefield="name,inStock"
+                    titlefield="name"
                     descriptionfield:"id"
                     minlengsh="1"
                     inputclass="form-control form-control-small" class="ng-isolate-scope"/>
             </div>
             <div class="form-group">
-                <label for="treatmentNumber">Number</label>
-                <input type="number" class="form-control" placeholder="Number" ng-model="treatment.number" min="0" required />
-            </div>
-            <div class="form-group">
-                <label for="treatmentDescription">Description</label>
-                <textarea class="form-control" autoheight placeholder="Treatment descriptions" ng-model="treatment.description" required />
+                <label for="Number">Number</label>
+                <input type="number" class="form-control" placeholder="Number" ng-model="drug.number" min="0" required />
             </div>
             <hr/>
             <button ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
-            <button class="btn btn-default" type="button" ng-click="closeTreatment()">Cancel</button>
+            <button class="btn btn-default" type="button" ng-click="closeDrug()">Cancel</button>
         </form>
     </div>
 </div>

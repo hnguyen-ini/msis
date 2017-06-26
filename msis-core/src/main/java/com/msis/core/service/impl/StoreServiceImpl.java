@@ -129,20 +129,30 @@ public class StoreServiceImpl implements StoreService {
 	 * STORE ZONE
 	 */
 	@Override
-	public Store createStore(Store store) throws ServiceException {
+	public Drug createStore(Store store, String accessToken) throws ServiceException {
 		try {
+			cacheService.checkAccessToken(accessToken);
 			if (store.getDrugId() == null || store.getDrugId().isEmpty()
 					|| store.getNumber() == null || store.getNumber() == 0) {
 				log.warn("Create Store:: Missing drugId or number");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing drugId or number");
 			}
-			if (checkInStock(store.getNumber(), store.getDrugId(), System.currentTimeMillis()) < 0) {
-				log.warn("Create Store:: Over of instock");
-				throw new ServiceException(ServiceStatus.OVER_INSTOCK, "Over inStock");
+			Drug drug = drugRepo.findOne(store.getDrugId());
+			if (drug == null) {
+				log.warn("Create Store:: Not found drug by " + store.getDrugId());
+				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found drug by " + store.getDrugId());
 			}
+			if (store.getNumber() < 0 && -store.getNumber() > drug.getInStock()) {
+				log.warn("Create Store:: Over instock " + store.getDrugId());
+				throw new ServiceException(ServiceStatus.OVER_INSTOCK, "Over instock " + store.getDrugId());
+			}
+			drug.setInStock(drug.getInStock() + store.getNumber());
+			drugRepo.save(drug);
+			
 			store.setCreateAt(System.currentTimeMillis());
 			storeRepo.save(store);
-			return store;
+			
+			return drug;
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
