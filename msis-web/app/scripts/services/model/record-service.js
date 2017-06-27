@@ -1,26 +1,22 @@
 angular.module('webappApp')
     .factory('RecordService', ['RestService', 'GlobalService', function(RestService, GlobalService) {
         var service = {};
-        service.create = create;
-        service.update = update;
+        service.save = save;
+        service.deleteRecord = deleteRecord;
         service.getByPatientId = getByPatientId;
-        service.search = search;
         return service;
 
-        function create(record, token) {
-            return RestService.restPost(GlobalService.createRecord + '?accessToken=' + token, record);
+        function save(record, token) {
+            return RestService.restPost(GlobalService.saveRecord + '?accessToken=' + token, record);
         }
 
-        function update(patient, token) {
-            return RestService.restPut(GlobalService.updatePatient + '?accessToken=' + token, patient);
+        function deleteRecord(id, token) {
+            return RestService.restDelete(GlobalService.deleteRecord + id + '?accessToken=' + token);
         }
 
         function getByPatientId(patientId, token) {
             return RestService.restGet(GlobalService.getRecordsByPatientId + patientId + '?accessToken=' + token);
         }
 
-        function  search(search, token) {
-            return RestService.restGet(GlobalService.searchPatient + search + '?accessToken=' + token);
-        }
     }
 ]);

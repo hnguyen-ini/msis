@@ -32,14 +32,14 @@ public class RecordController implements InitializingBean{
 	private static RecordService recordService;
 	
 	@POST
-	@Path("/create")
+	@Path("/save")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(Record record, @QueryParam("accessToken") String accessToken) {
+	public Response save(Record record, @QueryParam("accessToken") String accessToken) {
 		ServiceResponse<Record> response = new ServiceResponse<Record>();
 		try {
 			log.info("Create Record " + JsonHelper.toString(record));
-			record = recordService.createRecord(record, accessToken);
+			record = recordService.saveRecord(record, accessToken);
 			response.setResult(record);
 		} catch (ServiceException e) {
 			log.warn("-> Create Failed, " + e.getMessage());
@@ -51,83 +51,21 @@ public class RecordController implements InitializingBean{
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
-	@PUT
-	@Path("/update")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(Record record) {
-		ServiceResponse<Record> response = new ServiceResponse<Record>();
-		try {
-			log.info("Update Record " + JsonHelper.toString(record));
-			record = recordService.updateRecord(record);
-			response.setResult(record);
-		} catch (ServiceException e) {
-			log.warn("-> Update Failed, " + e.getMessage());
-			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-		}
-		log.info("-> Update OK");
-		response.setStatus(ServiceStatus.OK);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-	}
-	
 	@DELETE
 	@Path("/delete/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response delete(@PathParam("id") String id) {
+	public Response delete(@PathParam("id") String id, @QueryParam("accessToken") String accessToken) {
 		ServiceResponse<Record> response = new ServiceResponse<Record>();
 		try {
 			log.info("Delete record by id " + id);
-			recordService.deleteRecord(id);
+			recordService.deleteRecord(id, accessToken);
 		} catch (ServiceException e) {
 			log.warn("-> Delete Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
 			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> Delete OK");
-		response.setStatus(ServiceStatus.OK);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-	}
-	
-	@DELETE
-	@Path("/delete/patient/{pid}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteByPatient(@PathParam("pid") String pid) {
-		ServiceResponse<Record> response = new ServiceResponse<Record>();
-		try {
-			log.info("Delete record by patient " + pid);
-			recordService.deleteRecordByPatient(pid);
-		} catch (ServiceException e) {
-			log.warn("-> Delete Failed, " + e.getMessage());
-			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-		}
-		log.info("-> Delete OK");
-		response.setStatus(ServiceStatus.OK);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-	}
-	
-	@GET
-	@Path("/get/{id}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response get(@PathParam("id") String id) {
-		ServiceResponse<Record> response = new ServiceResponse<Record>();
-		try {
-			log.info("Get by id " + id);
-			Record record = recordService.findOne(id);
-			if (record == null) {
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by " + id);
-			}
-			response.setResult(record);
-		} catch (ServiceException e) {
-			log.warn("-> Get Failed, " + e.getMessage());
-			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
-		}
-		log.info("-> Get OK");
 		response.setStatus(ServiceStatus.OK);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
@@ -136,14 +74,11 @@ public class RecordController implements InitializingBean{
 	@Path("/get/patient/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getByPatient(@PathParam("id") String id) {
+	public Response getByPatient(@PathParam("id") String id, @QueryParam("accessToken") String accessToken) {
 		ServiceResponse<List<Record>> response = new ServiceResponse<List<Record>>();
 		try {
 			log.info("Get by patient " + id);
-			List<Record> records = recordService.findByPid(id);
-			if (records.size() == 0) {
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by patient" + id);
-			}
+			List<Record> records = recordService.findByPid(id, accessToken);
 			response.setResult(records);
 		} catch (ServiceException e) {
 			log.warn("-> Get Failed, " + e.getMessage());

@@ -26,12 +26,12 @@ angular.module('webappApp')
         service.deleteDrug = service.host + "drugstore/delete/drug/";
         service.getDrugByCreator = service.host + "drugstore/get/drug/creator/";
         service.searchDrug = service.host + "drugstore/get/drug/creator/";
-        saveStore = service.host + "drugstore/save/store";
+        service.saveStore = service.host + "drugstore/save/store";
 
         // record
         service.getRecordsByPatientId = service.host + "record/get/patient/";
-        service.createRecord = service.host + "record/create";
-
+        service.saveRecord = service.host + "record/save";
+        service.deleteRecord = service.host + "record/delete/"
 
         return service;
     });

@@ -40,6 +40,8 @@ public class RecordServiceImpl implements RecordService {
 	private PatientService patientService;
 	@Autowired
 	private DrugRepository drugRepo;
+	@Autowired
+	private StoreRepository storeRepo;
 
 	@Autowired
 	private CacheService cacheService;
@@ -60,30 +62,46 @@ public class RecordServiceImpl implements RecordService {
 	}
 	
 	@Override
-	public List<Record> findByPid(String pid) {
+	public List<Record> findByPid(String pid, String accessToken) throws ServiceException{
+		cacheService.checkAccessToken(accessToken);
 		return ListUtils.okList(recordRepo.findByPid(pid));
 	}
 	
 	@Override
-	public Record createRecord(Record record, String accessToken) throws ServiceException {
+	public Record saveRecord(Record record, String accessToken) throws ServiceException {
 		try {
 			cacheService.checkAccessToken(accessToken);
 			String pid = record.getPid(); 
 			if (pid == null || pid.isEmpty()) {
-				log.warn("Create Record::  Missing pid");
+				log.warn("Save Record::  Missing pid");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing pid");
 			}
 			if (patientService.findOne(pid) == null) {
-				log.warn("Create Record:: Not found patient by " + pid);
+				log.warn("Savee Record:: Not found patient by " + pid);
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by " + pid);
 			}
 			List<Treatment> treatments = (List<Treatment>) new Gson().fromJson(record.getTreatment(), new TypeToken<List<Treatment>>(){}.getType());
 			for (Treatment t : treatments) {
 				Drug drug = drugRepo.findOne(t.getId());
-				if (drug == null)
-					continue;
-				drug.setInStock(drug.getInStock() - t.getNumber());
+				if (drug == null) {
+					log.warn("Save Record:: Not found drug " + t.getName());
+					throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found drug " + t.getName());
+				}
+				int instock = drug.getInStock() - t.getNumber();
+				if (instock < 0) {
+					log.warn("Save Record:: Over instock " + drug.getName());
+					throw new ServiceException(ServiceStatus.OVER_INSTOCK, "Over instock at the drug " + drug.getName());
+				}
+			}
+			for (Treatment t : treatments) {
+				Drug drug = drugRepo.findOne(t.getId());
+				int instock = drug.getInStock() - t.getNumber();
+				drug.setInStock(instock);
 				drugRepo.save(drug);
+				
+				// save store
+				Store store = new Store(drug.getId(), -(t.getNumber()));
+				storeRepo.save(store);
 			}
 			
 			record.setCreatedAt(System.currentTimeMillis());
@@ -98,45 +116,9 @@ public class RecordServiceImpl implements RecordService {
 	}
 	
 	@Override
-	public Record updateRecord(Record record) throws ServiceException {
+	public void deleteRecord(String recordId, String accessToken) throws ServiceException {
 		try {
-			String id = record.getId(); 
-			if (id == null || id.isEmpty()) {
-				log.warn("Update Record::  Missing Id");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing Id");
-			}
-			String pid = record.getPid(); 
-			if (pid == null || pid.isEmpty()) {
-				log.warn("Update Record::  Missing pid");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing pid");
-			}
-			if (patientService.findOne(pid) == null) {
-				log.warn("Update Record:: Not found patient by " + pid);
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found patient by " + pid);
-			}
-			Record edit = findOne(id);
-			if (edit == null) {
-				log.warn("Update Record:: Not found record by " + id);
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by " + id);
-			}
-			edit.setComplain(record.getComplain());
-			edit.setDescription(record.getDescription());
-			edit.setDiagnose(record.getDiagnose());
-			edit.setPid(record.getPid());
-			edit.setRemindAt(record.getRemindAt());
-			save(edit);
-			return edit;
-		} catch (ServiceException e) {
-			throw e;
-		} catch (Exception e) {
-			log.warn("Update Record:: Running Time Error " + e.getMessage());
-			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
-		}
-	}
-	
-	@Override
-	public void deleteRecord(String recordId) throws ServiceException {
-		try {
+			cacheService.checkAccessToken(accessToken);
 			if (recordId == null || recordId.isEmpty()) {
 				log.warn("Delete Record::  Missing recordId");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing recordId");
@@ -146,34 +128,23 @@ public class RecordServiceImpl implements RecordService {
 				log.warn("Delete Record:: Not found record by " + recordId);
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by " + recordId);
 			}
+			List<Treatment> treatments = (List<Treatment>) new Gson().fromJson(del.getTreatment(), new TypeToken<List<Treatment>>(){}.getType());
+			for (Treatment t : treatments) {
+				Drug drug = drugRepo.findOne(t.getId());
+				int instock = drug.getInStock() + t.getNumber();
+				drug.setInStock(instock);
+				drugRepo.save(drug);
+				
+				// save store
+				Store store = new Store(drug.getId(), t.getNumber());
+				storeRepo.save(store);
+			}
 			delete(del);
-			// TODO delete test & treatment
-			// deleteAllByRecord(recordId);
+			
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
 			log.warn("Delete Record:: Running Time Error " + e.getMessage());
-			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
-		}
-	}
-	
-	@Override
-	public void deleteRecordByPatient(String pid) throws ServiceException {
-		try {
-			if (pid == null || pid.isEmpty()) {
-				log.warn("Delete Record By Patient::  Missing pid");
-				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing pid");
-			}
-			List<Record> dels = findByPid(pid);
-			if (dels.size() == 0) {
-				log.warn("Delete Record By Patient:: Not found record by patient " + pid);
-				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found record by patient " + pid);
-			}
-			recordRepo.delete(dels);
-		} catch (ServiceException e) {
-			throw e;
-		} catch (Exception e) {
-			log.warn("Delete Record By Patient:: Running Time Error " + e.getMessage());
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}
 	}

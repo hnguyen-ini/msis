@@ -19,6 +19,12 @@ var app = angular.module('webappApp');
         vm.save = save;
 
         function loadData() {
+            if ($rootScope.record != null) {
+                vm.record = $rootScope.record;
+                vm.record.tests = angular.fromJson(vm.record.test);
+                vm.record.treatments = angular.fromJson(vm.record.treatment);
+                $rootScope.record = null;
+            }
             loadDrugs();
         }
 
@@ -96,11 +102,10 @@ var app = angular.module('webappApp');
             vm.record.pid = $rootScope.patient.id;
             vm.record.test = angular.toJson(vm.record.tests);
             vm.record.treatment = angular.toJson(vm.record.treatments);
-            RecordService.create(vm.record, $rootScope.currentUser.status).then(function (response) {
+            RecordService.save(vm.record, $rootScope.currentUser.status).then(function (response) {
                 if (response.success) {
-                    toastr.success('Record is save', 'Msis-Web');
+                    toastr.success('Record is saved', 'Msis-Web');
                     $location.path('/records');
-                    //vm.drugs = response.result;
                 } else {
                     toastr.error(response.message, 'Msis-Web');
                 }

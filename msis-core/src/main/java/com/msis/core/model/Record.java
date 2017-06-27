@@ -19,7 +19,7 @@ public class Record {
 	private String description;
 	
 	public Record() {
-		UUID.randomUUID().toString();
+		this.setId(UUID.randomUUID().toString());
 	}
 
 	public String getId() {

@@ -10,6 +10,8 @@ angular.module('webappApp')
 
         vm.loadData = loadData;
         vm.addNewRecord = addNewRecord;
+        vm.edit = edit;
+        vm.del = del;
 
         function loadData() {
             if ($rootScope.currentUser == null) {
@@ -45,6 +47,38 @@ angular.module('webappApp')
 
         function addNewRecord() {
             $location.path('/record');
+        }
+
+        function edit(r) {
+            $rootScope.record = r;
+            $location.path('/record');
+        }
+
+        function del(r) {
+            if ($rootScope.currentUser == null) {
+                toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
+                AuthenService.clearCredentials();
+                $location.path('/signin');
+                return false;
+            }
+            toastr.warning("<br /><button type='button' id='confirDelete' class='btn btn-danger'>Yes </button>&nbsp;<button type='button' id='cancelDelete' class='btn btn-default'>Cancel</button>",'Are you sure to delete item?', 
+            {
+                closeButton: false,
+                allowHtml: true,
+                onShown: function (toast) {
+                    $("#confirDelete").click(function(){
+                        RecordService.deleteRecord(r.id, $rootScope.currentUser.status).then(function(response) {
+                            if (response.success) {
+                                var index = vm.patient.records.indexOf(r);
+                                vm.patient.records.splice(index, 1);
+                                renderData();
+                            } else {
+                                toastr.error(response.message, 'Msis-Web');
+                            }
+                        });
+                    });
+                }
+            });
         }
     }
 ]);

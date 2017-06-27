@@ -10,14 +10,9 @@ public interface RecordService {
 	void delete(Record record);
 	
 	Record findOne(String id);
-	List<Record> findByPid(String pid);
+	List<Record> findByPid(String pid, String accessToken) throws ServiceException;
 	
-	Record createRecord(Record record, String accessToken) throws ServiceException;
-	
-	
-	Record updateRecord(Record record) throws ServiceException;
-	void deleteRecord(String recordId) throws ServiceException;
-	void deleteRecordByPatient(String pid) throws ServiceException;
-	
+	Record saveRecord(Record record, String accessToken) throws ServiceException;
+	void deleteRecord(String recordId, String accessToken) throws ServiceException;
 	
 }
