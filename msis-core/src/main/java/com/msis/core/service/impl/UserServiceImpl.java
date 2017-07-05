@@ -142,7 +142,15 @@ public class UserServiceImpl implements UserService{
 	        deUser.setCreateAt(time);
 	        deUser.setModifyAt(time);
 	        deUser.setLoginAt(time);
-	        deUser.setToken(UUID.randomUUID().toString());
+	        String userToken = "";
+	        while (true) {
+	        	userToken = UUID.randomUUID().toString();
+		        String uuid = cryptoService.encryptNetwork(userToken);
+		        if (uuid.indexOf("/") == -1 && uuid.indexOf("\\") == -1 && uuid.indexOf("&") == -1) {
+		        	break;
+		        }
+	        }
+	        deUser.setToken(userToken);
 	        
 	        // aesKey
 	        KeyGeneration keyGen = new KeyGeneration(2048);

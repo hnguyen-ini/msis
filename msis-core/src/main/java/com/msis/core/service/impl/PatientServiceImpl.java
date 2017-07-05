@@ -183,7 +183,7 @@ public class PatientServiceImpl implements PatientService {
 	public List<Patient> findByNameOrIDn(String search, String accessToken) throws ServiceException {
 		try {
 			cacheService.checkAccessToken(accessToken);
-			List<Patient> patients = new ArrayList<>();
+			List<Patient> patients = new ArrayList<Patient>();
 			Patient patient = findByIdn(search);
 			if (patient != null) {
 				patients.add(patient);

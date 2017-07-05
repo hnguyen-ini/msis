@@ -40,17 +40,17 @@ public class AdminController implements InitializingBean{
 			if (users.size() == 0) {
 				log.warn("-> Not found user");
 				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found user"));
-				return Response.status(ServiceStatus.NOT_FOUND.getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+				return Response.status(ServiceStatus.NOT_FOUND.getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 			}
 			response.setResult(users);
 		} catch (Exception e) {
 			log.warn("-> Register Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
-			return Response.status(ServiceStatus.SERVICE_ERROR.getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			return Response.status(ServiceStatus.SERVICE_ERROR.getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> Get OK");
 		response.setStatus(ServiceStatus.OK);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
 	@DELETE
@@ -65,11 +65,11 @@ public class AdminController implements InitializingBean{
 		} catch (ServiceException e) {
 			log.warn("-> Delete Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "DELETE").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> delete OK");
 		response.setStatus(ServiceStatus.OK);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "DELETE").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
 	

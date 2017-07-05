@@ -66,12 +66,12 @@ public class PatientController implements InitializingBean {
 		} catch (ServiceException e) {
 			log.warn("-> Update Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> Update OK");
 		response.setStatus(ServiceStatus.OK);
 		response.setResult(patient);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
 	@GET
@@ -86,21 +86,21 @@ public class PatientController implements InitializingBean {
 			if (patients.size() == 0) {
 				log.info("Not found patient by creator " + creator);
 				response.setStatus(new ServiceStatus(ServiceStatus.NOT_FOUND, "Not found patient by creator " + creator));
-				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+				return Response.status(Response.Status.NOT_FOUND).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 			}
 			response.setResult(patients);
 		} catch (ServiceException e) {
 			log.warn("-> Get Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 		} catch (Exception e) {
 			log.warn("-> Get Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(ServiceStatus.SERVICE_ERROR, e.getMessage()));
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> get OK");
 		response.setStatus(ServiceStatus.OK);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
 	@GET
@@ -115,11 +115,11 @@ public class PatientController implements InitializingBean {
 		} catch(ServiceException e) {
 			log.warn("-> Search Failed, " + e.getMessage());
 			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
-			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 		}
 		log.info("-> search OK");
 		response.setStatus(ServiceStatus.OK);
-		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
 //	@DELETE
