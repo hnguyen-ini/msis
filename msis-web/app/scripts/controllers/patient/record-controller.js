@@ -57,7 +57,7 @@ var app = angular.module('webappApp');
 
         function deleteTest(item) {
             var index = vm.record.tests.indexOf(item);
-            vm.record.test.splice(index, 1);
+            vm.record.tests.splice(index, 1);
         };
 
         function addNewTreatment() {
@@ -86,7 +86,7 @@ var app = angular.module('webappApp');
 
         function deleteTreatment(item) {
             var index = vm.record.treatments.indexOf(item);
-            vm.record.treatment.splice(index, 1);
+            vm.record.treatments.splice(index, 1);
         };
 
         function cancel() {

@@ -49,6 +49,8 @@ public class StoreServiceImpl implements StoreService {
 			} else {
 				d = new Drug(drug.getName(), drug.getDescription(), drug.getCreator());
 			}
+			d.setInPrice(drug.getInPrice());
+			d.setOutPrice(drug.getOutPrice());
 			drugRepo.save(d);
 			return d;
 		} catch (ServiceException e) {
@@ -147,6 +149,7 @@ public class StoreServiceImpl implements StoreService {
 				throw new ServiceException(ServiceStatus.OVER_INSTOCK, "Over instock " + store.getDrugId());
 			}
 			drug.setInStock(drug.getInStock() + store.getNumber());
+			drug.setInPrice(store.getPrice());
 			drugRepo.save(drug);
 			
 			store.setCreateAt(System.currentTimeMillis());
@@ -160,6 +163,24 @@ public class StoreServiceImpl implements StoreService {
 			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
 		}
 	}
+	
+	@Override
+	public List<Store> getStoreByDrug(String drugId, String accessToken) throws ServiceException {
+		try {
+			cacheService.checkAccessToken(accessToken);
+			if (drugId == null || drugId.isEmpty()) {
+				log.warn("Get Store by Drug:: Missing drugId");
+				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing drugId");
+			}
+			return ListUtils.okList(storeRepo.findByDrugId(drugId));
+		} catch (ServiceException e) {
+			throw e;
+		} catch (Exception e) {
+			log.warn("Get Store by Durg:: Running Time Error " + e.getMessage());
+			throw new ServiceException(ServiceStatus.RUNNING_TIME_ERROR, e.getMessage());
+		}
+	}
+	
 	@Override
 	public Store updateStore(Store store) throws ServiceException {
 		try {
@@ -210,6 +231,8 @@ public class StoreServiceImpl implements StoreService {
 		}
 		
 	}
+	
+	
 	
 	@Override
 	public int inStock(String drugId, Long dateTime) {

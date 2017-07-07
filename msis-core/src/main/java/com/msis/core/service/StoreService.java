@@ -15,6 +15,7 @@ public interface StoreService {
 	Drug createStore(Store store, String accessToken) throws ServiceException;
 	Store updateStore(Store store) throws ServiceException;
 	void deleteStore(String id) throws ServiceException;
+	List<Store> getStoreByDrug(String drugId, String accessToken) throws ServiceException;
 	
 	int inStock(String drugId, Long dateTime);
 	int checkInStock(int number, String drugId, Long dateTime) throws ServiceException;

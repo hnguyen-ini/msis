@@ -101,6 +101,7 @@ public class RecordServiceImpl implements RecordService {
 				
 				// save store
 				Store store = new Store(drug.getId(), -(t.getNumber()));
+				store.setPrice(drug.getOutPrice());
 				storeRepo.save(store);
 			}
 			

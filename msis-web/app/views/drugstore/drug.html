@@ -9,6 +9,14 @@
                 <input type="text" class="form-control" placeholder="Name" ng-model="drug.name" required />
             </div>
             <div class="form-group">
+                <label for="In-Price">In-Price</label>
+                <input type="number" class="form-control" placeholder="In-Price" ng-model="drug.inPrice" min="0" required />
+            </div>
+            <div class="form-group">
+                <label for="Out-Price">Out-Price</label>
+                <input type="number" class="form-control" placeholder="Out-Price" ng-model="drug.outPrice" min="0" required />
+            </div>
+            <div class="form-group">
                 <label for="Description">Description</label>
                 <textarea class="form-control" autoheight placeholder="Description" ng-model="drug.description" required />
             </div>

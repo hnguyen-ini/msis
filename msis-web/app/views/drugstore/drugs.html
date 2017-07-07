@@ -1,13 +1,13 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        <div class="panel-title">List</div>
+        <div class="panel-title">Drug List</div>
         <div style="float:right;margin-top:-20px"><img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" /></div>
     </div>     
     <div style="padding-top:15px" class="panel-body" ng-init="vm.loadData()">
         <div class="row" style="padding-bottom:5px">
             <div class="col-lg-6">
                 <button class="btn btn-primary" ng-click="vm.addNew()">Add New </button>
-                <button class="btn btn-success" ng-click="vm.receipt()">Receipt </button>
+                <button class="btn btn-success" ng-click="vm.receipt()">Input </button>
             </div>
             <div class="col-lg-6">
                 <div class="input-group">
@@ -25,6 +25,8 @@
                 <td data-title="'Name'" sortable="'name'">{{d.name}}</td>
                 <td data-title="'Description'"><span class="angular-with-newlines">{{d.description}}</span></td>
                 <td data-title="'InStock'" style="width:100px" class="text-right">{{d.inStock}}</td>
+                <td data-title="'In-Price'" style="width:100px" class="text-right">{{d.inPrice}}</td>
+                <td data-title="'Out-Price'" style="width:100px" class="text-right">{{d.outPrice}}</td>
                 <td data-title="'Actions'" style="width:95px">
                     <span data-toggle="tooltip" title="Edit">
                         <button class="btn btn-primary btn-xs" ng-click="vm.edit(d)">
@@ -36,7 +38,13 @@
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
                     </span>
-                    <span data-toggle="tooltip" title="Report">
+                    <span data-toggle="tooltip" title="Input/Output Details">
+                        <button class="btn btn-info btn-xs" ng-click="vm.inout(d)">
+                            <span class="glyphicon glyphicon-th-list"></span>
+                        </button>
+                    </span>
+
+                    <!--<span data-toggle="tooltip" title="In/Out Details">
                         <div class="btn-group">
                             <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown">
                                 <span class="glyphicon glyphicon-th-list"></span>
@@ -47,7 +55,7 @@
                                 <li><a href="#">Both</a></li>
                             </ul>
                         </div>
-                    </span>
+                    </span>-->
                 </td>
             </tr>
         </tbody>

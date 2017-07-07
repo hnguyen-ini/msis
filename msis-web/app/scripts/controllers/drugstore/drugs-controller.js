@@ -9,6 +9,7 @@ angular.module('webappApp')
         vm.search = search;
         vm.edit = edit;
         vm.del = del;
+        vm.inout = inout;
         vm.receipt = receipt;
         vm.renderData = renderData;
         vm.data = {};
@@ -161,6 +162,11 @@ angular.module('webappApp')
                 }
             }
         }
+
+        function inout(d) {
+            $rootScope.drug = d;
+            $location.path('/in-out');
+        }
     }
 ]);
 
@@ -226,6 +232,7 @@ var ModalReceiptCtrl = function ($scope, $uibModalInstance, drugs, $rootScope, $
             } else {
                 $scope.store.drugId = $scope.selectedObject.originalObject.id;
                 $scope.store.number = $scope.drug.number;
+                $scope.store.price = $scope.drug.inPrice;
                 DrugStoreService.saveStore($scope.store, $rootScope.currentUser.status).then(function (response) {
                     if (response.success) {
                         $scope.drug = response.result;

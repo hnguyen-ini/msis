@@ -21,6 +21,10 @@
                 <label for="Number">Number</label>
                 <input type="number" class="form-control" placeholder="Number" ng-model="drug.number" min="0" required />
             </div>
+            <div class="form-group">
+                <label for="In-Price">In-Price</label>
+                <input type="number" class="form-control" placeholder="In-Price" ng-model="drug.inPrice" min="0" required />
+            </div>
             <hr/>
             <button ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
             <button class="btn btn-default" type="button" ng-click="closeDrug()">Cancel</button>

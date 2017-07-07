@@ -8,7 +8,8 @@ public class Store {
 	@Id
 	private String id;
 	private String drugId;
-	private Integer number;
+	private Integer number = 0;
+	private Integer price = 0;
 	private Long createAt;
 	
 	public Store() {}
@@ -49,6 +50,14 @@ public class Store {
 
 	public void setCreateAt(Long createAt) {
 		this.createAt = createAt;
+	}
+
+	public Integer getPrice() {
+		return price;
+	}
+
+	public void setPrice(Integer price) {
+		this.price = price;
 	}
 	
 }

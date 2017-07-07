@@ -11,7 +11,9 @@ public class Drug {
 	private String id;
 	private String name;
 	private String description;
-	private Integer inStock;
+	private Integer inStock = 0;
+	private Integer inPrice = 0;
+	private Integer outPrice = 0;
 	private String creator;
 	
 	public Drug() {
@@ -65,6 +67,22 @@ public class Drug {
 
 	public void setCreator(String creator) {
 		this.creator = creator;
+	}
+
+	public Integer getOutPrice() {
+		return outPrice;
+	}
+
+	public void setOutPrice(Integer outPrice) {
+		this.outPrice = outPrice;
+	}
+
+	public Integer getInPrice() {
+		return inPrice;
+	}
+
+	public void setInPrice(Integer inPrice) {
+		this.inPrice = inPrice;
 	}
 	
 	

@@ -6,6 +6,7 @@ angular.module('webappApp')
         service.search = search;
         service.del = del;
         service.saveStore = saveStore;
+        service.getStoreByDrug = getStoreByDrug;
         return service;
 
         function save(drug, token) {
@@ -26,6 +27,10 @@ angular.module('webappApp')
 
         function saveStore(drug, token) {
             return RestService.restPost(GlobalService.saveStore + '?accessToken=' + token, drug);
+        }
+
+        function getStoreByDrug(drugId, token) {
+            return RestService.restGet(GlobalService.getStoreByDrug + drugId + '?accessToken=' + token);
         }
     }
 ]);

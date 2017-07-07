@@ -19,7 +19,7 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 controller  : 'MainCtrl'
             })
             // patient
-            .when('/home', {
+            .when('/patients', {
                 templateUrl : 'views/patient/patients.html',
                 controller  : 'PatientsController',
                 controllerAs: 'vm'
@@ -68,9 +68,14 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 controllerAs: 'vm' 
             })
             
-            .when('/about', {
+            .when('/drugs', {
                 templateUrl : 'views/drugstore/drugs.html',
                 controller  : 'DrugsController',
+                controllerAs: 'vm'
+            })
+            .when('/in-out', {
+                templateUrl : 'views/drugstore/in-out.html',
+                controller  : 'InOutController',
                 controllerAs: 'vm'
             });
     }]);
