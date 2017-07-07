@@ -131,6 +131,26 @@ public class DrugStoreController implements InitializingBean {
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
+	@PUT
+	@Path("/update/store")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateStore(Store store, @QueryParam("accessToken") String accessToken) {
+		ServiceResponse<Store> response = new ServiceResponse<Store>();
+		try {
+			log.info("Update Store " + JsonHelper.toString(store));
+			storeService.updateStore(store, accessToken);
+			response.setResult(store);
+		} catch (ServiceException e) {
+			log.warn("-> Update Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Update Store OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
 	@GET
 	@Path("/get/store/drug/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -149,6 +169,8 @@ public class DrugStoreController implements InitializingBean {
 		response.setStatus(ServiceStatus.OK);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
+	
+	
 	
 	public static void setStoreService(StoreService storeService) {
 		DrugStoreController.storeService = storeService;

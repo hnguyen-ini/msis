@@ -182,8 +182,9 @@ public class StoreServiceImpl implements StoreService {
 	}
 	
 	@Override
-	public Store updateStore(Store store) throws ServiceException {
+	public Store updateStore(Store store, String accessToken) throws ServiceException {
 		try {
+			cacheService.checkAccessToken(accessToken);
 			if (store.getId() == null || store.getId().isEmpty() 
 					|| store.getDrugId() == null || store.getDrugId().isEmpty()
 					|| store.getNumber() == null || store.getNumber() == 0) {
@@ -195,14 +196,20 @@ public class StoreServiceImpl implements StoreService {
 				log.warn("Update Store:: Not found drug by " + store.getId());
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found store by " + store.getId());
 			}
-			if (checkInStock(store.getNumber(), edit.getDrugId(), edit.getCreateAt()) < 0) {
-				log.warn("Update Store:: Over of instock");
-				throw new ServiceException(ServiceStatus.OVER_INSTOCK, "Over inStock");
-			}
-			edit.setDrugId(store.getDrugId());
+			Integer change = store.getNumber() - edit.getNumber();
+			
 			edit.setNumber(store.getNumber());
+			edit.setPrice(store.getPrice());
 			storeRepo.save(edit);
-			return edit;
+			
+			// update instock
+			Drug drug = drugRepo.findOne(edit.getDrugId());
+			if (drug != null) {
+				drug.setInStock(drug.getInStock() + change);
+				drugRepo.save(drug);
+			}
+			
+			return store;
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -211,8 +218,9 @@ public class StoreServiceImpl implements StoreService {
 		}
 	}
 	@Override
-	public void deleteStore(String id) throws ServiceException {
+	public void deleteStore(String id, String accessToken) throws ServiceException {
 		try {
+			cacheService.checkAccessToken(accessToken);
 			if (id == null || id.isEmpty()) {
 				log.warn("Delete Store:: Missing id");
 				throw new ServiceException(ServiceStatus.BAD_REQUEST, "Missing id");

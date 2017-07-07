@@ -13,8 +13,8 @@ public interface StoreService {
 	List<Drug> searchDrugByCreatorAndNameLike(String creator, String name, String accessToken) throws ServiceException;
 	
 	Drug createStore(Store store, String accessToken) throws ServiceException;
-	Store updateStore(Store store) throws ServiceException;
-	void deleteStore(String id) throws ServiceException;
+	Store updateStore(Store store, String accessToken) throws ServiceException;
+	void deleteStore(String id, String accessToken) throws ServiceException;
 	List<Store> getStoreByDrug(String drugId, String accessToken) throws ServiceException;
 	
 	int inStock(String drugId, Long dateTime);

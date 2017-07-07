@@ -5,6 +5,8 @@ angular.module('webappApp')
     .controller('InOutController', ['NgTableParams', 'AuthenService', 'DrugStoreService', '$location', '$rootScope', '$uibModal', function(NgTableParams, AuthenService, DrugStoreService, $location, $rootScope, $uibModal) {
         var vm = this;
         vm.loadData = loadData;
+        vm.edit = edit;
+        vm.del = del;
         vm.drug = {};
         vm.stores = [];
         vm.data = {};
@@ -43,7 +45,7 @@ angular.module('webappApp')
                 d.drugId = store.drugId;
                 d.createAt = store.createAt;
                 if (store.number < 0) {
-                    d.output = store.number;
+                    d.output = -store.number;
                     d.outPrice = store.price;
                     d.input = '';
                     d.inPrice = '';
@@ -58,6 +60,10 @@ angular.module('webappApp')
             vm.data = data1;
             vm.tableParams = new NgTableParams({count:10}, {counts:[10,20,50,100], dataset: vm.data});
             vm.tableParams._settings.total = vm.data.length;
+        }
+
+        function edit(d) {
+
         }
     }
 ]);

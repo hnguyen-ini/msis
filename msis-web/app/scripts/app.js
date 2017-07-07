@@ -77,6 +77,21 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
                 templateUrl : 'views/drugstore/in-out.html',
                 controller  : 'InOutController',
                 controllerAs: 'vm'
+            })
+
+            .when('/reports', {
+                templateUrl: 'views/report/reports.html',
+                controller: 'reportsController'
+            })
+
+            .when('/documents', {
+                templateUrl: 'views/documents.html',
+                controller: 'docController'
+            })
+
+            .when('/contact', {
+                templateUrl: 'views/contact.html',
+                controller: 'contactController'
             });
     }]);
 
@@ -92,7 +107,7 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
         $rootScope.signining = false;
 
         $rootScope.$on('$locationChangeStart', function (event, next, current) {
-            var restrictedPage = $.inArray($location.path(), ['/signin', '/signup', '/token-validation']) === -1;
+            var restrictedPage = $.inArray($location.path(), ['/signin', '/signup', '/token-validation', '/contact', '/documents']) === -1;
             var loggedIn = $rootScope.currentUser;
             if (restrictedPage && !loggedIn) {
                 $location.path('/signin');
@@ -108,17 +123,19 @@ var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies'
         $scope.message = 'Everyone come and see how good I look!';
     });
 
-    scotchApp.controller('mainController', function($scope) {
+    scotchApp.controller('reportsController', function($scope) {
         // create a message to display in our view
-        $scope.message = 'Everyone come and see how good I look!';
+        $scope.message = 'Building...';
     });
 
-    scotchApp.controller('aboutController', function($scope) {
-        $scope.message = 'Look! I am an about page.';
+    scotchApp.controller('docController', function($scope) {
+        $scope.message = 'Building...';
     });
 
     scotchApp.controller('contactController', function($scope) {
-        $scope.message = 'Contact us! JK. This is just a demo.';
+        $scope.email = 'hnguyen.ini@gmail.com';
+        $scope.phone = '+84 0909 284 595';
+        $scope.name = 'Hien Nguyen';
     });
 
 //  run.$inject = ['$rootScope', '$location', '$cookies', '$http'];

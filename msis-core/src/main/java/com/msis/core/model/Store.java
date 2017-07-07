@@ -1,5 +1,7 @@
 package com.msis.core.model;
 
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -12,9 +14,12 @@ public class Store {
 	private Integer price = 0;
 	private Long createAt;
 	
-	public Store() {}
+	public Store() {
+		this.id = UUID.randomUUID().toString();
+	}
 	
 	public Store(String drugId, Integer number) {
+		this.id = UUID.randomUUID().toString();
 		this.drugId = drugId;
 		this.number = number;
 		this.createAt = System.currentTimeMillis();
