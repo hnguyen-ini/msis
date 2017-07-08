@@ -209,7 +209,7 @@ public class StoreServiceImpl implements StoreService {
 				drugRepo.save(drug);
 			}
 			
-			return store;
+			return edit;
 		} catch (ServiceException e) {
 			throw e;
 		} catch (Exception e) {
@@ -229,6 +229,12 @@ public class StoreServiceImpl implements StoreService {
 			if (del == null) {
 				log.warn("Delete Store:: Not found store by " + id);
 				throw new ServiceException(ServiceStatus.NOT_FOUND, "Not found store by " + id);
+			}
+			// update instock
+			Drug drug = drugRepo.findOne(del.getDrugId());
+			if (drug != null) {
+				drug.setInStock(drug.getInStock() - del.getNumber());
+				drugRepo.save(drug);
 			}
 			storeRepo.delete(del);
 		} catch (ServiceException e) {

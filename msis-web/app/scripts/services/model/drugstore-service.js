@@ -6,6 +6,8 @@ angular.module('webappApp')
         service.search = search;
         service.del = del;
         service.saveStore = saveStore;
+        service.updateStore = updateStore;
+        service.deleteStore = deleteStore;
         service.getStoreByDrug = getStoreByDrug;
         return service;
 
@@ -27,6 +29,14 @@ angular.module('webappApp')
 
         function saveStore(drug, token) {
             return RestService.restPost(GlobalService.saveStore + '?accessToken=' + token, drug);
+        }
+
+        function updateStore(store, token) {
+            return RestService.restPut(GlobalService.updateStore + '?accessToken=' + token, store);
+        }
+
+        function deleteStore(id, token) {
+            return RestService.restDelete(GlobalService.deleteStore + id + '?accessToken=' + token);
         }
 
         function getStoreByDrug(drugId, token) {

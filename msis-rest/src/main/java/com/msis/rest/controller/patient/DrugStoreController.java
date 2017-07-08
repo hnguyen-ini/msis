@@ -139,7 +139,7 @@ public class DrugStoreController implements InitializingBean {
 		ServiceResponse<Store> response = new ServiceResponse<Store>();
 		try {
 			log.info("Update Store " + JsonHelper.toString(store));
-			storeService.updateStore(store, accessToken);
+			store = storeService.updateStore(store, accessToken);
 			response.setResult(store);
 		} catch (ServiceException e) {
 			log.warn("-> Update Failed, " + e.getMessage());
@@ -149,6 +149,25 @@ public class DrugStoreController implements InitializingBean {
 		log.info("-> Update Store OK");
 		response.setStatus(ServiceStatus.OK);
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@DELETE
+	@Path("/delete/store/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteStore(@PathParam("id") String id, @QueryParam("accessToken") String accessToken) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			log.info("Delete Store " + id);
+			storeService.deleteStore(id, accessToken);
+		} catch (ServiceException e) {
+			log.warn("-> Delete Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "DELETE").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> DELETE Store OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "DELETE").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
 	@GET

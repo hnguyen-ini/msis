@@ -4,9 +4,9 @@ angular.module('webappApp')
         service.s1 = "DFGSDG233DJDPR3S";
         service.s2 = "495ae7e34b9da43b9b4bdac644529aa7";
         service.s3 = "9609f89caaa074264acf4df75122dbdc";
-        //service.host = "http://localhost:8080/msis-rest/rest/"; // home
+        service.host = "http://localhost:8080/msis-rest/rest/"; // home
         //service.host = "http://localhost:8085/msis/rest/"; // company
-        service.host = "http://35.186.152.185:8080/msis-rest/rest/"; // prod
+        //service.host = "http://35.186.152.185:8080/msis-rest/rest/"; // prod
         //authen
         service.registerUri = service.host + "authen/reg";
         service.signinUri = service.host + "authen/signin";
@@ -28,6 +28,8 @@ angular.module('webappApp')
         service.getDrugByCreator = service.host + "drugstore/get/drug/creator/";
         service.searchDrug = service.host + "drugstore/get/drug/creator/";
         service.saveStore = service.host + "drugstore/save/store";
+        service.updateStore = service.host + "drugstore/update/store";
+        service.deleteStore = service.host + "drugstore/delete/store/";
         service.getStoreByDrug = service.host + "drugstore/get/store/drug/";
 
 

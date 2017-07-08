@@ -63,7 +63,103 @@ angular.module('webappApp')
         }
 
         function edit(d) {
+            var store = {};
+            store.id = d.id;
+            store.drugId = d.drugId;
+            store.createAt = d.createAt;
+            if (d.input == '') {
+                store.number = -(d.output);
+                store.pice = d.outPrice;
+            } else {
+                store.number = d.input;
+                store.price = d.inPrice;
+            }
+            vm.modalInstance = $uibModal.open({
+                templateUrl: '/views/drugstore/in-out-edit.html',
+                controller: ModalInOutEditCtrl,
+                resolve: {
+                    stores: function () {
+                        return vm.stores;
+                    },
+                    store: function() {
+                        return store;
+                    }
+                }
+            });
+            vm.modalInstance.result.then(function (stores) {
+                if (stores != null) {
+                    vm.stores = stores;
+                    renderData();
+                }
+            });
+        }
 
+        function del(d) {
+            if ($rootScope.currentUser == null) {
+                toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
+                AuthenService.clearCredentials();
+                $location.path('/signin');
+                return false;
+            }
+            toastr.warning("<br /><button type='button' id='confirDelete' class='btn btn-danger'>Yes </button>&nbsp;<button type='button' id='cancelDelete' class='btn btn-default'>Cancel</button>",'Are you sure to delete item?', 
+            {
+                closeButton: false,
+                allowHtml: true,
+                onShown: function (toast) {
+                    $("#confirDelete").click(function(){
+                        DrugStoreService.deleteStore(d.id, $rootScope.currentUser.status).then(function(response) {
+                            if (response.success) {
+                                var index = vm.stores.indexOf(d);
+                                vm.stores.splice(index, 1);
+                                renderData();
+                            } else {
+                                toastr.error(response.message, 'Msis-Web');
+                            }
+                        });
+                    });
+                }
+            });
         }
     }
 ]);
+
+/*
+* ModalInOutEditCtrl
+*/
+var ModalInOutEditCtrl = function ($scope, $uibModalInstance, stores, store, $rootScope, $location, AuthenService, DrugStoreService) {
+
+    $scope.stores = stores;
+    $scope.store = {};
+    if (store != null)
+        $scope.store = store;
+
+    $scope.save = function() {
+        if ($rootScope.currentUser == null) {
+            toastr.warning("Session was expired. Please signin again!", 'Msis-Web');
+            AuthenService.clearCredentials();
+            $location.path('/signin');
+        } else {
+            DrugStoreService.updateStore($scope.store, $rootScope.currentUser.status).then(function (response) {
+                if (response.success) {
+                    var found = false;
+                    angular.forEach($scope.stores, function(sto, i){
+                        if (sto.id === response.result.id) {
+                            found = true;
+                            $scope.stores[i] = response.result;
+                        }
+                    });
+                    if (found == false) {
+                        $scope.stores.push(response.result);
+                    }
+                    $uibModalInstance.close($scope.stores);
+                } else {
+                    toastr.error(response.message, 'Msis-Web');
+                }
+            });
+        }
+    };
+
+    $scope.close = function() {
+        $uibModalInstance.close(null);
+    }
+};
