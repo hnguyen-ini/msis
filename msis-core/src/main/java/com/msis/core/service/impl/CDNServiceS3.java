@@ -1,6 +1,7 @@
 package com.msis.core.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,7 +26,7 @@ import com.msis.common.service.ServiceStatus;
 import com.msis.core.config.CoreConfig;
 import com.msis.core.service.CDNService;
 
-@Service(value="cdnService")
+@Service
 public class CDNServiceS3 implements CDNService{
 	static Logger log = LoggerFactory.getLogger(CDNServiceS3.class);
 	private String rootBucketName;
@@ -122,5 +123,11 @@ public class CDNServiceS3 implements CDNService{
         }
         return uri;
     }
+
+	@Override
+	public void cleanDirectory(File directory) throws ServiceException {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

@@ -108,7 +108,7 @@ public class MailServiceImpl implements MailService {
 	  					template.merge(context, writer);
 	  	                messageHelper.setText(writer.toString(), true);
 	  	                
-	  					File file = new File(mail.getName() + "_privatekey.txt"); 
+	  					File file = new File("/var/www/mail/" + mail.getName() + "_privatekey.txt"); 
 	  					FileUtils.writeStringToFile(file, mail.getPrivateKey(), "UTF-8");
 	  					messageHelper.addAttachment(file.getName(), file);
 	  	            }

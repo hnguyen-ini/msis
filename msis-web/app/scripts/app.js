@@ -7,7 +7,7 @@
  *
  * Main module of the application.
  */
-var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies', 'ngTable', 'ui.bootstrap', 'autoheight', 'angularjs-datetime-picker', 'angucomplete']);
+var scotchApp = angular.module('webappApp', ['ngRoute', 'ngStorage', 'ngCookies', 'ngTable', 'ui.bootstrap', 'autoheight', 'angularjs-datetime-picker', 'angucomplete', 'ngFileUpload']);
 
     // configure our routes
     scotchApp.config(['$routeProvider', function($routeProvider) {

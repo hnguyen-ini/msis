@@ -33,6 +33,27 @@
                         </tr>
                     </tbody>
                 </table>
+                <br>
+                <table id="tablefile" class="table">
+                    <thead>
+                        <tr>
+                            <th>Test File Name <button type="button" ngf-select="vm.addFiles($files)" multiple accept="image/*">Select Files</button></th>
+                            <th style="width:50px">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="f in vm.record.files">
+                            <td>{{f.name}}</td>
+                            <td>
+                                <span data-toggle="tooltip" title="Delete">
+                                    <button class="btn btn-danger btn-xs" type="button" ng-click="vm.deleteFile(f)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="form-group">
                 <label for="Diagnose">Diagnose</label>

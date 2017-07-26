@@ -13,11 +13,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.msis.core.config.BeanConfig;
+import com.msis.core.config.BeanTestConfig;
 import com.msis.core.config.EsConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {EsConfig.class, BeanConfig.class})
+@ContextConfiguration(classes = {EsConfig.class, BeanTestConfig.class})
 @ActiveProfiles("test")
 @FixMethodOrder(value=MethodSorters.NAME_ASCENDING)
 

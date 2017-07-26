@@ -13,7 +13,7 @@
     </context:component-scan>
     
     <import resource="classpath*:core-config.xml"/>
-	
+    
     <bean id="adminController" class="com.msis.rest.controller.admin.AdminController">
         <property name="userService" ref="userService"></property>
     </bean>
@@ -34,6 +34,14 @@
 	
 	<bean id="drugStoreController" class="com.msis.rest.controller.patient.DrugStoreController">
 		<property name="storeService" ref="storeService"></property>
+	</bean>
+	
+	<bean id="contentController" class="com.msis.rest.controller.cdn.ContentController">
+		<property name="contentService" ref="contentService"></property>
+	</bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	    <property name="maxUploadSize" value="5000000"/>
 	</bean>
 	
 </beans>

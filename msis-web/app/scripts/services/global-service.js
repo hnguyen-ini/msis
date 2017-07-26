@@ -4,8 +4,8 @@ angular.module('webappApp')
         service.s1 = "DFGSDG233DJDPR3S";
         service.s2 = "495ae7e34b9da43b9b4bdac644529aa7";
         service.s3 = "9609f89caaa074264acf4df75122dbdc";
-        service.host = "http://localhost:8080/msis-rest/rest/"; // home
-        //service.host = "http://localhost:8085/msis/rest/"; // company
+        //service.host = "http://localhost:8080/msis-rest/rest/"; // home
+        service.host = "http://localhost:8085/msis/rest/"; // company
         //service.host = "http://35.186.152.185:8080/msis-rest/rest/"; // prod
         //authen
         service.registerUri = service.host + "authen/reg";
@@ -32,11 +32,13 @@ angular.module('webappApp')
         service.deleteStore = service.host + "drugstore/delete/store/";
         service.getStoreByDrug = service.host + "drugstore/get/store/drug/";
 
-
         // record
         service.getRecordsByPatientId = service.host + "record/get/patient/";
         service.saveRecord = service.host + "record/save";
         service.deleteRecord = service.host + "record/delete/"
+
+        // content
+        service.cdnUpload = service.host + "cdn/upload";
 
         return service;
     });

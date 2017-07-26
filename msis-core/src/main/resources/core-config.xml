@@ -7,6 +7,11 @@
         http://www.springframework.org/schema/context 
     	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+ 	<!-- CDN -->
+ 	<!-- 
+ 	<bean id="cdnService" class="com.msis.core.service.impl.CDNServiceFile" />
+    <bean id="cdnServiceS3" class="com.msis.core.service.impl.CDNServiceS3" />
+     -->
 	
 	<!-- Mail -->
 	<!-- 
@@ -14,7 +19,7 @@
 		<property name="host" value="smtp.gmail.com" />
 	  	<property name="port" value="465" />
 	  	<property name="username" value="hien.nguyen@terrologic.com" />
-	  	<property name="password" value="12345678@Ab1" />
+	  	<property name="password" value="" />
 	  	<property name="javaMailProperties">
 	   	  <props>
 	    	<prop key="mail.debug">true</prop> 
@@ -44,4 +49,5 @@
 	  	<property name="velocityEngine" ref="velocityEngine"/>
 	 </bean>
  -->
+ 
 </beans>

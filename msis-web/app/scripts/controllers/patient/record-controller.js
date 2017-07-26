@@ -2,10 +2,12 @@
  * Record Controller
  */
 var app = angular.module('webappApp');
-    app.controller('RecordController', ['$rootScope', '$uibModal', '$location', 'DrugStoreService', 'RecordService', function($rootScope, $uibModal, $location, DrugStoreService, RecordService) {
+    app.controller('RecordController', ['$rootScope', '$uibModal', '$location', 'DrugStoreService', 'RecordService', 'Upload', 'GlobalService', function($rootScope, $uibModal, $location, DrugStoreService, RecordService, Upload, GlobalService) {
         var vm = this;
         vm.record = {};
         vm.record.tests = [];
+        vm.record.files = [];
+        vm.record.contents = [];
         vm.record.treatments = [];
         vm.drugs = [];
         
@@ -14,6 +16,10 @@ var app = angular.module('webappApp');
         vm.addNewTreatment = addNewTreatment;
         vm.deleteTreatment = deleteTreatment;
         vm.loadData = loadData;
+        vm.uploadFiles = uploadFiles;
+        vm.addFiles = addFiles;
+        vm.deleteFile = deleteFile;
+
 
         vm.cancel = cancel;
         vm.save = save;
@@ -22,6 +28,8 @@ var app = angular.module('webappApp');
             if ($rootScope.record != null) {
                 vm.record = $rootScope.record;
                 vm.record.tests = angular.fromJson(vm.record.test);
+                vm.record.files = []; // TODO
+                vm.record.contents = []; // TODO
                 vm.record.treatments = angular.fromJson(vm.record.treatment);
                 $rootScope.record = null;
             }
@@ -99,18 +107,65 @@ var app = angular.module('webappApp');
                 $location.path('/patients');
                 return false;
             }
+            
             vm.record.pid = $rootScope.patient.id;
             vm.record.test = angular.toJson(vm.record.tests);
             vm.record.treatment = angular.toJson(vm.record.treatments);
             RecordService.save(vm.record, $rootScope.currentUser.status).then(function (response) {
                 if (response.success) {
+                    uploadFiles(response.result.id);
                     toastr.success('Record is saved', 'Msis-Web');
                     $location.path('/records');
                 } else {
                     toastr.error(response.message, 'Msis-Web');
                 }
             });
-        }
+        };
+
+        function uploadFiles(recordId) {
+            if (vm.record.files && vm.record.files.length) {
+                var uri = GlobalService.cdnUpload + '?accessToken=' + $rootScope.currentUser.status;
+                uri += "&pid=" + vm.record.pid;
+                uri += "&recordId=" + recordId;
+                angular.forEach(vm.record.files, function(file, i) {
+                    var url = uri + "&fileName=" + file.name;
+                    Upload.upload({
+                        method: 'POST',
+                        url: url,
+                        file: file
+                    }).then(function (response) {
+                        var str = response;
+
+                    }, function (response) {
+                        if (response.status > 0) {
+                            toastr.warning(response.status + ': ' + response.data, 'Msis-Web');
+                        }
+                    });
+                });
+            }
+        };
+
+        function addFiles(files) {
+            if (files && files.length) {
+                angular.forEach(files, function(f, i) {
+                    var found = false;
+                    angular.forEach(vm.record.files, function(fi, j) {
+                        if (f.name === fi.name) {
+                            found = true;
+                            vm.record.files[j] = f;
+                        }
+                    });
+                    if (found == false) {
+                        vm.record.files.push(f);
+                    }
+                });
+            }
+        };
+
+        function deleteFile(file) {
+            var index = vm.record.files.indexOf(file);
+            vm.record.files.splice(index, 1);
+        };
     }
 ]);
 
