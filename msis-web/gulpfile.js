@@ -32,6 +32,7 @@ var paths = {
     'bower_components/bootstrap/dist/js/bootstrap.min.js',
     'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
     'bower_components/angularjs-datetime-picker/angularjs-datetime-picker.js',
+    'bower_components/ng-file-upload/ng-file-upload.min.js',
     'app/libs/js/ng-table.min.js',
     'app/libs/js/angucomplete.js'
   ],
