@@ -6,10 +6,10 @@ var app = angular.module('webappApp');
         var vm = this;
         vm.record = {};
         vm.record.tests = [];
-        vm.record.files = [];
         vm.record.contents = [];
         vm.record.treatments = [];
         vm.drugs = [];
+        vm.contentDeleted = [];
         
         vm.addNewTest = addNewTest;
         vm.deleteTest = deleteTest;
@@ -20,7 +20,6 @@ var app = angular.module('webappApp');
         vm.addFiles = addFiles;
         vm.deleteFile = deleteFile;
 
-
         vm.cancel = cancel;
         vm.save = save;
 
@@ -28,12 +27,22 @@ var app = angular.module('webappApp');
             if ($rootScope.record != null) {
                 vm.record = $rootScope.record;
                 vm.record.tests = angular.fromJson(vm.record.test);
-                vm.record.files = []; // TODO
-                vm.record.contents = []; // TODO
                 vm.record.treatments = angular.fromJson(vm.record.treatment);
                 $rootScope.record = null;
             }
+            loadContents();
             loadDrugs();
+        }
+
+        function loadContents() {
+            RecordService.getByRecord(vm.record.id, $rootScope.currentUser.status).then(function(response) {
+                if (response.success) {
+                    vm.record.contents = response.result;
+                } else {
+                    vm.record.contents = [];
+                    toastr.error(response.message, 'Msis-Web');
+                }
+            });
         }
 
         function loadDrugs() {
@@ -113,6 +122,7 @@ var app = angular.module('webappApp');
             vm.record.treatment = angular.toJson(vm.record.treatments);
             RecordService.save(vm.record, $rootScope.currentUser.status).then(function (response) {
                 if (response.success) {
+                    removeFiles(response.result.id);
                     uploadFiles(response.result.id);
                     toastr.success('Record is saved', 'Msis-Web');
                     $location.path('/records');
@@ -122,25 +132,35 @@ var app = angular.module('webappApp');
             });
         };
 
+        function removeFiles(recordId) {
+            if (vm.contentDeleted && vm.contentDeleted.length) {
+                angular.forEach(vm.contentDeleted, function(c, i) {
+                    RecordService.deleteContent(c.name, vm.record.pid, recordId, $rootScope.currentUser.status);
+                });
+            }
+        }
+
         function uploadFiles(recordId) {
-            if (vm.record.files && vm.record.files.length) {
+            if (vm.record.contents && vm.record.contents.length) {
                 var uri = GlobalService.cdnUpload + '?accessToken=' + $rootScope.currentUser.status;
                 uri += "&pid=" + vm.record.pid;
                 uri += "&recordId=" + recordId;
-                angular.forEach(vm.record.files, function(file, i) {
-                    var url = uri + "&fileName=" + file.name;
-                    Upload.upload({
-                        method: 'POST',
-                        url: url,
-                        file: file
-                    }).then(function (response) {
-                        var str = response;
+                angular.forEach(vm.record.contents, function(content, i) {
+                    if (content.file != null) {
+                        var url = uri + "&fileName=" + content.name;
+                        Upload.upload({
+                            method: 'POST',
+                            url: url,
+                            file: content.file
+                        }).then(function (response) {
+                            var str = response;
 
-                    }, function (response) {
-                        if (response.status > 0) {
-                            toastr.warning(response.status + ': ' + response.data, 'Msis-Web');
-                        }
-                    });
+                        }, function (response) {
+                            if (response.status > 0) {
+                                toastr.warning(response.status + ': ' + response.data, 'Msis-Web');
+                            }
+                        });
+                    }
                 });
             }
         };
@@ -148,23 +168,37 @@ var app = angular.module('webappApp');
         function addFiles(files) {
             if (files && files.length) {
                 angular.forEach(files, function(f, i) {
-                    var found = false;
-                    angular.forEach(vm.record.files, function(fi, j) {
-                        if (f.name === fi.name) {
-                            found = true;
-                            vm.record.files[j] = f;
+                    var index = -1;
+                    angular.forEach(vm.record.contents, function(c, j) {
+                        if (f.name == c.name) {
+                            index = j;
                         }
                     });
-                    if (found == false) {
-                        vm.record.files.push(f);
+                    if (index == -1) {
+                        var content = {};
+                        content.name = f.name;
+                        content.file = f;
+                        vm.record.contents.push(content);
+                    } else {
+                        vm.record.contents[index].file = f;
                     }
                 });
             }
         };
 
-        function deleteFile(file) {
-            var index = vm.record.files.indexOf(file);
-            vm.record.files.splice(index, 1);
+        function deleteFile(content) {
+            index = vm.record.contents.indexOf(content);
+            vm.record.contents.splice(index, 1);
+
+            var exist = false;
+            angular.forEach(vm.contentDeleted, function(c, i) {
+                if (c.name === content.name) {
+                    exist = true;
+                }
+            });
+            if (exist == false) {
+                vm.contentDeleted.push(content);
+            }
         };
     }
 ]);

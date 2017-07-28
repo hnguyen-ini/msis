@@ -3,7 +3,9 @@ package com.msis.rest.controller.cdn;
 import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -48,6 +50,43 @@ public class ContentController implements InitializingBean {
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
+	@PUT
+	@Path("/delete")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response delete(@QueryParam("fileName") String fileName, @QueryParam("pid") String pid, @QueryParam("recordId") String recordId, @QueryParam("accessToken") String accessToken) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			log.info("Deleting files " + fileName + "..");
+			contentService.delete(fileName, pid, recordId, accessToken);
+		} catch (ServiceException e) {
+			log.warn("-> Delete Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Delete OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "PUT").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
+	@GET
+	@Path("/gets")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getByRecord(@QueryParam("recordId") String recordId, @QueryParam("accessToken") String accessToken) {
+		ServiceResponse response = new ServiceResponse();
+		try {
+			log.info("Gets by record " + recordId);
+			response.setResult(contentService.getByRecord(recordId, accessToken));
+		} catch (ServiceException e) {
+			log.warn("-> Get Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Get OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
 	
 	public static void setContentService(ContentService contentService) {
 		ContentController.contentService = contentService;

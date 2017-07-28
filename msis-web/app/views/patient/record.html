@@ -42,11 +42,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="f in vm.record.files">
-                            <td>{{f.name}}</td>
+                        <tr ng-repeat="c in vm.record.contents">
+                            <td>{{c.name}}</td>
                             <td>
                                 <span data-toggle="tooltip" title="Delete">
-                                    <button class="btn btn-danger btn-xs" type="button" ng-click="vm.deleteFile(f)">
+                                    <button class="btn btn-danger btn-xs" type="button" ng-click="vm.deleteFile(c)">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </button>
                                 </span>

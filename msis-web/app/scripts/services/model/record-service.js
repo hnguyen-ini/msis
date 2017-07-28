@@ -4,6 +4,8 @@ angular.module('webappApp')
         service.save = save;
         service.deleteRecord = deleteRecord;
         service.getByPatientId = getByPatientId;
+        service.deleteContent = deleteContent;
+        service.getByRecord = getByRecord;
         return service;
 
         function save(record, token) {
@@ -16,6 +18,14 @@ angular.module('webappApp')
 
         function getByPatientId(patientId, token) {
             return RestService.restGet(GlobalService.getRecordsByPatientId + patientId + '?accessToken=' + token);
+        }
+
+        function deleteContent(fileName, patientId, recordId, token) {
+            return RestService.restPut(GlobalService.cdnDelete + '?accessToken=' + token + '&pid=' + patientId + '&recordId=' + recordId + '&fileName=' + fileName);
+        }
+
+        function getByRecord(recordId, token) {
+            return RestService.restGet(GlobalService.cdnGetByRecord + '?accessToken=' + token + '&recordId=' + recordId)
         }
 
     }

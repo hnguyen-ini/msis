@@ -125,7 +125,7 @@ public class CDNServiceS3 implements CDNService{
     }
 
 	@Override
-	public void cleanDirectory(File directory) throws ServiceException {
+	public void cleanDirectory(String directory) throws ServiceException {
 		// TODO Auto-generated method stub
 		
 	}

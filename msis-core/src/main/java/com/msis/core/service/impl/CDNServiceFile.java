@@ -100,9 +100,11 @@ public class CDNServiceFile implements CDNService {
 	}
 
 	@Override
-	public void cleanDirectory(File directory) throws ServiceException {
+	public void cleanDirectory(String directory) throws ServiceException {
 		try {
-			FileUtils.cleanDirectory(directory);
+			String uri = cdnRoot + directory;
+			File file = new File(uri);
+			FileUtils.cleanDirectory(file);
 		} catch (Exception e) {
 			throw new ServiceException(ServiceStatus.NO_CONTENT, e.getMessage());
 		}
