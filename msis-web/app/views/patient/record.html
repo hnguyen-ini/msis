@@ -37,14 +37,19 @@
                 <table id="tablefile" class="table">
                     <thead>
                         <tr>
-                            <th>Test File Name <button type="button" ngf-select="vm.addFiles($files)" multiple accept="image/*">Select Files</button></th>
-                            <th style="width:50px">Delete</th>
+                            <th>Test File Name <button type="button" class="btn-bs-file btn btn-xs btn-primary" ngf-select="vm.addFiles($files)" multiple accept="image/*">...</button></th>
+                            <th style="width:70px">Delete</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="c in vm.record.contents">
                             <td>{{c.name}}</td>
                             <td>
+                                <span data-toggle="tooltip" title="Download">
+                                    <button class="btn btn-info btn-xs" type="button" ng-click="vm.downloadFile(c)">
+                                        <span class="glyphicon glyphicon-download-alt"></span>
+                                    </button>
+                                </span>
                                 <span data-toggle="tooltip" title="Delete">
                                     <button class="btn btn-danger btn-xs" type="button" ng-click="vm.deleteFile(c)">
                                         <span class="glyphicon glyphicon-trash"></span>

@@ -5,8 +5,8 @@ angular.module('webappApp')
         service.s2 = "495ae7e34b9da43b9b4bdac644529aa7";
         service.s3 = "9609f89caaa074264acf4df75122dbdc";
         //service.host = "http://localhost:8080/msis-rest/rest/"; // home
-        //service.host = "http://localhost:8085/msis/rest/"; // company
-        service.host = "http://35.186.152.185:8080/msis-rest/rest/"; // prod
+        service.host = "http://localhost:8085/msis/rest/"; // company
+        //service.host = "http://35.186.152.185:8080/msis-rest/rest/"; // prod
         //authen
         service.registerUri = service.host + "authen/reg";
         service.signinUri = service.host + "authen/signin";
@@ -41,6 +41,7 @@ angular.module('webappApp')
         service.cdnUpload = service.host + "cdn/upload";
         service.cdnDelete = service.host + "cdn/delete";
         service.cdnGetByRecord = service.host + "cdn/gets";
+        service.cdnDownload = service.host + "cdn/download";
 
         return service;
     });

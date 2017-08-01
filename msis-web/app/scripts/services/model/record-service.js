@@ -6,6 +6,7 @@ angular.module('webappApp')
         service.getByPatientId = getByPatientId;
         service.deleteContent = deleteContent;
         service.getByRecord = getByRecord;
+        service.downloadContent = downloadContent;
         return service;
 
         function save(record, token) {
@@ -22,6 +23,10 @@ angular.module('webappApp')
 
         function deleteContent(fileName, patientId, recordId, token) {
             return RestService.restPut(GlobalService.cdnDelete + '?accessToken=' + token + '&pid=' + patientId + '&recordId=' + recordId + '&fileName=' + fileName);
+        }
+
+        function downloadContent(fileName, patientId, recordId, token) {
+            return RestService.restPost(GlobalService.cdnDownload + '?accessToken=' + token + '&pid=' + patientId + '&recordId=' + recordId + '&fileName=' + fileName);
         }
 
         function getByRecord(recordId, token) {

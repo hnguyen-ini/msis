@@ -2,7 +2,7 @@
  * Record Controller
  */
 var app = angular.module('webappApp');
-    app.controller('RecordController', ['$rootScope', '$uibModal', '$location', 'DrugStoreService', 'RecordService', 'Upload', 'GlobalService', function($rootScope, $uibModal, $location, DrugStoreService, RecordService, Upload, GlobalService) {
+    app.controller('RecordController', ['$rootScope', '$uibModal', '$location', 'DrugStoreService', 'RecordService', 'Upload', 'GlobalService', 'FileSaver', 'Blob', function($rootScope, $uibModal, $location, DrugStoreService, RecordService, Upload, GlobalService, FileSaver, Blob) {
         var vm = this;
         vm.record = {};
         vm.record.tests = [];
@@ -19,6 +19,7 @@ var app = angular.module('webappApp');
         vm.uploadFiles = uploadFiles;
         vm.addFiles = addFiles;
         vm.deleteFile = deleteFile;
+        vm.downloadFile = downloadFile;
 
         vm.cancel = cancel;
         vm.save = save;
@@ -200,6 +201,43 @@ var app = angular.module('webappApp');
                 vm.contentDeleted.push(content);
             }
         };
+
+        function downloadFile(content) {
+            var fileType = content.name.substr(content.name.lastIndexOf('.') + 1);
+            RecordService.downloadContent(content.name, content.pid, content.recordId, $rootScope.currentUser.status).then(function (response) {
+                if (response.success) {
+                    var contentType = 'image/' + fileType;
+                    var blob = b64toBlob(response.result, contentType);
+                    FileSaver.saveAs(blob, content.name);
+                } else {
+                    toastr.error(response.message, 'Msis-Web');
+                }
+            });
+        };
+
+        function b64toBlob(b64Data, contentType, sliceSize) {
+            contentType = contentType || '';
+            sliceSize = sliceSize || 512;
+
+            var byteCharacters = atob(b64Data);
+            var byteArrays = [];
+
+            for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+                var byteNumbers = new Array(slice.length);
+                for (var i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+                }
+
+                var byteArray = new Uint8Array(byteNumbers);
+
+                byteArrays.push(byteArray);
+            }
+
+            var blob = new Blob(byteArrays, {type: contentType});
+            return blob;
+        }
     }
 ]);
 

@@ -88,6 +88,25 @@ public class ContentController implements InitializingBean {
 		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "GET").header("Access-Control-Allow-Headers", "Content-Type").build();
 	}
 	
+	@POST
+	@Path("/download")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response download(@QueryParam("fileName") String fileName, @QueryParam("pid") String pid, @QueryParam("recordId") String recordId, @QueryParam("accessToken") String accessToken) {
+		ServiceResponse<String> response = new ServiceResponse<String>();
+		try {
+			log.info("Downloading file " + fileName + "..");
+			response.setResult(contentService.download(fileName, pid, recordId, accessToken));
+		} catch (ServiceException e) {
+			log.warn("-> Download Failed, " + e.getMessage());
+			response.setStatus(new ServiceStatus(e.getStatus().getCode(), e.getMessage()));
+			return Response.status(e.getStatus().getCode()).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+		}
+		log.info("-> Download OK");
+		response.setStatus(ServiceStatus.OK);
+		return Response.status(Response.Status.OK).entity(response).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Methods", "POST").header("Access-Control-Allow-Headers", "Content-Type").build();
+	}
+	
 	public static void setContentService(ContentService contentService) {
 		ContentController.contentService = contentService;
 	}

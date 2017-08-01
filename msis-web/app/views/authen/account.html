@@ -15,38 +15,44 @@
             <br/>
             <div class="row">
                 <div class="col-sm-3">Last name</div>
-                <div class="col-sm-6">Nguyen</div>
-                <div class="col-sm-3" style="float:right"><button ng-click="editMode=true">Edit</button></div>
+                <div class="col-sm-6">
+                    <label ng-hide="editMode" ng-model="vm.account.lastName">{{vm.account.lastName}}</label>
+                </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col-sm-3">Sex</div>
-                <div class="col-sm-6">Nguyen</div>
-                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+                <div class="col-sm-6">
+                    <label ng-hide="editMode" ng-model="vm.account.sex">{{vm.account.sex}}</label>
+                </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col-sm-3">Job title</div>
-                <div class="col-sm-6">Nguyen</div>
-                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+                <div class="col-sm-6">
+                    <label ng-hide="editMode" ng-model="vm.account.jobTitle">{{vm.account.jobTitle}}</label>
+                </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col-sm-3">Phone Number</div>
-                <div class="col-sm-6">Nguyen</div>
-                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+                <div class="col-sm-6">
+                    <label ng-hide="editMode" ng-model="vm.account.phone">{{vm.account.phone}}</label>
+                </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col-sm-3">Home address</div>
-                <div class="col-sm-6">Nguyen</div>
-                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+                <div class="col-sm-6">
+                    <label ng-hide="editMode" ng-model="vm.account.homeAddress">{{vm.account.homeAdress}}</label>
+                </div>
             </div>
             <br/>
             <div class="row">
                 <div class="col-sm-3">Work address</div>
-                <div class="col-sm-6">Nguyen</div>
-                <div class="col-sm-3"><button ng-click="editMode=true">Edit</button></div>
+                <div class="col-sm-6">
+                    <label ng-hide="editMode" ng-model="vm.account.workAddress">{{vm.account.workAddress}}</label>
+                </div>
             </div>
         </form>
     </div>
